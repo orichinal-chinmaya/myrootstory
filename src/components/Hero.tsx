@@ -1,11 +1,5 @@
 import heroBg from "@/assets/hero-bg.jpg";
 
-const STATS = [
-  { value: "12+", label: "Languages" },
-  { value: "40K+", label: "Narratives captured" },
-  { value: "28", label: "Countries" },
-  { value: "97%", label: "Validation rate" },
-];
 
 const Hero = () => {
   return (
@@ -67,19 +61,6 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Stats bar */}
-        <div className="mt-20 pt-10 border-t border-cream/15 grid grid-cols-2 md:grid-cols-4 gap-8 opacity-0 animate-fade-up animation-delay-600">
-          {STATS.map((stat) => (
-            <div key={stat.label}>
-              <div className="font-display text-3xl font-semibold text-cream mb-1">
-                {stat.value}
-              </div>
-              <div className="font-body text-xs tracking-wide text-cream/50 uppercase">
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Scroll indicator */}
