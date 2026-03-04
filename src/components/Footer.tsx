@@ -4,7 +4,7 @@ const Footer = () => {
       <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
         <div>
           <span className="font-display text-lg font-semibold text-foreground">
-            Root<span className="text-accent">story</span>
+            root<span className="text-accent">story</span>
           </span>
           <p className="font-body text-xs text-muted-foreground mt-1">
             Narrative intelligence for social systems.
@@ -22,7 +22,7 @@ const Footer = () => {
           ))}
         </div>
         <p className="font-body text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Rootstory. All rights reserved.
+          © {new Date().getFullYear()} Orichinal Labs Ltd. All rights reserved.
         </p>
       </div>
     </footer>
