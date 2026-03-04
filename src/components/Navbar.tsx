@@ -21,7 +21,7 @@ const Navbar = () => {
     >
       <div className="container mx-auto flex items-center justify-between py-5 px-6">
         <span className="font-display text-cream text-xl font-semibold tracking-tight">
-          Root<span className="text-amber">story</span>
+          root<span className="text-amber">story</span>
         </span>
         <div className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map((link) => (
