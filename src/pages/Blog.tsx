@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import roosterImg from "@/assets/rooster.png";
 
 const Blog = () => {
   return (
@@ -63,6 +64,16 @@ const Blog = () => {
               <div key={i} className="h-[3px] flex-1 rounded-full" style={{ background: c }} />
             ))}
           </div>
+        </div>
+
+        {/* Hero image */}
+        <div className="mb-6 opacity-0 animate-fade-up animation-delay-400" style={{ animationDelay: "0.5s" }}>
+          <img
+            src={roosterImg}
+            alt="Big Ben as Rooster — Bhajju Shyam, The London Jungle Book (Tara Books, 2004)"
+            className="w-full rounded-sm"
+            style={{ background: "hsl(var(--cream))" }}
+          />
         </div>
 
         {/* Attribution chip */}
