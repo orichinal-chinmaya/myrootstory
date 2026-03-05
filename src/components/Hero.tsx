@@ -35,14 +35,19 @@ const Hero = () => {
             that experience it.
           </h1>
 
+          {/* Descriptor */}
+          <p className="font-body text-cream/90 text-base font-medium mb-4 opacity-0 animate-fade-up animation-delay-300">
+            RootStory is an AI platform for capturing and analyzing structured human stories at scale.
+          </p>
+
           {/* Subhead */}
-          <p className="font-body text-cream/70 text-lg md:text-xl leading-relaxed max-w-xl mb-12 opacity-0 animate-fade-up animation-delay-300">
+          <p className="font-body text-cream/70 text-lg md:text-xl leading-relaxed max-w-xl mb-12 opacity-0 animate-fade-up animation-delay-400">
             We help governments, foundations, and organisations listen at scale —
             turning thousands of first-person accounts into structured, analysable evidence.
           </p>
 
           {/* CTAs */}
-          <div className="flex flex-wrap gap-4 opacity-0 animate-fade-up animation-delay-400">
+          <div className="flex flex-wrap gap-4 opacity-0 animate-fade-up animation-delay-500">
             <a
               href="#contact"
               className="inline-flex items-center gap-2 font-body font-medium bg-amber text-forest-deep px-7 py-3.5 rounded-sm hover:bg-amber/90 transition-colors duration-200 text-sm"
