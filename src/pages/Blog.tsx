@@ -32,7 +32,7 @@ const Blog = () => {
             {["Micro narratives", "Grassroot lens", "Core values"].map((tag) => (
               <span
                 key={tag}
-                className="font-body text-[10px] tracking-[0.18em] uppercase px-3 py-1 border border-foreground/20 text-foreground/50"
+                className="font-body text-[10px] tracking-[0.18em] uppercase px-3 py-1 border border-foreground/30 text-foreground/70"
               >
                 {tag}
               </span>
@@ -234,7 +234,7 @@ const Blog = () => {
 
         {/* Footer */}
         <div className="mt-18 flex items-center justify-between opacity-0 animate-fade-up" style={{ animationDelay: "2.2s", marginTop: "72px" }}>
-          <div className="font-body text-[10.5px] tracking-[0.26em] uppercase text-amber-muted/60 leading-loose">
+          <div className="font-body text-[10.5px] tracking-[0.26em] uppercase text-amber-muted/85 leading-loose">
             <div>rootstory</div>
             <div>rootstory.io</div>
           </div>

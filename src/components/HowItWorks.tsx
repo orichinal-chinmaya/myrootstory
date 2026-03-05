@@ -56,14 +56,14 @@ const HowItWorks = () => {
         <div className="max-w-2xl mb-20">
           <div className="inline-flex items-center gap-2.5 mb-6">
             <div className="w-6 h-px bg-amber" />
-            <span className="font-body text-xs tracking-[0.2em] uppercase text-amber/70">
+            <span className="font-body text-xs tracking-[0.2em] uppercase text-amber/80">
               The Process
             </span>
           </div>
           <h2 className="font-display text-4xl md:text-5xl font-medium text-cream leading-tight mb-6">
             From conversation to evidence — four steps.
           </h2>
-          <p className="font-body text-cream/60 text-lg leading-relaxed">
+          <p className="font-body text-cream/75 text-lg leading-relaxed">
             Adaptive AI interviews paired with rigorous human validation create datasets
             that are both measurable and meaningful.
           </p>
@@ -79,7 +79,7 @@ const HowItWorks = () => {
                 <div className="text-cream/80 group-hover:text-amber transition-colors duration-300">
                   {step.icon}
                 </div>
-                <span className="font-body text-xs tracking-[0.15em] uppercase text-amber/50">
+                <span className="font-body text-xs tracking-[0.15em] uppercase text-amber/75">
                   {String(i + 1).padStart(2, "0")}
                 </span>
               </div>
@@ -89,7 +89,7 @@ const HowItWorks = () => {
               <h3 className="font-display text-lg font-semibold text-cream mb-4">
                 {step.title}
               </h3>
-              <p className="font-body text-cream/55 text-sm leading-relaxed">{step.body}</p>
+              <p className="font-body text-cream/75 text-sm leading-relaxed">{step.body}</p>
             </div>
           ))}
         </div>

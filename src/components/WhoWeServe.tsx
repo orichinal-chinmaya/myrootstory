@@ -64,7 +64,7 @@ const WhoWeServe = () => {
                 key={client.type}
                 className="flex gap-8 p-10 bg-card hover:bg-secondary/50 transition-colors duration-300 group cursor-default"
               >
-                <div className="flex-shrink-0 text-accent/60 group-hover:text-accent transition-colors duration-300 mt-1">
+                <div className="flex-shrink-0 text-accent/80 group-hover:text-accent transition-colors duration-300 mt-1">
                   {client.icon}
                 </div>
                 <div>

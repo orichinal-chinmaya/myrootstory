@@ -5,7 +5,7 @@ const CTA = () => {
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2.5 mb-8 justify-center">
             <div className="w-6 h-px bg-amber" />
-            <span className="font-body text-xs tracking-[0.2em] uppercase text-amber/70">
+            <span className="font-body text-xs tracking-[0.2em] uppercase text-amber/80">
               Get Started
             </span>
             <div className="w-6 h-px bg-amber" />
@@ -13,7 +13,7 @@ const CTA = () => {
           <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-medium text-cream leading-tight mb-8">
             Ready to listen at scale?
           </h2>
-          <p className="font-body text-cream/60 text-lg leading-relaxed mb-12 max-w-xl mx-auto">
+          <p className="font-body text-cream/75 text-lg leading-relaxed mb-12 max-w-xl mx-auto">
             We work with governments, foundations, and research organisations.
             Tell us about your project and we'll design a listening study that fits your evidence needs.
           </p>
@@ -25,7 +25,7 @@ const CTA = () => {
           >
             <div className="grid md:grid-cols-2 gap-6 mb-6">
               <div>
-                <label className="block font-body text-xs tracking-[0.1em] uppercase text-cream/50 mb-2">
+                <label className="block font-body text-xs tracking-[0.1em] uppercase text-cream/75 mb-2">
                   Name
                 </label>
                 <input
@@ -35,7 +35,7 @@ const CTA = () => {
                 />
               </div>
               <div>
-                <label className="block font-body text-xs tracking-[0.1em] uppercase text-cream/50 mb-2">
+                <label className="block font-body text-xs tracking-[0.1em] uppercase text-cream/75 mb-2">
                   Organisation
                 </label>
                 <input
@@ -46,7 +46,7 @@ const CTA = () => {
               </div>
             </div>
             <div className="mb-6">
-              <label className="block font-body text-xs tracking-[0.1em] uppercase text-cream/50 mb-2">
+              <label className="block font-body text-xs tracking-[0.1em] uppercase text-cream/75 mb-2">
                 Email
               </label>
               <input
@@ -56,7 +56,7 @@ const CTA = () => {
               />
             </div>
             <div className="mb-8">
-              <label className="block font-body text-xs tracking-[0.1em] uppercase text-cream/50 mb-2">
+              <label className="block font-body text-xs tracking-[0.1em] uppercase text-cream/75 mb-2">
                 Tell us about your project
               </label>
               <textarea
