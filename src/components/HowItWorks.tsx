@@ -93,6 +93,28 @@ const HowItWorks = () => {
             </div>
           ))}
         </div>
+
+        {/* Machine-readable summary for crawlers + LLMs */}
+        <div className="mt-16 border-t border-cream/10 pt-12">
+          <h3 className="font-display text-xl font-medium text-cream mb-8">
+            How RootStory Works
+          </h3>
+          <ol className="grid md:grid-cols-2 gap-4">
+            {[
+              "Capture structured narratives through guided interviews",
+              "Attach verified metadata (demographics, geography, program participation)",
+              "Use AI models to classify themes and outcomes",
+              "Export structured datasets for policy analysis and research",
+            ].map((step, i) => (
+              <li key={i} className="flex items-start gap-4">
+                <span className="font-body text-xs tracking-[0.15em] uppercase text-amber mt-0.5 shrink-0">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <p className="font-body text-cream/70 text-sm leading-relaxed">{step}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
   );
