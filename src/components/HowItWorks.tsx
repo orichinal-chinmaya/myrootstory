@@ -99,18 +99,33 @@ const HowItWorks = () => {
           <h3 className="font-display text-xl font-medium text-cream mb-8">
             How RootStory Works
           </h3>
-          <ol className="grid md:grid-cols-2 gap-4">
+          <ol className="grid md:grid-cols-2 gap-6">
             {[
-              "Capture structured narratives through guided interviews",
-              "Attach verified metadata (demographics, geography, program participation)",
-              "Use AI models to classify themes and outcomes",
-              "Export structured datasets for policy analysis and research",
+              {
+                title: "Capture narratives",
+                body: "Guided interviews collect lived experiences from beneficiaries, citizens, or frontline workers.",
+              },
+              {
+                title: "Attach metadata",
+                body: "Demographic, geographic, and program information is recorded alongside each story.",
+              },
+              {
+                title: "AI-assisted coding",
+                body: "Machine learning models classify themes, outcomes, and patterns across narratives.",
+              },
+              {
+                title: "Generate datasets",
+                body: "Thousands of narratives become analyzable datasets for policy evaluation and research.",
+              },
             ].map((step, i) => (
               <li key={i} className="flex items-start gap-4">
                 <span className="font-body text-xs tracking-[0.15em] uppercase text-amber mt-0.5 shrink-0">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <p className="font-body text-cream/70 text-sm leading-relaxed">{step}</p>
+                <div>
+                  <p className="font-body text-sm font-semibold text-cream mb-1">{step.title}</p>
+                  <p className="font-body text-cream/70 text-sm leading-relaxed">{step.body}</p>
+                </div>
               </li>
             ))}
           </ol>
