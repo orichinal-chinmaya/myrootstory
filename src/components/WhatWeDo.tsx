@@ -53,7 +53,7 @@ const WhatWeDo = () => {
               }`}
               style={{ transition: "background-color 0.4s ease, color 0.4s ease" }}
             >
-              <div className="font-display text-5xl font-medium text-accent/30 group-hover:text-amber/40 mb-8 transition-colors duration-400">
+              <div className="font-display text-5xl font-medium text-accent/70 group-hover:text-amber/80 mb-8 transition-colors duration-400">
                 {pillar.number}
               </div>
               <h3 className="font-display text-xl font-semibold text-foreground group-hover:text-primary-foreground mb-4 transition-colors duration-400">
