@@ -40,10 +40,10 @@ const Blog = () => {
             className="font-display font-light leading-[0.97] tracking-tight text-foreground mb-6 opacity-0 animate-fade-up animation-delay-200"
             style={{ fontSize: "clamp(52px, 9vw, 96px)" }}
           >
-            <span className="block italic text-foreground font-light">Bhajju</span>
-            <span className="block font-bold not-italic text-foreground">goes to</span>
-            <span className="block italic font-light text-foreground">London:</span>
-            <span className="block font-bold text-foreground" style={{ fontSize: "clamp(22px, 4vw, 42px)", WebkitTextStroke: "0.5px hsl(var(--foreground))" }}>how a tribal artist inspired us to build Rootstory</span>
+            <span className="block italic text-foreground font-light">Bhajju and</span>
+            <span className="block font-bold not-italic text-foreground">the Big Ben:</span>
+            <span className="block italic font-light text-foreground">a roo(s)t</span>
+            <span className="block font-bold text-foreground" style={{ WebkitTextStroke: "0.5px hsl(var(--foreground))" }}>story</span>
           </h1>
 
           {/* Subtitle */}
