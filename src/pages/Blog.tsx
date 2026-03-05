@@ -29,7 +29,7 @@ const Blog = () => {
         <div className="pt-20 pb-16">
           {/* Eyebrow */}
           <div className="flex items-center gap-2 mb-10 opacity-0 animate-fade-up animation-delay-100 flex-wrap">
-            {["Gond Art", "Evidence", "Philosophy", "Origin Story"].map((tag) => (
+            {["Micro narratives", "Grassroot lens", "Core values"].map((tag) => (
               <span
                 key={tag}
                 className="font-body text-[10px] tracking-[0.18em] uppercase px-3 py-1 border border-foreground/20 text-foreground/50"
