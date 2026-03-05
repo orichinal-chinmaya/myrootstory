@@ -37,7 +37,7 @@ const Hero = () => {
 
           {/* Descriptor */}
           <p className="font-body text-cream/90 text-base font-medium mb-4 opacity-0 animate-fade-up animation-delay-300">
-            RootStory is an AI platform for capturing and analyzing structured human stories at scale.
+            RootStory is an AI platform that captures large-scale human narratives and converts them into structured datasets for policy analysis and social impact research.
           </p>
 
           {/* Subhead */}
