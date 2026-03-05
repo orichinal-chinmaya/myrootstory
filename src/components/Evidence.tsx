@@ -33,7 +33,7 @@ const Evidence = () => {
               </blockquote>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-px bg-amber" />
-                <span className="font-body text-xs tracking-[0.15em] uppercase text-amber/70">
+                <span className="font-body text-xs tracking-[0.15em] uppercase text-amber/85">
                   {QUOTE.context}
                 </span>
               </div>
