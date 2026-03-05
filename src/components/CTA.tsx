@@ -76,7 +76,7 @@ const CTA = () => {
   };
 
   return (
-    <section id="contact" className="py-28" style={{ background: "hsl(var(--forest-deep))" }}>
+    <section id="contact" className="py-28 bg-background">
       <Toaster />
       <div className="container mx-auto px-6">
         <div className="max-w-3xl mx-auto text-center">
@@ -87,38 +87,34 @@ const CTA = () => {
             </span>
             <div className="w-6 h-px bg-amber" />
           </div>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-medium text-cream leading-tight mb-8">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-medium text-foreground leading-tight mb-8">
             Ready to listen at scale?
           </h2>
-          <p className="font-body text-cream/75 text-lg leading-relaxed mb-12 max-w-xl mx-auto">
+          <p className="font-body text-foreground/65 text-lg leading-relaxed mb-12 max-w-xl mx-auto">
             We work with governments, foundations, and research organisations.
             Tell us about your project and we'll design a listening study that fits your evidence needs.
           </p>
 
           {submitted ? (
-            <div
-              className="rounded-sm p-12 text-center"
-              style={{ background: "hsl(var(--forest-mid))" }}
-            >
+            <div className="rounded-sm p-12 text-center border border-border bg-card">
               <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: "hsl(var(--amber) / 0.15)" }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-amber">
                   <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <h3 className="font-display text-2xl font-medium text-cream mb-3">Enquiry sent</h3>
-              <p className="font-body text-cream/75 text-base leading-relaxed max-w-sm mx-auto">
+              <h3 className="font-display text-2xl font-medium text-foreground mb-3">Enquiry sent</h3>
+              <p className="font-body text-foreground/65 text-base leading-relaxed max-w-sm mx-auto">
                 Thank you for reaching out. We'll be in touch shortly.
               </p>
             </div>
           ) : (
             <form
               onSubmit={handleSubmit}
-              className="rounded-sm p-10 text-left"
-              style={{ background: "hsl(var(--forest-mid))" }}
+              className="rounded-sm p-10 text-left border border-border bg-card"
             >
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <label className="block font-body text-xs tracking-[0.1em] uppercase text-cream/75 mb-2">
+                  <label className="block font-body text-xs tracking-[0.1em] uppercase text-foreground/60 mb-2">
                     Name <span className="text-amber">*</span>
                   </label>
                   <input
@@ -128,11 +124,11 @@ const CTA = () => {
                     onChange={handleChange}
                     placeholder="Your full name"
                     required
-                    className="w-full bg-forest-deep/60 border border-cream/10 rounded-sm px-4 py-3 font-body text-sm text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors"
+                    className="w-full bg-background border border-border rounded-sm px-4 py-3 font-body text-sm text-foreground placeholder:text-foreground/35 focus:outline-none focus:border-amber/60 transition-colors"
                   />
                 </div>
                 <div>
-                  <label className="block font-body text-xs tracking-[0.1em] uppercase text-cream/75 mb-2">
+                  <label className="block font-body text-xs tracking-[0.1em] uppercase text-foreground/60 mb-2">
                     Organisation
                   </label>
                   <input
@@ -141,12 +137,12 @@ const CTA = () => {
                     value={form.organisation}
                     onChange={handleChange}
                     placeholder="Your organisation"
-                    className="w-full bg-forest-deep/60 border border-cream/10 rounded-sm px-4 py-3 font-body text-sm text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors"
+                    className="w-full bg-background border border-border rounded-sm px-4 py-3 font-body text-sm text-foreground placeholder:text-foreground/35 focus:outline-none focus:border-amber/60 transition-colors"
                   />
                 </div>
               </div>
               <div className="mb-6">
-                <label className="block font-body text-xs tracking-[0.1em] uppercase text-cream/75 mb-2">
+                <label className="block font-body text-xs tracking-[0.1em] uppercase text-foreground/60 mb-2">
                   Email <span className="text-amber">*</span>
                 </label>
                 <input
@@ -156,11 +152,11 @@ const CTA = () => {
                   onChange={handleChange}
                   placeholder="you@organisation.org"
                   required
-                  className="w-full bg-forest-deep/60 border border-cream/10 rounded-sm px-4 py-3 font-body text-sm text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors"
+                  className="w-full bg-background border border-border rounded-sm px-4 py-3 font-body text-sm text-foreground placeholder:text-foreground/35 focus:outline-none focus:border-amber/60 transition-colors"
                 />
               </div>
               <div className="mb-8">
-                <label className="block font-body text-xs tracking-[0.1em] uppercase text-cream/75 mb-2">
+                <label className="block font-body text-xs tracking-[0.1em] uppercase text-foreground/60 mb-2">
                   Tell us about your project <span className="text-amber">*</span>
                 </label>
                 <textarea
@@ -170,7 +166,7 @@ const CTA = () => {
                   onChange={handleChange}
                   placeholder="What are you trying to understand? What populations? What's the timeline?"
                   required
-                  className="w-full bg-forest-deep/60 border border-cream/10 rounded-sm px-4 py-3 font-body text-sm text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors resize-none"
+                  className="w-full bg-background border border-border rounded-sm px-4 py-3 font-body text-sm text-foreground placeholder:text-foreground/35 focus:outline-none focus:border-amber/60 transition-colors resize-none"
                 />
               </div>
               <button
