@@ -77,12 +77,12 @@ const Blog = () => {
         </div>
 
         {/* Attribution chip */}
-        <div className="inline-flex items-center gap-2.5 border border-amber-muted/40 px-4 py-3 mb-14 opacity-0 animate-fade-up animation-delay-500">
-          <div className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
-          <p className="font-body text-[11.5px] leading-relaxed text-amber-muted m-0">
-            The image above is <strong className="text-accent">Big Ben as Rooster</strong> from{" "}
+        <div className="flex items-start gap-2.5 px-5 py-4 mb-14 opacity-0 animate-fade-up animation-delay-500" style={{ background: "hsl(var(--forest-deep))" }}>
+          <div className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0 mt-1" />
+          <p className="font-body text-[11.5px] leading-relaxed m-0" style={{ color: "hsl(var(--cream) / 0.75)" }}>
+            The image above is <strong style={{ color: "hsl(var(--accent))" }}>Big Ben as Rooster</strong> from{" "}
             <em>The London Jungle Book</em> (Tara Books, 2004) by Pardhan Gond artist{" "}
-            <strong className="text-accent">Bhajju Shyam</strong>. In his world, a rooster announces time. In London,
+            <strong style={{ color: "hsl(var(--accent))" }}>Bhajju Shyam</strong>. In his world, a rooster announces time. In London,
             a clock tower does. He merged them — not as a metaphor, but as a statement about whose knowledge counts.
           </p>
         </div>
