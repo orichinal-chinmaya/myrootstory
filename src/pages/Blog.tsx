@@ -246,11 +246,11 @@ const SectionBreak = ({ label, delay }: { label: string; delay: string }) => (
     className="flex items-center gap-3.5 my-14 opacity-0 animate-fade-up"
     style={{ animationDelay: delay }}
   >
-    <div className="w-2 h-2 rounded-full bg-accent flex-shrink-0" />
-    <span className="font-body text-[10.5px] tracking-[0.24em] uppercase text-accent">{label}</span>
+    <div className="w-2 h-2 rounded-full bg-foreground flex-shrink-0" />
+    <span className="font-body text-[10.5px] tracking-[0.24em] uppercase text-foreground">{label}</span>
     <div
       className="flex-1 h-px"
-      style={{ background: "linear-gradient(to right, hsl(var(--accent) / 0.3), transparent)" }}
+      style={{ background: "linear-gradient(to right, hsl(var(--foreground) / 0.3), transparent)" }}
     />
   </div>
 );
