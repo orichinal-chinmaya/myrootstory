@@ -2,6 +2,9 @@
 
 > Narrative Intelligence Platform — turning first-person accounts into structured, analysable evidence.
 
+**Tagline:** Listen at scale. Structure the story. Analyse alongside data.
+**Keywords:** narrative intelligence, micro-narratives, qualitative evidence, AI-guided interviews, mixed-methods research, community listening, development research, policy evaluation, lived experience data, grassroots evidence
+
 Rootstory helps governments, foundations, and development organisations listen at scale. We capture micro-narratives through adaptive AI-guided interviews conducted in local languages, then structure and validate them so lived experience becomes rigorous, research-grade evidence.
 
 ## Mission
@@ -48,12 +51,12 @@ Rootstory produces research-grade narrative datasets with the following characte
 
 ## Contact
 
-Rootstory works with governments, foundations, and research organisations. Enquiries can be submitted via the contact form at myrootstory.lovable.app/#contact or by emailing chinmaya@rootstory.io.
+Rootstory works with governments, foundations, and research organisations. Enquiries can be submitted via the contact form at https://rootstory.io/#contact or by emailing chinmaya@rootstory.io.
 
 ## Pages
 
-- `/` — Home (Hero, What We Do, How It Works, Who We Serve, Evidence, Contact)
-- `/blog` — Blog (long-form editorial, methodology, and origin stories)
+- https://rootstory.io/ — Home (Hero, What We Do, How It Works, Who We Serve, Evidence, Contact)
+- https://rootstory.io/blog — Blog (long-form editorial, methodology, and origin stories)
 
 ## Technical
 
