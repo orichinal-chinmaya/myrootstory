@@ -18,9 +18,9 @@ const Blog = () => {
         <Link to="/" className="font-display text-xl font-semibold text-foreground">
           root<span className="text-accent">story</span>
         </Link>
-        <span className="font-body text-xs tracking-[0.2em] uppercase text-amber-muted">
-          Story &amp; Philosophy
-        </span>
+            <span className="font-body text-xs tracking-[0.2em] uppercase text-foreground/50">
+              Story &amp; Philosophy
+            </span>
       </nav>
 
       {/* Content */}
@@ -29,10 +29,10 @@ const Blog = () => {
         <div className="pt-20 pb-16">
           {/* Eyebrow */}
           <div className="flex items-center gap-4 mb-10 opacity-0 animate-fade-up animation-delay-100">
-            <span className="font-body text-[10.5px] tracking-[0.24em] uppercase text-accent">
+            <span className="font-body text-[10.5px] tracking-[0.24em] uppercase text-foreground/60">
               On Bhajju Shyam, the Gond gaze &amp; the evidence in lived experience
             </span>
-            <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, hsl(var(--accent)), transparent)" }} />
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, hsl(var(--foreground) / 0.3), transparent)" }} />
           </div>
 
           {/* Title */}
@@ -40,14 +40,14 @@ const Blog = () => {
             className="font-display font-light leading-[0.97] tracking-tight text-foreground mb-6 opacity-0 animate-fade-up animation-delay-200"
             style={{ fontSize: "clamp(52px, 9vw, 96px)" }}
           >
-            <span className="block italic text-amber-muted font-light">The</span>
+            <span className="block italic text-foreground font-light">The</span>
             <span className="block font-bold not-italic text-foreground">Rootstory</span>
-            <span className="block italic font-light text-accent">of the</span>
+            <span className="block italic font-light text-foreground">of the</span>
             <span className="block font-bold text-foreground" style={{ WebkitTextStroke: "0.5px hsl(var(--foreground))" }}>Rooster</span>
           </h1>
 
           {/* Subtitle */}
-          <p className="font-body text-lg italic text-amber-muted max-w-xl leading-relaxed mb-0 opacity-0 animate-fade-up animation-delay-300">
+          <p className="font-body text-lg italic text-foreground/70 max-w-xl leading-relaxed mb-0 opacity-0 animate-fade-up animation-delay-300">
             How a Gond artist from central India painted the philosophy behind Rootstory — before we had words for it.
           </p>
 
