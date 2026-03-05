@@ -2,23 +2,61 @@
 
 > Narrative Intelligence Platform — turning first-person accounts into structured, analysable evidence.
 
-Rootstory helps governments, foundations, and organisations listen at scale. We capture micro narratives through adaptive AI-guided interviews in local languages, then structure and validate them so lived experience becomes rigorous evidence.
+Rootstory helps governments, foundations, and development organisations listen at scale. We capture micro-narratives through adaptive AI-guided interviews conducted in local languages, then structure and validate them so lived experience becomes rigorous, research-grade evidence.
+
+## Mission
+
+Rootstory fills the space surveys cannot reach: how stability feels, how money circulates, how decisions change inside a home, how dignity or risk shifts over time. We make listening a form of infrastructure.
 
 ## What We Do
 
-- **Listen at Scale** — AI-guided conversations in local languages capture structured, first-person accounts from thousands of participants simultaneously.
-- **Structure the Story** — Every narrative is tagged, validated, and structured by trained analysts, grounding testimony in lived reality.
-- **Analyse Alongside Data** — Rootstory datasets integrate with quantitative research so policymakers can see not just what changed, but how change moved through households and communities.
+### 01 — Listen at Scale
+Adaptive AI interviews in local languages capture structured, first-person accounts from thousands of participants simultaneously — without losing context or dignity. Technology: AI-guided conversations.
+
+### 02 — Structure the Story
+Every narrative is tagged, validated, and structured by trained analysts. What emerges is not just testimony — it is evidence, grounded in lived reality. Technology: rigorous tagging and validation.
+
+### 03 — Analyse Alongside Data
+Rootstory datasets integrate with quantitative research. Policymakers can see not only what changed, but how change moved through households and communities. Technology: quantitative integration.
+
+## The Process (Four Steps)
+
+1. **Capture — Guided Conversations**: Participants engage in respectful, adaptive AI interviews conducted in their local language. Questions follow the natural flow of each person's account.
+2. **Structure — Tagging & Coding**: Narratives are automatically tagged across dozens of thematic dimensions, then reviewed by human validators to ensure accuracy and sensitivity.
+3. **Validate — Human Review**: Trained analysts check every narrative. The validation layer ensures the dataset meets the standards expected of quantitative evidence.
+4. **Analyse — Integrated Dataset**: The structured narrative dataset is delivered alongside quantitative data — queryable, filterable, and ready for mixed-methods analysis.
 
 ## Who We Serve
 
-Governments, development finance institutions, foundations, and research organisations seeking qualitative evidence that complements quantitative data.
+- **Governments** — Monitor how policies travel from legislation into daily life. Understand adoption, resistance, and unintended consequences at household level.
+- **Foundations** — Demonstrate impact beyond output metrics. Capture the texture of change — how dignity, aspiration, and agency shift over the life of a programme.
+- **Development Organisations** — Complement quantitative baselines with structured narrative datasets. Hear directly how economic shifts are experienced within communities.
 
-## Core Values
+## Evidence Standards
 
-Micro narratives · Grassroot lens · Core values
+Rootstory produces research-grade narrative datasets with the following characteristics:
+
+- Structured micro-narratives with verified metadata
+- Cross-referenced across demographic and geographic tags
+- Exportable in formats compatible with major analysis tools
+- Longitudinal capability — track the same community over time
+- Ethically collected with informed consent at every step
+
+## Manifesto
+
+"These are not testimonials. They are evidence — grounded in lived reality and structured so they can be analysed alongside quantitative data." — Rootstory Manifesto
+
+## Contact
+
+Rootstory works with governments, foundations, and research organisations. Enquiries can be submitted via the contact form at myrootstory.lovable.app/#contact or by emailing chinmaya@rootstory.io.
 
 ## Pages
 
-- `/` — Home (Hero, What We Do, How It Works, Who We Serve, Evidence, CTA)
+- `/` — Home (Hero, What We Do, How It Works, Who We Serve, Evidence, Contact)
 - `/blog` — Blog (long-form editorial, methodology, and origin stories)
+
+## Technical
+
+- Built with React, Vite, TypeScript, and Tailwind CSS
+- Hosted on Lovable Cloud
+- Contact form handled via a secure backend edge function
