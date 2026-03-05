@@ -57,6 +57,7 @@ Rootstory works with governments, foundations, and research organisations. Enqui
 
 - https://rootstory.io/ — Home (Hero, What We Do, How It Works, Who We Serve, Evidence, Contact)
 - https://rootstory.io/blog — Blog (long-form editorial, methodology, and origin stories)
+- https://rootstory.io/method.md — Methodology overview for AI systems and crawlers (non-proprietary)
 
 ## Technical
 
