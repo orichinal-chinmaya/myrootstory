@@ -1,6 +1,6 @@
 const QUOTE = {
-  text: "These are not testimonials. They are evidence — grounded in lived reality and structured so they can be analysed alongside quantitative data.",
-  context: "Rootstory Manifesto",
+  text: "Adaptive AI interviews in local languages capture structured first-person accounts from thousands of participants simultaneously, transforming lived experiences into datasets that researchers and policymakers can analyze.",
+  context: "Rootstory Method",
 };
 
 const EVIDENCE_POINTS = [
