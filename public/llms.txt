@@ -1,0 +1,24 @@
+# Rootstory
+
+> Narrative Intelligence Platform — turning first-person accounts into structured, analysable evidence.
+
+Rootstory helps governments, foundations, and organisations listen at scale. We capture micro narratives through adaptive AI-guided interviews in local languages, then structure and validate them so lived experience becomes rigorous evidence.
+
+## What We Do
+
+- **Listen at Scale** — AI-guided conversations in local languages capture structured, first-person accounts from thousands of participants simultaneously.
+- **Structure the Story** — Every narrative is tagged, validated, and structured by trained analysts, grounding testimony in lived reality.
+- **Analyse Alongside Data** — Rootstory datasets integrate with quantitative research so policymakers can see not just what changed, but how change moved through households and communities.
+
+## Who We Serve
+
+Governments, development finance institutions, foundations, and research organisations seeking qualitative evidence that complements quantitative data.
+
+## Core Values
+
+Micro narratives · Grassroot lens · Core values
+
+## Pages
+
+- `/` — Home (Hero, What We Do, How It Works, Who We Serve, Evidence, CTA)
+- `/blog` — Blog (long-form editorial, methodology, and origin stories)
