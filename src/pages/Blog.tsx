@@ -38,7 +38,7 @@ const Blog = () => {
           {/* Title */}
           <h1
             className="font-journal leading-[1.05] tracking-tight mb-6 opacity-0 animate-fade-up animation-delay-200"
-            style={{ fontSize: "clamp(58px, 10vw, 104px)", color: "hsl(var(--forest-deep))" }}
+            style={{ fontSize: "clamp(38px, 9vw, 104px)", color: "hsl(var(--forest-deep))" }}
           >
             <span className="block italic font-light pb-1" style={{ color: "hsl(var(--accent))" }}>Bhajju and</span>
             <span className="block font-semibold italic pb-1" style={{ color: "hsl(var(--forest-deep))" }}>the Big Ben:</span>
