@@ -40,10 +40,10 @@ const Blog = () => {
             className="font-journal leading-[0.95] tracking-tight mb-6 opacity-0 animate-fade-up animation-delay-200"
             style={{ fontSize: "clamp(58px, 10vw, 104px)", color: "hsl(var(--forest-deep))" }}
           >
-            <span className="block italic font-light" style={{ color: "hsl(var(--forest-deep))" }}>Bhajju and</span>
+            <span className="block italic font-light" style={{ color: "hsl(var(--amber-muted))" }}>Bhajju and</span>
             <span className="block font-semibold not-italic" style={{ color: "hsl(var(--forest-deep))" }}>the Big Ben:</span>
-            <span className="block italic font-light" style={{ color: "hsl(var(--amber-muted))" }}>a roo(s)t</span>
-            <span className="block font-bold not-italic" style={{ color: "hsl(var(--forest-deep))" }}>story</span>
+            <span className="block italic font-light" style={{ color: "hsl(var(--forest-deep))" }}>a roo(s)t</span>
+            <span className="block font-bold not-italic" style={{ color: "hsl(var(--forest-deep))" }}>rootstory</span>
           </h1>
 
           {/* Subtitle */}
