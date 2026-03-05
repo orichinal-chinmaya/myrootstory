@@ -67,12 +67,12 @@ const Blog = () => {
         </div>
 
         {/* Hero image */}
-        <div className="mb-6 opacity-0 animate-fade-up animation-delay-400" style={{ animationDelay: "0.5s" }}>
+        <div className="mb-6 opacity-0 animate-fade-up animation-delay-400" style={{ animationDelay: "0.5s", background: "hsl(var(--cream))" }}>
           <img
             src={roosterImg}
             alt="Big Ben as Rooster — Bhajju Shyam, The London Jungle Book (Tara Books, 2004)"
             className="w-full rounded-sm"
-            style={{ background: "hsl(var(--cream))" }}
+            style={{ mixBlendMode: "multiply", display: "block" }}
           />
         </div>
 
