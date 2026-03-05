@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const NAV_LINKS = ["How It Works", "Who We Serve", "Evidence", "About"];
 
@@ -33,6 +34,12 @@ const Navbar = () => {
               {link}
             </a>
           ))}
+          <Link
+            to="/blog/rootstory-of-the-rooster"
+            className="font-body text-sm text-cream/70 hover:text-cream transition-colors duration-200"
+          >
+            Journal
+          </Link>
         </div>
         <a
           href="#contact"
