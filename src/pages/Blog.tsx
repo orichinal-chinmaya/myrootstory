@@ -51,7 +51,7 @@ const Blog = () => {
           </p>
 
           {/* Feather colour band */}
-          <div className="flex gap-1.5 mt-11 mb-16 opacity-0 animate-fade-up animation-delay-400">
+          <div className="flex gap-1.5 mt-11 mb-6 opacity-0 animate-fade-up animation-delay-400">
             {[
               "hsl(var(--accent))",
               "hsl(var(--forest-mid))",
