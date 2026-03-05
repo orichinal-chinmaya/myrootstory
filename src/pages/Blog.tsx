@@ -28,11 +28,16 @@ const Blog = () => {
         {/* Hero */}
         <div className="pt-20 pb-16">
           {/* Eyebrow */}
-          <div className="flex items-center gap-4 mb-10 opacity-0 animate-fade-up animation-delay-100">
-            <span className="font-body text-[10.5px] tracking-[0.24em] uppercase text-foreground/60">
-              On Bhajju Shyam, the Gond gaze &amp; the evidence in lived experience
-            </span>
-            <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, hsl(var(--foreground) / 0.3), transparent)" }} />
+          <div className="flex items-center gap-2 mb-10 opacity-0 animate-fade-up animation-delay-100 flex-wrap">
+            {["Gond Art", "Evidence", "Philosophy", "Origin Story"].map((tag) => (
+              <span
+                key={tag}
+                className="font-body text-[10px] tracking-[0.18em] uppercase px-3 py-1 border border-foreground/20 text-foreground/50"
+              >
+                {tag}
+              </span>
+            ))}
+            <div className="flex-1 h-px ml-2 hidden sm:block" style={{ background: "linear-gradient(to right, hsl(var(--foreground) / 0.2), transparent)" }} />
           </div>
 
           {/* Title */}
