@@ -30,7 +30,7 @@
     --muted-foreground: 150 10% 45%;
 
     /* Amber accent */
-    --accent: 35 85% 55%;
+    --accent: 38 92% 48%;
     --accent-foreground: 150 25% 10%;
 
     --destructive: 0 84.2% 60.2%;
@@ -48,8 +48,8 @@
     --forest-light: 152 25% 35%;
     --cream: 42 40% 95%;
     --cream-dark: 42 25% 88%;
-    --amber: 35 85% 55%;
-    --amber-muted: 35 60% 70%;
+    --amber: 38 92% 48%;
+    --amber-muted: 38 65% 62%;
     --text-primary: 150 25% 10%;
     --text-secondary: 150 15% 30%;
     --text-muted: 150 8% 50%;
@@ -88,7 +88,7 @@
     --secondary-foreground: 42 30% 94%;
     --muted: 152 25% 18%;
     --muted-foreground: 42 20% 65%;
-    --accent: 35 85% 55%;
+    --accent: 38 92% 48%;
     --accent-foreground: 152 40% 8%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 42 30% 94%;
@@ -149,7 +149,7 @@
   }
 
   .text-gradient-amber {
-    background: linear-gradient(135deg, hsl(var(--amber)), hsl(35 90% 65%));
+    background: linear-gradient(135deg, hsl(var(--amber)), hsl(38 95% 60%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
