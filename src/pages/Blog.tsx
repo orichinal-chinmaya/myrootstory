@@ -42,7 +42,6 @@ const Blog = () => {
           >
             <span className="block italic font-light" style={{ color: "hsl(var(--amber-muted))" }}>Bhajju and</span>
             <span className="block font-semibold not-italic" style={{ color: "hsl(var(--forest-deep))" }}>the Big Ben:</span>
-            <span className="block italic font-light" style={{ color: "hsl(var(--forest-deep))" }}>a roo(s)t</span>
             <span className="block font-bold not-italic" style={{ color: "hsl(var(--forest-deep))" }}>rootstory</span>
           </h1>
 
