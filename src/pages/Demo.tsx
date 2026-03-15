@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import RootstoryInterview from "@/components/RootstoryInterview";
+import rootstoryIcon from "@/assets/rootstory-icon.png";
 import QuestionEditor from "@/components/QuestionEditor";
 import Dashboard from "@/pages/Dashboard";
 
@@ -34,9 +35,7 @@ const GateCard = ({
 
   return (
     <div className="w-full max-w-md bg-white border border-[#D8D4CC] rounded-2xl shadow-lg p-10 flex flex-col items-center gap-6">
-      <div className="w-12 h-12 rounded-full bg-[#1A7A7A] flex items-center justify-center">
-        <span className="text-white text-xl font-bold">R</span>
-      </div>
+      <img src={rootstoryIcon} alt="Rootstory" className="w-14 h-14 rounded-2xl shadow-sm" />
       <div className="text-center">
         <h1 className="text-2xl font-normal tracking-wide text-[#1A1A2E]">
           root<span className="text-[#C47A0A]">story</span>

@@ -1,11 +1,16 @@
+import rootstoryIcon from "@/assets/rootstory-icon.png";
+
 const Footer = () => {
   return (
     <footer className="py-12 bg-background border-t border-border">
       <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
         <div>
-          <span className="font-display text-lg font-semibold text-foreground">
-            root<span className="text-accent">story</span>
-          </span>
+          <div className="flex items-center gap-2">
+            <img src={rootstoryIcon} alt="Rootstory" className="w-7 h-7 rounded-md" />
+            <span className="font-display text-lg font-semibold text-foreground">
+              root<span className="text-accent">story</span>
+            </span>
+          </div>
           <p className="font-body text-xs text-muted-foreground mt-1">
             Narrative intelligence for social systems.
           </p>

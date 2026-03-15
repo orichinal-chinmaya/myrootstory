@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import rootstoryIcon from "@/assets/rootstory-icon.png";
 
 const NAV_LINKS = ["How It Works", "Who We Serve", "Evidence", "About"];
 
@@ -31,9 +32,12 @@ const Navbar = () => {
         }`}
       >
         <div className="container mx-auto flex items-center justify-between py-5 px-6">
-          <span className="font-display text-cream text-[22px] font-semibold tracking-tight">
-            root<span className="text-amber">story</span>
-          </span>
+          <div className="flex items-center gap-2">
+            <img src={rootstoryIcon} alt="Rootstory" className="w-7 h-7 rounded-md" />
+            <span className="font-display text-cream text-[22px] font-semibold tracking-tight">
+              root<span className="text-amber">story</span>
+            </span>
+          </div>
 
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-8">

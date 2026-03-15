@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import roosterImg from "@/assets/rooster.png";
+import rootstoryIcon from "@/assets/rootstory-icon.png";
 
 const Blog = () => {
   return (
@@ -15,7 +16,8 @@ const Blog = () => {
 
       {/* Navbar */}
       <nav className="sticky top-0 z-50 flex items-center justify-between px-12 py-5 bg-cream/92 backdrop-blur-md border-b border-amber-muted/30">
-        <Link to="/" className="font-display text-xl font-semibold text-foreground">
+        <Link to="/" className="flex items-center gap-2 font-display text-xl font-semibold text-foreground">
+          <img src={rootstoryIcon} alt="Rootstory" className="w-7 h-7 rounded-md" />
           root<span className="text-accent">story</span>
         </Link>
             <span className="font-body text-xs tracking-[0.2em] uppercase text-foreground/50">
