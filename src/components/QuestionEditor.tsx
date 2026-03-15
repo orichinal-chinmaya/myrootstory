@@ -17,7 +17,6 @@ const COMPOSITES: Record<string, { bg: string; border: string; text: string }> =
   "Narrative":              { bg:"#F5F0E8", border:"#C8A060", text:"#5A3A10" },
 };
 
-// v0.4: composites can feed multiple domains
 const DOMAIN_COMPOSITES: Record<string, string[]> = {
   "Economic Security":              ["Household Stability", "Debt & Credit Relief", "Savings & Assets"],
   "Consumption Quality & Multiplier": ["Nutrition & Health", "Education", "Livelihood & Enterprise", "Community & Social"],
@@ -51,6 +50,8 @@ const LANGS = [
 
 const SCORE_OPTS = [-0.2, 0.0, 0.3, 0.4, 0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 0.9, 1.0];
 const WEIGHT_LABEL: Record<number, string> = { 1:"Supporting", 2:"Strong signal", 3:"Primary" };
+const Q_TYPES = ["single","multi","scale5","text","select","open","location","consent"];
+const MODULES = ["Setup","Core","Adaptive","Community","Story Depth","Her Voice","Validation","Consent","Researcher only"];
 
 function scoreAppearance(v: number | null | undefined) {
   if (v === null || v === undefined) return { bg:"#F0F4F0", fg:"#8A9A8A", label:"—" };
@@ -72,6 +73,8 @@ interface Question {
   options: string[];
   scores?: Record<string, number>;
   hint: string;
+  adminComment?: string;
+  researcherDirection?: string;
 }
 
 // ─── COMPLETE QUESTION DATA ───────────────────────────────────────────────────
@@ -189,6 +192,18 @@ export default function QuestionEditor() {
   const [trans,      setTrans]      = useState<TranslationStore>({});
   const [viewMode,   setViewMode]   = useState<"list"|"matrix">("list");
   const [flash,      setFlash]      = useState(false);
+  const [globalEdit, setGlobalEdit] = useState(false);
+  const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
+
+  const toggleEditQ = (id: string) => {
+    setEditingIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const isEditing = (id: string) => globalEdit || editingIds.has(id);
 
   const visible = questions.filter(q => {
     const mc = filterComp === "All" || q.composite === filterComp;
@@ -223,9 +238,80 @@ export default function QuestionEditor() {
       return { ...q, options:opts, scores:sc };
     })), []);
 
+  const updateField = useCallback((qid: string, field: keyof Question, val: any) =>
+    setQuestions(qs => qs.map(q => q.id !== qid ? q : { ...q, [field]: val })), []);
+
+  const addOption = useCallback((qid: string) =>
+    setQuestions(qs => qs.map(q => {
+      if (q.id !== qid) return q;
+      const newOpt = `Option ${q.options.length + 1}`;
+      return { ...q, options: [...q.options, newOpt], scores: { ...(q.scores||{}), [newOpt]: 0.0 } };
+    })), []);
+
+  const removeOption = useCallback((qid: string, opt: string) =>
+    setQuestions(qs => qs.map(q => {
+      if (q.id !== qid) return q;
+      const opts = q.options.filter(o => o !== opt);
+      const sc = { ...(q.scores||{}) };
+      delete sc[opt];
+      return { ...q, options: opts, scores: sc };
+    })), []);
+
+  const moveQuestion = useCallback((qid: string, dir: -1 | 1) =>
+    setQuestions(qs => {
+      const idx = qs.findIndex(q => q.id === qid);
+      if (idx < 0) return qs;
+      const target = idx + dir;
+      if (target < 0 || target >= qs.length) return qs;
+      const next = [...qs];
+      [next[idx], next[target]] = [next[target], next[idx]];
+      return next;
+    }), []);
+
+  const deleteQuestion = useCallback((qid: string) =>
+    setQuestions(qs => qs.filter(q => q.id !== qid)), []);
+
+  const addQuestion = useCallback((afterId?: string) => {
+    const newQ: Question = {
+      id: `NEW_${Date.now().toString(36).toUpperCase()}`,
+      composite: "Setup / Admin",
+      module: "Core",
+      weight: null,
+      always: true,
+      type: "single",
+      label: "New question",
+      options: [],
+      scores: {},
+      hint: "",
+      adminComment: "",
+      researcherDirection: "",
+    };
+    setQuestions(qs => {
+      if (!afterId) return [...qs, newQ];
+      const idx = qs.findIndex(q => q.id === afterId);
+      if (idx < 0) return [...qs, newQ];
+      const next = [...qs];
+      next.splice(idx + 1, 0, newQ);
+      return next;
+    });
+    setExpandedId(newQ.id);
+    setEditingIds(prev => new Set(prev).add(newQ.id));
+  }, []);
+
+  const duplicateQuestion = useCallback((qid: string) => {
+    setQuestions(qs => {
+      const idx = qs.findIndex(q => q.id === qid);
+      if (idx < 0) return qs;
+      const src = qs[idx];
+      const newId = `${src.id}_DUP_${Date.now().toString(36).slice(-3).toUpperCase()}`;
+      const dup: Question = { ...src, id: newId };
+      const next = [...qs];
+      next.splice(idx + 1, 0, dup);
+      return next;
+    });
+  }, []);
+
   const handleExport = () => {
-    // ─── Build WhatsApp Flow JSON ───────────────────────────────────────────────
-    // Group questions into screens of max ~8 components (leave room for Footer)
     const SCREEN_SIZE = 6;
     const scorableQs  = questions.filter(q => q.type !== "location" && q.type !== "consent" && q.type !== "open");
     const chunks: Question[][] = [];
@@ -251,39 +337,13 @@ export default function QuestionEditor() {
       qs.forEach(q => {
         const displayLabel = getLang(q.id, "label") || q.label;
         if (q.type === "multi") {
-          children.push({
-            type: "CheckboxGroup",
-            label: displayLabel,
-            name: q.id,
-            required: q.always,
-            "data-source": buildDataSource(q),
-            ...(q.hint ? { description: q.hint } : {}),
-          });
+          children.push({ type: "CheckboxGroup", label: displayLabel, name: q.id, required: q.always, "data-source": buildDataSource(q), ...(q.hint ? { description: q.hint } : {}) });
         } else if (q.type === "single" || q.type === "scale5") {
-          children.push({
-            type: "RadioButtonsGroup",
-            label: displayLabel,
-            name: q.id,
-            required: q.always,
-            "data-source": buildDataSource(q),
-            ...(q.hint ? { description: q.hint } : {}),
-          });
+          children.push({ type: "RadioButtonsGroup", label: displayLabel, name: q.id, required: q.always, "data-source": buildDataSource(q), ...(q.hint ? { description: q.hint } : {}) });
         } else if (q.type === "text") {
-          children.push({
-            type: "TextInput",
-            label: displayLabel,
-            name: q.id,
-            required: q.always,
-            "input-type": "text",
-          });
+          children.push({ type: "TextInput", label: displayLabel, name: q.id, required: q.always, "input-type": "text" });
         } else if (q.type === "select") {
-          children.push({
-            type: "Dropdown",
-            label: displayLabel,
-            name: q.id,
-            required: q.always,
-            "data-source": buildDataSource(q),
-          });
+          children.push({ type: "Dropdown", label: displayLabel, name: q.id, required: q.always, "data-source": buildDataSource(q) });
         }
       });
       return children;
@@ -291,83 +351,28 @@ export default function QuestionEditor() {
 
     const screenIds = chunks.map((_, i) => `SCREEN_${String(i + 1).padStart(2, "0")}`);
     const routingModel: Record<string, string[]> = {};
-    screenIds.forEach((sid, i) => {
-      routingModel[sid] = i < screenIds.length - 1 ? [screenIds[i + 1]] : [];
-    });
+    screenIds.forEach((sid, i) => { routingModel[sid] = i < screenIds.length - 1 ? [screenIds[i + 1]] : []; });
 
     const screens = chunks.map((qs, i) => {
-      const sid   = screenIds[i];
+      const sid = screenIds[i];
       const isLast = i === chunks.length - 1;
       const compositeSet = [...new Set(qs.map(q => q.composite))];
       const children = buildChildren(qs);
-
-      // Wrap in Form for all screens
       const formChildren: object[] = [
         ...children,
-        {
-          type: "Footer",
-          label: isLast ? "Submit" : "Next",
-          "on-click-action": {
-            name: isLast ? "complete" : "navigate",
-            ...(isLast ? {} : { next: { type: "screen", name: screenIds[i + 1] } }),
-            payload: Object.fromEntries(
-              qs.filter(q => q.options.length > 0).map(q => [q.id, `\${form.${q.id}}`])
-            ),
-          },
-        },
+        { type: "Footer", label: isLast ? "Submit" : "Next", "on-click-action": { name: isLast ? "complete" : "navigate", ...(isLast ? {} : { next: { type: "screen", name: screenIds[i + 1] } }), payload: Object.fromEntries(qs.filter(q => q.options.length > 0).map(q => [q.id, `\${form.${q.id}}`])) } },
       ];
-
-      return {
-        id: sid,
-        title: compositeSet.join(" · ").substring(0, 60),
-        layout: {
-          type: "SingleColumnLayout",
-          children: [
-            {
-              type: "Form",
-              name: `form_${sid.toLowerCase()}`,
-              children: formChildren,
-            },
-          ],
-        },
-      };
+      return { id: sid, title: compositeSet.join(" · ").substring(0, 60), layout: { type: "SingleColumnLayout", children: [{ type: "Form", name: `form_${sid.toLowerCase()}`, children: formChildren }] } };
     });
 
-    // Build scoring metadata as a separate data block for reference
-    const scoringMetadata = questions
-      .filter(q => q.scores && Object.keys(q.scores).length > 0)
-      .map(q => ({
-        id: q.id,
-        composite: q.composite,
-        weight: q.weight,
-        impact_dimension: IMPACT_DIM[q.composite] || null,
-        scores: q.scores,
-      }));
-
-    const waFlow = {
-      version: "6.0",
-      data_api_version: "3.0",
-      routing_model: routingModel,
-      screens,
-      // ── Rootstory-specific metadata (not rendered by WhatsApp) ──────────────
-      _rootstory_metadata: {
-        exportedAt: new Date().toISOString(),
-        language: lang,
-        total_questions: questions.length,
-        scoring_map: scoringMetadata,
-        translations: lang !== "en" ? trans : undefined,
-      },
-    };
+    const scoringMetadata = questions.filter(q => q.scores && Object.keys(q.scores).length > 0).map(q => ({ id: q.id, composite: q.composite, weight: q.weight, impact_dimension: IMPACT_DIM[q.composite] || null, scores: q.scores }));
+    const waFlow = { version: "6.0", data_api_version: "3.0", routing_model: routingModel, screens, _rootstory_metadata: { exportedAt: new Date().toISOString(), language: lang, total_questions: questions.length, scoring_map: scoringMetadata, translations: lang !== "en" ? trans : undefined } };
 
     const blob = new Blob([JSON.stringify(waFlow, null, 2)], { type: "application/json" });
-    const a = Object.assign(document.createElement("a"), {
-      href: URL.createObjectURL(blob),
-      download: `rootstory_whatsapp_flow_${lang}.json`,
-    });
+    const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `rootstory_whatsapp_flow_${lang}.json` });
     a.click();
   };
 
-  // Persist edits to localStorage so RootstoryInterview can pick them up
   const handleSave = () => {
     const overrides: Record<string, { label?: string; options?: string[] }> = {};
     questions.forEach(q => {
@@ -396,6 +401,17 @@ export default function QuestionEditor() {
           <span style={{color:"rgba(255,255,255,0.3)",fontSize:12,marginLeft:10,fontWeight:400}}>Question Editor</span>
         </div>
         <div style={{flex:1}}/>
+
+        {/* Global Edit Toggle */}
+        <button onClick={()=>{ setGlobalEdit(!globalEdit); if (globalEdit) setEditingIds(new Set()); }}
+          style={{padding:"5px 14px",borderRadius:5,border: globalEdit ? "1.5px solid #E8A020" : "1px solid rgba(255,255,255,0.2)",
+            background: globalEdit ? "rgba(232,160,32,0.15)" : "transparent",
+            color: globalEdit ? "#E8A020" : "rgba(255,255,255,0.75)",cursor:"pointer",fontSize:12,fontFamily:"Georgia, serif",
+            display:"flex",alignItems:"center",gap:6}}>
+          <span style={{fontSize:14}}>{globalEdit ? "✎" : "✎"}</span>
+          {globalEdit ? "Exit Edit Mode" : "Edit Mode"}
+        </button>
+
         <div style={{display:"flex",gap:2,background:"rgba(255,255,255,0.08)",padding:3,borderRadius:6}}>
           {(["list","matrix"] as const).map((v)=>(
             <button key={v} onClick={()=>setViewMode(v)}
@@ -432,6 +448,11 @@ export default function QuestionEditor() {
         </div>
         {lang!=="en" && <span style={{fontSize:11,color:"#8A8A9A"}}>{trCount}/{questions.length} labels translated</span>}
         <div style={{flex:1}}/>
+        {globalEdit && (
+          <button onClick={()=>addQuestion()} style={{padding:"4px 14px",borderRadius:5,border:"1.5px solid #2E7D52",background:"#E8F5EE",color:"#0D2818",cursor:"pointer",fontSize:12,fontFamily:"Georgia, serif",fontWeight:500}}>
+            + Add Question
+          </button>
+        )}
         <span style={{fontSize:11,color:"#8A8A9A"}}>{visible.length} of {questions.length}</span>
       </div>
 
@@ -467,7 +488,15 @@ export default function QuestionEditor() {
                   <QCard key={q.id} q={q} lang={lang} expanded={expandedId===q.id}
                     onToggle={()=>setExpandedId(expandedId===q.id?null:q.id)}
                     getTr={getTr} setTr={setTr}
-                    updateScore={updateScore} updateLabel={updateLabel} updateOpt={updateOpt}/>
+                    updateScore={updateScore} updateLabel={updateLabel} updateOpt={updateOpt}
+                    editMode={isEditing(q.id)} onToggleEdit={()=>toggleEditQ(q.id)}
+                    globalEdit={globalEdit}
+                    updateField={updateField}
+                    addOption={addOption} removeOption={removeOption}
+                    moveQuestion={moveQuestion} deleteQuestion={deleteQuestion}
+                    addQuestion={addQuestion} duplicateQuestion={duplicateQuestion}
+                    questions={questions}
+                  />
                 ))
           }
         </div>
@@ -477,7 +506,7 @@ export default function QuestionEditor() {
 }
 
 // ─── QUESTION CARD ────────────────────────────────────────────────────────────
-function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,updateOpt}: {
+function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,updateOpt,editMode,onToggleEdit,globalEdit,updateField,addOption,removeOption,moveQuestion,deleteQuestion,addQuestion,duplicateQuestion,questions}: {
   q: Question;
   lang: string;
   expanded: boolean;
@@ -487,33 +516,152 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
   updateScore: (qid: string, key: string, val: number) => void;
   updateLabel: (qid: string, val: string) => void;
   updateOpt: (qid: string, old: string, nw: string) => void;
+  editMode: boolean;
+  onToggleEdit: () => void;
+  globalEdit: boolean;
+  updateField: (qid: string, field: keyof Question, val: any) => void;
+  addOption: (qid: string) => void;
+  removeOption: (qid: string, opt: string) => void;
+  moveQuestion: (qid: string, dir: -1 | 1) => void;
+  deleteQuestion: (qid: string) => void;
+  addQuestion: (afterId?: string) => void;
+  duplicateQuestion: (qid: string) => void;
+  questions: Question[];
 }) {
   const cc      = COMPOSITES[q.composite]||COMPOSITES["Setup / Admin"];
   const hasScore= !!(q.scores && Object.keys(q.scores).length>0 && q.type!=="open");
   const isScale = q.type==="scale5";
   const isEn    = lang==="en";
   const hasHint = !!q.hint;
+  const qIdx    = questions.findIndex(x => x.id === q.id);
 
   return (
-    <div style={{background:"#fff",border:"0.5px solid #E0DDD8",borderRadius:8,overflow:"hidden",borderLeft:`3px solid ${cc.border}`}}>
+    <div style={{background:"#fff",border: editMode ? "1.5px solid #E8A020" : "0.5px solid #E0DDD8",borderRadius:8,overflow:"hidden",borderLeft:`3px solid ${cc.border}`,position:"relative"}}>
 
       {/* header */}
-      <div onClick={onToggle} style={{display:"flex",alignItems:"flex-start",gap:10,padding:"11px 14px",cursor:"pointer",userSelect:"none"}}>
-        <div style={{display:"flex",flexWrap:"wrap",gap:5,alignItems:"center",flexShrink:0,paddingTop:2}}>
-          <span style={{fontSize:11,fontWeight:500,padding:"2px 7px",borderRadius:4,background:cc.bg,color:cc.text,fontFamily:"monospace"}}>{q.id}</span>
-          <span style={{fontSize:10,padding:"2px 6px",borderRadius:4,background:"#F5F3F0",color:"#8A8A9A"}}>{q.module}</span>
-          {q.weight && <WeightDots w={q.weight}/>}
-          {!q.always && <span style={{fontSize:10,padding:"2px 7px",borderRadius:4,background:"#FEF3DC",color:"#8A4A00"}}>conditional</span>}
+      <div style={{display:"flex",alignItems:"flex-start",gap:10,padding:"11px 14px",cursor:"pointer",userSelect:"none"}}>
+
+        {/* Reorder buttons */}
+        {(editMode || globalEdit) && (
+          <div style={{display:"flex",flexDirection:"column",gap:2,flexShrink:0,paddingTop:1}}>
+            <button onClick={(e)=>{e.stopPropagation();moveQuestion(q.id,-1);}} disabled={qIdx===0}
+              style={{border:"none",background:"none",cursor:qIdx===0?"default":"pointer",fontSize:10,color:qIdx===0?"#E0DDD8":"#8A8A9A",padding:"1px 4px",lineHeight:1}}>▲</button>
+            <button onClick={(e)=>{e.stopPropagation();moveQuestion(q.id,1);}} disabled={qIdx===questions.length-1}
+              style={{border:"none",background:"none",cursor:qIdx===questions.length-1?"default":"pointer",fontSize:10,color:qIdx===questions.length-1?"#E0DDD8":"#8A8A9A",padding:"1px 4px",lineHeight:1}}>▼</button>
+          </div>
+        )}
+
+        <div onClick={onToggle} style={{display:"flex",flex:1,alignItems:"flex-start",gap:10,minWidth:0}}>
+          <div style={{display:"flex",flexWrap:"wrap",gap:5,alignItems:"center",flexShrink:0,paddingTop:2}}>
+            <span style={{fontSize:11,fontWeight:500,padding:"2px 7px",borderRadius:4,background:cc.bg,color:cc.text,fontFamily:"monospace"}}>{q.id}</span>
+            <span style={{fontSize:10,padding:"2px 6px",borderRadius:4,background:"#F5F3F0",color:"#8A8A9A"}}>{q.module}</span>
+            {q.weight && <WeightDots w={q.weight}/>}
+            {!q.always && <span style={{fontSize:10,padding:"2px 7px",borderRadius:4,background:"#FEF3DC",color:"#8A4A00"}}>conditional</span>}
+            {q.adminComment && <span style={{fontSize:10,padding:"2px 6px",borderRadius:4,background:"#EEF0FF",color:"#3040C0"}} title={q.adminComment}>💬</span>}
+            {q.researcherDirection && <span style={{fontSize:10,padding:"2px 6px",borderRadius:4,background:"#FFF0F8",color:"#A0206A"}} title={q.researcherDirection}>🔬</span>}
+          </div>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontSize:13,color:"#1A1A2E",lineHeight:1.5}}>{q.label}</div>
+            {hasHint && !expanded && <div style={{fontSize:11,color:"#8A8A9A",marginTop:2,fontStyle:"italic"}}>{q.hint}</div>}
+          </div>
+          <span style={{color:"#8A8A9A",fontSize:12,flexShrink:0,paddingTop:3,transform:expanded?"rotate(180deg)":"none",transition:"transform 0.15s"}}>▾</span>
         </div>
-        <div style={{flex:1,minWidth:0}}>
-          <div style={{fontSize:13,color:"#1A1A2E",lineHeight:1.5}}>{q.label}</div>
-          {hasHint && !expanded && <div style={{fontSize:11,color:"#8A8A9A",marginTop:2,fontStyle:"italic"}}>{q.hint}</div>}
-        </div>
-        <span style={{color:"#8A8A9A",fontSize:12,flexShrink:0,paddingTop:3,transform:expanded?"rotate(180deg)":"none",transition:"transform 0.15s"}}>▾</span>
+
+        {/* Per-question edit toggle */}
+        {!globalEdit && (
+          <button onClick={(e)=>{e.stopPropagation();onToggleEdit();}}
+            style={{border:"none",background: editMode ? "#FEF3DC" : "transparent",
+              cursor:"pointer",fontSize:13,padding:"3px 6px",borderRadius:4,flexShrink:0,
+              color: editMode ? "#C47A0A" : "#C8C4BC"}}
+            title={editMode ? "Exit edit mode" : "Edit this question"}>
+            ✎
+          </button>
+        )}
       </div>
 
       {expanded && (
         <div style={{borderTop:"0.5px solid #E0DDD8",background:"#F9F7F4"}}>
+
+          {/* ── EDIT MODE: Metadata Fields ── */}
+          {editMode && (
+            <div style={{padding:"12px 14px",borderBottom:"0.5px solid #E0DDD8",background:"#FFFBE6"}}>
+              <div style={{fontSize:10,fontWeight:600,color:"#A07800",textTransform:"uppercase",letterSpacing:0.7,marginBottom:10}}>✎ Edit Metadata</div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(200px, 1fr))",gap:10}}>
+                {/* ID */}
+                <EditField label="Question ID">
+                  <input value={q.id} onChange={e=>updateField(q.id,"id",e.target.value)}
+                    style={inputSm}/>
+                </EditField>
+                {/* Composite */}
+                <EditField label="Composite / Category">
+                  <select value={q.composite} onChange={e=>updateField(q.id,"composite",e.target.value)} style={inputSm}>
+                    {Object.keys(COMPOSITES).map(c=><option key={c} value={c}>{c}</option>)}
+                  </select>
+                </EditField>
+                {/* Module */}
+                <EditField label="Module">
+                  <select value={q.module} onChange={e=>updateField(q.id,"module",e.target.value)} style={inputSm}>
+                    {MODULES.map(m=><option key={m} value={m}>{m}</option>)}
+                  </select>
+                </EditField>
+                {/* Type */}
+                <EditField label="Question Type">
+                  <select value={q.type} onChange={e=>updateField(q.id,"type",e.target.value)} style={inputSm}>
+                    {Q_TYPES.map(t=><option key={t} value={t}>{t}</option>)}
+                  </select>
+                </EditField>
+                {/* Weight */}
+                <EditField label="Weight (1–3 or null)">
+                  <select value={q.weight ?? ""} onChange={e=>updateField(q.id,"weight",e.target.value===""?null:Number(e.target.value))} style={inputSm}>
+                    <option value="">None</option>
+                    <option value="1">1 — Supporting</option>
+                    <option value="2">2 — Strong signal</option>
+                    <option value="3">3 — Primary</option>
+                  </select>
+                </EditField>
+                {/* Always */}
+                <EditField label="Visibility">
+                  <select value={q.always?"always":"conditional"} onChange={e=>updateField(q.id,"always",e.target.value==="always")} style={inputSm}>
+                    <option value="always">Always shown</option>
+                    <option value="conditional">Conditional</option>
+                  </select>
+                </EditField>
+              </div>
+
+              {/* Hint */}
+              <div style={{marginTop:10}}>
+                <EditField label="Hint / Admin note">
+                  <input value={q.hint} onChange={e=>updateField(q.id,"hint",e.target.value)} placeholder="Internal hint…" style={{...inputSm,width:"100%"}}/>
+                </EditField>
+              </div>
+
+              {/* Admin Comment */}
+              <div style={{marginTop:10}}>
+                <EditField label="Admin Comment (internal only)">
+                  <textarea value={q.adminComment||""} onChange={e=>updateField(q.id,"adminComment",e.target.value)}
+                    placeholder="Internal admin notes about this question…"
+                    style={{...inputSm,width:"100%",minHeight:48,resize:"vertical"}}/>
+                </EditField>
+              </div>
+
+              {/* Researcher Direction */}
+              <div style={{marginTop:10}}>
+                <EditField label="Researcher Direction (shown when 'researcher-only' toggled)">
+                  <textarea value={q.researcherDirection||""} onChange={e=>updateField(q.id,"researcherDirection",e.target.value)}
+                    placeholder="Directions for the field researcher…"
+                    style={{...inputSm,width:"100%",minHeight:48,resize:"vertical"}}/>
+                </EditField>
+              </div>
+
+              {/* Actions */}
+              <div style={{display:"flex",gap:8,marginTop:12,flexWrap:"wrap"}}>
+                <button onClick={()=>duplicateQuestion(q.id)} style={actionBtnStyle}>⧉ Duplicate</button>
+                <button onClick={()=>addQuestion(q.id)} style={actionBtnStyle}>+ Insert After</button>
+                <button onClick={()=>{if(confirm(`Delete question ${q.id}?`)) deleteQuestion(q.id);}}
+                  style={{...actionBtnStyle,borderColor:"#C85000",color:"#C85000"}}>✕ Delete</button>
+              </div>
+            </div>
+          )}
 
           {/* question label edit / translation */}
           <div style={{padding:"12px 14px"}}>
@@ -535,10 +683,11 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
           </div>
 
           {/* scoring table */}
-          {hasScore && (
+          {(hasScore || (editMode && q.options.length > 0)) && (
             <div style={{padding:"0 14px 14px"}}>
               <div style={{fontSize:10,fontWeight:500,color:"#8A8A9A",textTransform:"uppercase",letterSpacing:0.7,marginBottom:6}}>Response options & scoring</div>
-              <div style={{display:"grid",gridTemplateColumns:isEn?"1fr 84px 120px":"1fr 1fr 84px 110px",gap:8,padding:"5px 10px",background:"#0D2818",borderRadius:"6px 6px 0 0"}}>
+              <div style={{display:"grid",gridTemplateColumns:isEn ? (editMode?"auto 1fr 84px 120px":"1fr 84px 120px") : (editMode?"auto 1fr 1fr 84px 110px":"1fr 1fr 84px 110px"),gap:8,padding:"5px 10px",background:"#0D2818",borderRadius:"6px 6px 0 0"}}>
+                {editMode && <span style={{fontSize:10,color:"rgba(255,255,255,0.55)",fontWeight:500,width:24}}></span>}
                 {["Option","Translation","Score","Effect"].filter((_,i)=>i!==1||!isEn).map(h=>(
                   <span key={h} style={{fontSize:10,color:"rgba(255,255,255,0.55)",fontWeight:500}}>{h}</span>
                 ))}
@@ -549,9 +698,13 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
                   const score = q.scores?.[sk];
                   const sa    = scoreAppearance(score);
                   return (
-                    <div key={opt} style={{display:"grid",gridTemplateColumns:isEn?"1fr 84px 120px":"1fr 1fr 84px 110px",gap:8,padding:"7px 10px",alignItems:"center",
+                    <div key={`${opt}-${oi}`} style={{display:"grid",gridTemplateColumns:isEn ? (editMode?"auto 1fr 84px 120px":"1fr 84px 120px") : (editMode?"auto 1fr 1fr 84px 110px":"1fr 1fr 84px 110px"),gap:8,padding:"7px 10px",alignItems:"center",
                       background:oi%2===0?"#fff":"#F9F7F4",
                       borderTop:oi>0?"0.5px solid #E0DDD8":"none"}}>
+                      {editMode && (
+                        <button onClick={()=>removeOption(q.id,opt)} title="Remove option"
+                          style={{border:"none",background:"none",cursor:"pointer",fontSize:12,color:"#C85000",padding:"0 2px",width:24,textAlign:"center"}}>✕</button>
+                      )}
                       <div style={{fontSize:12,color:"#1A1A2E",lineHeight:1.4}}>
                         {isEn
                           ? <InlineEdit value={isScale?`${oi+1} — ${opt}`:opt} onSave={v=>updateOpt(q.id,opt,isScale?v.replace(/^\d+ — /,"")||v:v)}/>
@@ -581,6 +734,11 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
                   );
                 })}
               </div>
+              {editMode && (
+                <button onClick={()=>addOption(q.id)} style={{marginTop:6,padding:"4px 12px",border:"1px dashed #C8C4BC",background:"transparent",borderRadius:4,cursor:"pointer",fontSize:11,color:"#8A8A9A",fontFamily:"Georgia, serif"}}>
+                  + Add Option
+                </button>
+              )}
               <div style={{display:"flex",flexWrap:"wrap",gap:12,paddingTop:7}}>
                 {[["#0D2818","#E8F5EE","0.8–1.0 Strong +"],["#1B5E3A","#E8F8F0","0.4–0.79 Positive"],["#705400","#FFFBE6","0.1–0.39 Weak +"],["#3A4A3A","#F0F4F0","0 No effect"],["#8A1A10","#FDECEA","−0.2 Negative"]].map(([fg,bg,l])=>(
                   <span key={l} style={{display:"flex",alignItems:"center",gap:5,fontSize:10,color:"#8A8A9A"}}>
@@ -598,6 +756,22 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
               <div style={{fontSize:12,color:"#8A8A9A",lineHeight:1.6}}>
                 Open text — researcher transcribes exact words. No option scoring. Adds +5 depth boost to mapped composites when answered (≥15 chars).
               </div>
+            </div>
+          )}
+
+          {/* Admin comment & researcher direction display (non-edit view) */}
+          {!editMode && (q.adminComment || q.researcherDirection) && (
+            <div style={{padding:"8px 14px",borderTop:"0.5px solid #E0DDD8",display:"flex",flexWrap:"wrap",gap:16}}>
+              {q.adminComment && (
+                <MetaCell label="Admin Comment">
+                  <span style={{fontSize:12,color:"#3040C0",fontStyle:"italic"}}>{q.adminComment}</span>
+                </MetaCell>
+              )}
+              {q.researcherDirection && (
+                <MetaCell label="Researcher Direction">
+                  <span style={{fontSize:12,color:"#A0206A",fontStyle:"italic"}}>{q.researcherDirection}</span>
+                </MetaCell>
+              )}
             </div>
           )}
 
@@ -694,7 +868,27 @@ function ScoreMatrix({questions}: {questions: Question[]}) {
   );
 }
 
+// ─── SHARED STYLES ────────────────────────────────────────────────────────────
+const inputSm: React.CSSProperties = {
+  fontSize:12, padding:"4px 8px", border:"0.5px solid #C8C4BC", borderRadius:4,
+  fontFamily:"Georgia, serif", boxSizing:"border-box", width:"100%", background:"#fff",
+};
+
+const actionBtnStyle: React.CSSProperties = {
+  padding:"4px 12px", borderRadius:4, border:"1px solid #C8C4BC", background:"#fff",
+  cursor:"pointer", fontSize:11, fontFamily:"Georgia, serif", color:"#1A1A2E",
+};
+
 // ─── MICRO COMPONENTS ─────────────────────────────────────────────────────────
+function EditField({label,children}: {label: string; children: React.ReactNode}) {
+  return (
+    <div style={{display:"flex",flexDirection:"column",gap:3}}>
+      <span style={{fontSize:10,fontWeight:500,color:"#8A8A9A",textTransform:"uppercase",letterSpacing:0.5}}>{label}</span>
+      {children}
+    </div>
+  );
+}
+
 function WeightDots({w}: {w: number | null}) {
   if (!w) return null;
   const filled = ["#8A9A8A","#2E7D52","#0D2818"];
