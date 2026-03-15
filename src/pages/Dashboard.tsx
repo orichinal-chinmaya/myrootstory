@@ -67,18 +67,27 @@ const COMPOSITES: Record<string, { bg: string; b: string; t: string }> = {
   "Community & Social":      { bg:"#FFF3E0", b:"#E65100", t:"#BF360C" },
 };
 
+// v0.4: composites can feed multiple domains
+const DOMAIN_COMPOSITES: Record<string, string[]> = {
+  "Economic Security":              ["Household Stability", "Debt & Credit Relief", "Savings & Assets"],
+  "Consumption Quality & Multiplier": ["Nutrition & Health", "Education", "Livelihood & Enterprise", "Community & Social"],
+  "Women's Empowerment":            ["Financial Confidence", "Household Agency", "Social Empowerment", "Financial Inclusion"],
+  "Social Transformation":          ["Social Empowerment", "Household Agency", "Community & Social"],
+};
+
+// Legacy 1:1 for display (primary domain label per composite)
 const IMPACT_DIMS: Record<string, string> = {
   "Household Stability":     "Economic Security",
   "Debt & Credit Relief":    "Economic Security",
   "Savings & Assets":        "Economic Security",
-  "Nutrition & Health":      "Consumption Quality",
-  "Education":               "Consumption Quality",
+  "Nutrition & Health":      "Consumption Quality & Multiplier",
+  "Education":               "Consumption Quality & Multiplier",
   "Financial Confidence":    "Women's Empowerment",
   "Household Agency":        "Women's Empowerment",
   "Social Empowerment":      "Women's Empowerment",
   "Financial Inclusion":     "Women's Empowerment",
-  "Livelihood & Enterprise": "Consumption Quality",
-  "Community & Social":      "Social Transformation",
+  "Livelihood & Enterprise": "Consumption Quality & Multiplier",
+  "Community & Social":      "Consumption Quality & Multiplier",
 };
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
