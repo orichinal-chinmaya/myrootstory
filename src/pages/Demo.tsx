@@ -47,7 +47,7 @@ const GateCard = ({
         {title === "Interactive Demo"
           ? "Enter your access code to explore the Rootstory interview tool — a live demonstration of adaptive AI-assisted narrative capture."
           : title === "Dashboard"
-          ? "Enter your access code to explore the Policy Intelligence Dashboard — quantitative scores, story map, and AI-powered theme discovery."
+          ? "Enter your access code to explore the Narrative Intelligence Dashboard — quantitative scores, story map, and AI-powered theme discovery."
           : "Enter the admin code to access the question editor and scoring configuration."}
       </p>
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-3">
