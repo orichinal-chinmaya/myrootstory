@@ -261,7 +261,9 @@ export default function Dashboard({ embedded = false }: { embedded?: boolean }) 
       {!embedded && (
         <div style={{ background:C.teal, padding:"0 24px", height:56, display:"flex", alignItems:"center", gap:16, flexShrink:0 }}>
           <div style={{ display:"flex", alignItems:"flex-end", gap:8, fontFamily:"Georgia,serif", fontSize:18 }}>
-            <img src={rootstoryIcon} alt="Rootstory" style={{ height:40, width:"auto", marginBottom:-3, objectFit:"cover", objectPosition:"center top" }} />
+            <div style={{ background:C.teal, height:40, display:"inline-flex", alignItems:"center", justifyContent:"center" }}>
+              <img src={rootstoryIcon} alt="Rootstory" style={{ height:40, width:"auto", objectFit:"cover", objectPosition:"center top" }} />
+            </div>
             <span style={{ lineHeight:1, paddingBottom:2 }}><span style={{ fontWeight:"bold", color:"#fff" }}>root</span><span style={{ color:C.amber }}>story</span></span>
             <span style={{ color:"rgba(255,255,255,0.35)", fontSize:12, marginLeft:4, paddingBottom:2 }}>Narrative Intelligence</span>
           </div>
