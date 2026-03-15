@@ -81,7 +81,7 @@ const GateCard = ({
 
 const TAB_META: { id: Tab; label: string; subtitle: string }[] = [
   { id: "demo",      label: "Interview",  subtitle: "Interactive Demo" },
-  { id: "dashboard", label: "Dashboard",  subtitle: "Policy Intelligence" },
+  { id: "dashboard", label: "Dashboard",  subtitle: "Narrative Intelligence" },
   { id: "admin",     label: "Admin",      subtitle: "Question Editor" },
 ];
 
