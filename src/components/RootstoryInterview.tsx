@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import type { CSSProperties } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -672,6 +672,26 @@ const MODULE_ICONS = {
 };
 
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
+// ─── APPLY QUESTION EDITOR OVERRIDES ─────────────────────────────────────────
+function applyEditorOverrides(questions: typeof ALL_QUESTIONS) {
+  try {
+    const raw = localStorage.getItem("rootstory_question_overrides");
+    if (!raw) return questions;
+    const overrides: Record<string, { label?: string; options?: string[] }> = JSON.parse(raw);
+    return questions.map(q => {
+      const ov = overrides[q.id];
+      if (!ov) return q;
+      return {
+        ...q,
+        ...(ov.label    !== undefined ? { label:   ov.label }   : {}),
+        ...(ov.options  !== undefined ? { options: ov.options } : {}),
+        // keep scaleLabels in sync if options replaced
+        ...((ov.options !== undefined && (q as any).scaleLabels) ? { scaleLabels: ov.options } : {}),
+      };
+    });
+  } catch { return questions; }
+}
+
 export default function RootstoryInterview() {
   const [phase, setPhase]             = useState("login");
   const [researcher, setResearcher]   = useState(null);
@@ -695,6 +715,9 @@ export default function RootstoryInterview() {
   const online = useOnline();
   const cardRef = useRef(null);
 
+  // Load questions with any overrides saved by QuestionEditor
+  const QUESTIONS = useMemo(() => applyEditorOverrides(ALL_QUESTIONS), []);
+
   // Refresh queue display whenever we return to complete screen
   useEffect(() => {
     setQueue(loadQueue());
@@ -705,7 +728,7 @@ export default function RootstoryInterview() {
     if (online && loadQueue().length > 0) syncQueue();
   }, [online]);
 
-  const visibleQuestions = ALL_QUESTIONS.filter(q => {
+  const visibleQuestions = QUESTIONS.filter(q => {
     if (!q.trigger) return true;
     try { return q.trigger(answers); } catch { return false; }
   });
@@ -1130,7 +1153,7 @@ export default function RootstoryInterview() {
           {/* DATA TAB */}
           {activeTab==="data" && (
             <div style={{background:C.white,border:`1px solid ${C.border}`,borderTop:"none",borderRadius:"0 0 12px 12px",display:"flex",flexDirection:"column"}}>
-              {[{id:"S1",label:"Participant ID"},{id:"timestamp",label:"Timestamp"},...ALL_QUESTIONS].filter(q=>answers[q.id]).map((q,i)=>(
+              {[{id:"S1",label:"Participant ID"},{id:"timestamp",label:"Timestamp"},...QUESTIONS].filter(q=>answers[q.id]).map((q,i)=>(
                 <div key={q.id} style={{display:"flex",gap:10,padding:"9px 20px",background:i%2===0?C.greyLight:C.white,alignItems:"flex-start",borderBottom:`1px solid ${C.paperDark}`}}>
                   <span style={{fontFamily:"monospace",fontSize:10,color:C.teal,width:40,flexShrink:0,marginTop:1}}>{q.id}</span>
                   <span style={{fontSize:11,color:C.grey,flex:"0 0 220px",lineHeight:1.4}}>{(q.label||"").slice(0,55)}{(q.label||"").length>55?"…":""}</span>
