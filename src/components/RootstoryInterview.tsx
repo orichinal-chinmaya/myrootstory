@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import type { CSSProperties } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 // ─── OFFLINE QUEUE ────────────────────────────────────────────────────────────
 const QUEUE_KEY = "rootstory_queue";
