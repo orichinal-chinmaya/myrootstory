@@ -97,6 +97,13 @@ const Navbar = () => {
             >
               Journal
             </Link>
+            <Link
+              to="/demo"
+              className="font-body text-sm text-cream/70 hover:text-cream transition-colors duration-200"
+              onClick={() => setMenuOpen(false)}
+            >
+              Demo
+            </Link>
             <a
               href="#contact"
               className="inline-flex items-center justify-center font-body text-sm font-medium bg-amber text-forest-deep px-5 py-2.5 rounded-sm hover:bg-amber/90 transition-colors duration-200 mt-2"
