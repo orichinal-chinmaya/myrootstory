@@ -1147,12 +1147,13 @@ export default function RootstoryInterview() {
           <div style={{background:C.white,borderRadius:8,padding:10,border:`1px solid ${C.border}`,display:"flex",flexDirection:"column",gap:6}}>
             <div style={{fontSize:9,fontWeight:"bold",color:C.grey,textTransform:"uppercase",letterSpacing:1}}>Live Scores</div>
             {Object.entries(scores).map(([eff,sc])=>{
+              const scNum = sc as number;
               const col=EC[eff];
               return (
                 <div key={eff} style={{display:"flex",alignItems:"center",gap:4}}>
                   <span style={{fontSize:8,color:C.inkLight,width:68,flexShrink:0,lineHeight:1.1}}>{eff.length>12?eff.slice(0,11)+"…":eff}</span>
-                  <div style={{flex:1,height:3,background:C.paperDark,borderRadius:2,overflow:"hidden"}}><div style={{height:"100%",background:col.b,width:`${sc}%`,transition:"width 0.5s"}} /></div>
-                  <span style={{fontSize:9,fontWeight:"bold",color:col.t,width:20,textAlign:"right"}}>{sc}</span>
+                  <div style={{flex:1,height:3,background:C.paperDark,borderRadius:2,overflow:"hidden"}}><div style={{height:"100%",background:col.b,width:`${scNum}%`,transition:"width 0.5s"}} /></div>
+                  <span style={{fontSize:9,fontWeight:"bold",color:col.t,width:20,textAlign:"right"}}>{scNum}</span>
                 </div>
               );
             })}
