@@ -108,8 +108,8 @@ export default function Dashboard({ embedded = false }: { embedded?: boolean }) 
   const [expandedStory, setExpandedStory] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<ThemeAnalysis | null>(null);
   const [analysisLoading, setAnalysisLoading] = useState(false);
-  const [customPrompt, setCustomPrompt] = useState("");
-  const [showCustom, setShowCustom] = useState(false);
+  const [customPrompt, setCustomPrompt] = useState("How did women in ST (Scheduled Tribe) castes react versus the average? Identify themes across three dimensions:\n1. Likelihood of use — how readily ST women adopted or engaged with the scheme compared to others\n2. Openness to receiving information — trust, willingness to learn about the programme, and information-seeking behaviour\n3. Family dynamics — how the transfer affected household power structures, family support, and intra-household decision-making for ST women specifically\n\nFor each dimension, compare ST women's experiences against the overall average and surface quotes that illustrate the contrast.");
+  const [showCustom, setShowCustom] = useState(true);
   const [activeTab, setActiveTab] = useState<"overview"|"stories"|"themes"|"policy"|"map">("overview");
   const [isDemo, setIsDemo] = useState(false);
 
