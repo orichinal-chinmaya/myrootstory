@@ -882,7 +882,7 @@ export default function RootstoryInterview() {
         <div style={{padding:"14px 20px",background:C.teal,borderRadius:8,marginBottom:4}}>
           <span style={{fontSize:28,fontWeight:"bold",color:C.white,fontFamily:"Trebuchet MS,Arial,sans-serif",letterSpacing:0}}>root</span><span style={{fontSize:28,fontWeight:"normal",color:C.amber,fontFamily:"Trebuchet MS,Arial,sans-serif"}}>story</span>
         </div>
-        <p style={{fontSize:12,color:C.grey,margin:0,textAlign:"center"}}>Ladki Bahin Yojana · IIT Madras Social Audit · Researcher Login</p>
+        <p style={{fontSize:12,color:C.grey,margin:0,textAlign:"center"}}>Ladki Bahin Yojana · Social Audit · Researcher Login</p>
         <div style={{width:32,height:2,background:C.tealMid,borderRadius:1}} />
         {!otpSent ? (
           <div style={{width:"100%",display:"flex",flexDirection:"column",gap:10}}>
@@ -975,7 +975,7 @@ export default function RootstoryInterview() {
 
           {/* Tabs */}
           <div style={{display:"flex",borderBottom:`2px solid ${C.paperDark}`}}>
-            {[["story","📖 Rootstory"],["scores","◈ Scores"],["iitm","IIT Madras"],["data","≡ Data"]].map(([tab,lbl])=>(
+            {[["story","📖 Rootstory"],["scores","◈ Scores"],["impact","◈ Impact Dims"],["data","≡ Data"]].map(([tab,lbl])=>(
               <button key={tab} onClick={()=>setActiveTab(tab)}
                 style={{padding:"10px 18px",border:"none",background:"transparent",cursor:"pointer",fontSize:12,
                   color:activeTab===tab?C.teal:C.grey,fontFamily:"Georgia,serif",
@@ -1048,10 +1048,10 @@ export default function RootstoryInterview() {
             </div>
           )}
 
-          {/* IIT MADRAS DIMENSIONS TAB */}
-          {activeTab==="iitm" && (
+          {/* IMPACT DIMENSIONS TAB */}
+          {activeTab==="impact" && (
             <div style={{background:C.white,border:`1px solid ${C.border}`,borderTop:"none",borderRadius:"0 0 12px 12px",padding:"24px 28px",display:"flex",flexDirection:"column",gap:16}}>
-              <p style={{fontSize:13,color:C.inkLight,margin:0,lineHeight:1.6}}>IIT Madras reporting dimensions — rolled up from Rootstory effect scores for the Social Impact Audit of Mukhyamantri Majhi Ladki Bahin Yojana.</p>
+              <p style={{fontSize:13,color:C.inkLight,margin:0,lineHeight:1.6}}>Impact reporting dimensions — rolled up from Rootstory effect scores for the Social Impact Audit of Mukhyamantri Majhi Ladki Bahin Yojana.</p>
               <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
                 {Object.entries(iitmScores).map(([dim,sc])=>{
                   const scNum = sc as number;
@@ -1175,7 +1175,7 @@ export default function RootstoryInterview() {
                 <span style={{fontFamily:"monospace",fontSize:10,color:isSetupMeta?C.purple:C.teal,fontWeight:"bold",background:isSetupMeta?C.purpleLight:C.tealLight,padding:"2px 6px",borderRadius:3}}>{current.id}</span>
                 <span style={{fontSize:10,color:C.grey}}>{MODULE_LABELS[current.module]}</span>
                 {current.badge&&<span style={{fontSize:10,fontWeight:"bold",color:C.amber,background:C.amberLight,padding:"2px 7px",borderRadius:3}}>{current.badge}</span>}
-                {isSetupMeta&&<span style={{fontSize:9,fontWeight:"bold",color:C.purple,background:C.purpleLight,padding:"2px 7px",borderRadius:3}}>IIT Madras Sampling</span>}
+                {isSetupMeta&&<span style={{fontSize:9,fontWeight:"bold",color:C.purple,background:C.purpleLight,padding:"2px 7px",borderRadius:3}}>Sampling Data</span>}
               </div>
               {effArr.length>0&&!effArr.includes("All")&&(
                 <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
@@ -1192,7 +1192,7 @@ export default function RootstoryInterview() {
               </div>
             )}
 
-            {/* IIT Madras sampling stripe */}
+            {/* Sampling metadata stripe */}
             {isSetupMeta&&(
               <div style={{background:`linear-gradient(90deg,${C.purpleLight},transparent)`,borderLeft:`3px solid ${C.purple}`,padding:"6px 12px",borderRadius:"0 5px 5px 0",display:"flex",alignItems:"center",gap:6}}>
                 <span style={{fontSize:12,color:C.purple,fontStyle:"italic"}}>Researcher fills — do not read this question to the participant</span>

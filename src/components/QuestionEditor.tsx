@@ -17,7 +17,7 @@ const COMPOSITES: Record<string, { bg: string; border: string; text: string }> =
   "Narrative":              { bg:"#F5F0E8", border:"#C8A060", text:"#5A3A10" },
 };
 
-const IITM_DIM: Record<string, string> = {
+const IMPACT_DIM: Record<string, string> = {
   "Household Stability":"Economic Security",
   "Debt & Credit Relief":"Economic Security",
   "Savings & Assets":"Economic Security",
@@ -425,9 +425,9 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
             <MetaCell label="Composite">
               <span style={{fontSize:12,fontWeight:500,padding:"2px 9px",borderRadius:4,background:cc.bg,color:cc.text}}>{q.composite}</span>
             </MetaCell>
-            {IITM_DIM[q.composite] && (
-              <MetaCell label="IIT Madras">
-                <span style={{fontSize:12,color:"#8A8A9A"}}>{IITM_DIM[q.composite]}</span>
+            {IMPACT_DIM[q.composite] && (
+              <MetaCell label="Impact Dimension">
+                <span style={{fontSize:12,color:"#8A8A9A"}}>{IMPACT_DIM[q.composite]}</span>
               </MetaCell>
             )}
             {q.weight && (
@@ -464,7 +464,7 @@ function ScoreMatrix({questions}: {questions: Question[]}) {
           <div key={comp}>
             <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
               <span style={{fontSize:12,fontWeight:500,padding:"3px 10px",borderRadius:4,background:cc.bg,color:cc.text}}>{comp}</span>
-              {IITM_DIM[comp] && <span style={{fontSize:11,color:"#8A8A9A"}}>→ {IITM_DIM[comp]}</span>}
+              {IMPACT_DIM[comp] && <span style={{fontSize:11,color:"#8A8A9A"}}>→ {IMPACT_DIM[comp]}</span>}
             </div>
             <div style={{overflowX:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
