@@ -1101,7 +1101,7 @@ export default function RootstoryInterview() {
   const isDepth = current.module==="depth"||current.module==="narrative";
   const isNarrativeDisplay = current.type==="narrative_display";
   const isSetupMeta = current.researcherOnly === true;
-  const effArr = current.effect ? (Array.isArray(current.effect)?current.effect:[current.effect]) : [];
+  const effArr = (current as Record<string, unknown>).effect ? (Array.isArray((current as Record<string, unknown>).effect)?(current as Record<string, unknown>).effect as string[]:[(current as Record<string, unknown>).effect as string]) : [];
 
   return (
     <div style={SS.shell}>
