@@ -410,6 +410,31 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* ═══════════════════ MAP ═══════════════════ */}
+        {activeTab === "map" && (
+          <div style={{ display:"flex", flexDirection:"column" as const, gap:20, animation:"fadeIn 0.3s ease" }}>
+            <div style={{ background:C.white, border:`1px solid ${C.border}`, borderRadius:12, padding:"18px 20px" }}>
+              <h2 style={{ fontSize:15, fontWeight:"bold", color:C.teal, margin:"0 0 4px" }}>
+                Maharashtra Story Map
+              </h2>
+              <p style={{ fontSize:12, color:C.grey, margin:"0 0 16px", lineHeight:1.6 }}>
+                {totalStories} stories across {totalDistricts} district{totalDistricts !== 1 ? "s" : ""}. Click a district to read its narratives. Toggle between story count and impact score views.
+              </p>
+              <MaharashtraMap
+                stories={stories.map(s => ({
+                  id: s.id,
+                  district: s.district,
+                  validated: s.validated,
+                  scores: s.scores || {},
+                  narrative: s.narrative || "",
+                  themes: s.themes || [],
+                }))}
+                onDistrictClick={d => { setFilterDistrict(d); }}
+              />
+            </div>
+          </div>
+        )}
+
         {/* ═══════════════════ STORIES ═══════════════════ */}
         {activeTab === "stories" && (
           <div style={{ display:"flex", flexDirection:"column" as const, gap:12, animation:"fadeIn 0.3s ease" }}>
