@@ -1031,13 +1031,14 @@ export default function RootstoryInterview() {
             <div style={{background:C.white,border:`1px solid ${C.border}`,borderTop:"none",borderRadius:"0 0 12px 12px",padding:"24px 28px",display:"flex",flexDirection:"column",gap:14}}>
               <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
                 {Object.entries(scores).map(([eff,sc])=>{
+                  const scNum = sc as number;
                   const col=EC[eff];
                   return (
                     <div key={eff} style={{flex:"1 1 140px",borderRadius:10,padding:"16px",border:`1.5px solid ${col.b}`,background:col.bg,display:"flex",flexDirection:"column",gap:5,alignItems:"center"}}>
-                      <div style={{fontSize:34,fontWeight:"bold",color:col.t,fontFamily:"Georgia,serif"}}>{sc}</div>
+                      <div style={{fontSize:34,fontWeight:"bold",color:col.t,fontFamily:"Georgia,serif"}}>{scNum}</div>
                       <div style={{fontSize:10,fontWeight:"bold",textAlign:"center",color:col.t}}>{eff}</div>
                       <div style={{width:"100%",height:4,background:"rgba(0,0,0,0.08)",borderRadius:2}}>
-                        <div style={{height:"100%",borderRadius:2,background:col.b,width:`${sc}%`,transition:"width 0.5s"}} />
+                        <div style={{height:"100%",borderRadius:2,background:col.b,width:`${scNum}%`,transition:"width 0.5s"}} />
                       </div>
                     </div>
                   );
