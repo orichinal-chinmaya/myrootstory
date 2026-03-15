@@ -167,16 +167,13 @@ export default function Dashboard({ embedded = false }: { embedded?: boolean }) 
     color: COMPOSITES[c].b,
   })).sort((a, b) => b.score - a.score);
 
-  // Impact dimension aggregates
-  const impactDimData = Object.entries(
-    stories.reduce((acc, s) => {
-      Object.entries(IMPACT_DIMS).forEach(([comp, dim]) => {
-        if (!acc[dim]) acc[dim] = [];
-        if (s.scores?.[comp]) acc[dim].push(s.scores[comp]);
-      });
-      return acc;
-    }, {} as Record<string, number[]>)
-  ).map(([dim, vals]) => ({ dim, score: avg(vals) }));
+  // Impact dimension aggregates (v0.4 multi-map)
+  const impactDimData = Object.entries(DOMAIN_COMPOSITES).map(([dim, composites]) => {
+    const vals = stories.flatMap(s =>
+      composites.map(c => s.scores?.[c]).filter((v): v is number => v != null && v > 0)
+    );
+    return { dim, score: avg(vals) };
+  });
 
   const totalStories = stories.length;
   const validatedCount = stories.filter(s => s.validated).length;

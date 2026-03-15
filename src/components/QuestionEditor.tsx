@@ -17,6 +17,14 @@ const COMPOSITES: Record<string, { bg: string; border: string; text: string }> =
   "Narrative":              { bg:"#F5F0E8", border:"#C8A060", text:"#5A3A10" },
 };
 
+// v0.4: composites can feed multiple domains
+const DOMAIN_COMPOSITES: Record<string, string[]> = {
+  "Economic Security":              ["Household Stability", "Debt & Credit Relief", "Savings & Assets"],
+  "Consumption Quality & Multiplier": ["Nutrition & Health", "Education", "Livelihood & Enterprise", "Community & Social"],
+  "Women's Empowerment":            ["Financial Confidence", "Household Agency", "Social Empowerment", "Financial Inclusion"],
+  "Social Transformation":          ["Social Empowerment", "Household Agency", "Community & Social"],
+};
+
 const IMPACT_DIM: Record<string, string> = {
   "Household Stability":"Economic Security",
   "Debt & Credit Relief":"Economic Security",
@@ -28,7 +36,7 @@ const IMPACT_DIM: Record<string, string> = {
   "Social Empowerment":"Women's Empowerment",
   "Financial Inclusion":"Women's Empowerment",
   "Livelihood & Enterprise":"Consumption Quality & Multiplier",
-  "Community & Social":"Social Transformation",
+  "Community & Social":"Consumption Quality & Multiplier",
 };
 
 const LANGS = [

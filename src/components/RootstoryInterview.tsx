@@ -332,17 +332,13 @@ function calcScores(answers) {
   return result;
 }
 
-// Rollup Rootstory scores → IIT Madras 4-dimension scores
+// Rollup Rootstory scores → IIT Madras 4-dimension scores (v0.4 multi-map)
 function calcIITMScores(scores) {
-  const dims = {};
-  const dimWeights = {};
-  Object.entries(IITM_DIMS).forEach(([rs, dim]) => {
-    if (!dims[dim]) { dims[dim]=0; dimWeights[dim]=0; }
-    dims[dim] += scores[rs];
-    dimWeights[dim]++;
-  });
   const result = {};
-  Object.keys(dims).forEach(d => { result[d] = Math.round(dims[d]/dimWeights[d]); });
+  Object.entries(DOMAIN_COMPOSITES).forEach(([dim, composites]) => {
+    const vals = composites.map(c => scores[c] ?? 0);
+    result[dim] = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+  });
   return result;
 }
 
