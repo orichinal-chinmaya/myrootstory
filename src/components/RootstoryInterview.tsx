@@ -261,12 +261,15 @@ const Q_EFFECTS = {
 // Mapped to the specific composite each depth question is most relevant to
 const OPEN_BOOST = {
   P2:  ["Household Stability","Debt & Credit Relief","Savings & Assets","Financial Confidence","Community & Social"],
-  D1:  ["Household Stability","Debt & Credit Relief"],   // before moment — hardship before DBT
-  D2:  ["Household Stability"],                           // turning point — stability shift
-  D4:  ["Financial Confidence","Household Agency","Financial Inclusion"],
-  D6:  ["Household Stability","Financial Confidence","Household Agency","Social Empowerment","Community & Social","Savings & Assets"],
+  D1:  ["Household Stability","Debt & Credit Relief"],
+  D2:  ["Household Stability"],
+  D3:  ["Debt & Credit Relief"],
+  D4:  ["Financial Confidence","Household Agency"],
+  D6:  ["Social Empowerment","Household Agency","Community & Social"],
   D7:  ["Household Stability","Household Agency","Social Empowerment","Debt & Credit Relief"],
+  V3:  ["Household Stability","Debt & Credit Relief","Savings & Assets","Nutrition & Health","Education","Financial Confidence","Household Agency","Social Empowerment","Financial Inclusion","Livelihood & Enterprise","Community & Social"],
   V4:  ["Household Stability","Financial Confidence","Social Empowerment","Community & Social","Nutrition & Health","Education"],
+  CQ14:["Community & Social","Household Stability"],
 };
 
 function calcScores(answers) {
