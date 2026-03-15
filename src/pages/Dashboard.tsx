@@ -110,7 +110,7 @@ export default function Dashboard() {
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [customPrompt, setCustomPrompt] = useState("");
   const [showCustom, setShowCustom] = useState(false);
-  const [activeTab, setActiveTab] = useState<"overview"|"stories"|"themes"|"policy">("overview");
+  const [activeTab, setActiveTab] = useState<"overview"|"stories"|"themes"|"policy"|"map">("overview");
   const [isDemo, setIsDemo] = useState(false);
 
   // Load stories
