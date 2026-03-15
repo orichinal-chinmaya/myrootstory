@@ -14,7 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      stories: {
+        Row: {
+          age_group: string | null
+          answers: Json
+          created_at: string
+          district: string | null
+          education_level: string | null
+          household_type: string | null
+          id: string
+          impact_scores: Json
+          income_range: string | null
+          livelihood: string | null
+          marital_status: string | null
+          narrative: string | null
+          researcher_id: string | null
+          scheme: string | null
+          scores: Json
+          settlement_type: string | null
+          social_category: string | null
+          themes: string[] | null
+          timestamp: string
+          validated: boolean | null
+          village: string | null
+        }
+        Insert: {
+          age_group?: string | null
+          answers?: Json
+          created_at?: string
+          district?: string | null
+          education_level?: string | null
+          household_type?: string | null
+          id: string
+          impact_scores?: Json
+          income_range?: string | null
+          livelihood?: string | null
+          marital_status?: string | null
+          narrative?: string | null
+          researcher_id?: string | null
+          scheme?: string | null
+          scores?: Json
+          settlement_type?: string | null
+          social_category?: string | null
+          themes?: string[] | null
+          timestamp?: string
+          validated?: boolean | null
+          village?: string | null
+        }
+        Update: {
+          age_group?: string | null
+          answers?: Json
+          created_at?: string
+          district?: string | null
+          education_level?: string | null
+          household_type?: string | null
+          id?: string
+          impact_scores?: Json
+          income_range?: string | null
+          livelihood?: string | null
+          marital_status?: string | null
+          narrative?: string | null
+          researcher_id?: string | null
+          scheme?: string | null
+          scores?: Json
+          settlement_type?: string | null
+          social_category?: string | null
+          themes?: string[] | null
+          timestamp?: string
+          validated?: boolean | null
+          village?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
