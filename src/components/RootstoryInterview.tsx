@@ -1333,10 +1333,12 @@ export default function RootstoryInterview() {
   );
 }
 
-const SS = {
-  shell:{ minHeight:"100vh", background:C.paper, fontFamily:"Georgia,serif", display:"flex", flexDirection:"column" },
-  loginCard:{ maxWidth:420, margin:"80px auto", background:C.white, borderRadius:14, padding:"40px 44px", boxShadow:"0 8px 40px rgba(26,26,46,0.1)", display:"flex", flexDirection:"column", alignItems:"center", gap:14, border:`1px solid ${C.border}` },
+import type { CSSProperties } from "react";
+
+const SS: Record<string, CSSProperties> = {
+  shell:{ minHeight:"100vh", background:C.paper, fontFamily:"Georgia,serif", display:"flex", flexDirection:"column" as const },
+  loginCard:{ maxWidth:420, margin:"80px auto", background:C.white, borderRadius:14, padding:"40px 44px", boxShadow:"0 8px 40px rgba(26,26,46,0.1)", display:"flex", flexDirection:"column" as const, alignItems:"center", gap:14, border:`1px solid ${C.border}` },
   logoRing:{ width:48, height:48, borderRadius:"50%", background:C.teal, display:"flex", alignItems:"center", justifyContent:"center" },
   primaryBtn:{ width:"100%", padding:"12px", borderRadius:7, border:"none", background:C.teal, color:C.white, fontSize:14, fontFamily:"Georgia,serif", cursor:"pointer", letterSpacing:0.3, transition:"opacity 0.15s" },
-  completeWrap:{ maxWidth:880, margin:"0 auto", width:"100%", padding:"20px 20px 40px", display:"flex", flexDirection:"column", gap:0 },
+  completeWrap:{ maxWidth:880, margin:"0 auto", width:"100%", padding:"20px 20px 40px", display:"flex", flexDirection:"column" as const, gap:0 },
 };
