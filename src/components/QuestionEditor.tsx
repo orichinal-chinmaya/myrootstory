@@ -201,7 +201,22 @@ export default function QuestionEditor() {
     const a = Object.assign(document.createElement("a"),{href:URL.createObjectURL(blob),download:"rootstory_questions.json"});
     a.click();
   };
-  const handleSave = () => { setFlash(true); setTimeout(()=>setFlash(false),1600); };
+
+  // Persist edits to localStorage so RootstoryInterview can pick them up
+  const handleSave = () => {
+    const overrides: Record<string, { label?: string; options?: string[] }> = {};
+    questions.forEach(q => {
+      const orig = INITIAL_QS.find(o => o.id === q.id);
+      if (!orig) return;
+      const entry: { label?: string; options?: string[] } = {};
+      if (q.label !== orig.label) entry.label = q.label;
+      if (JSON.stringify(q.options) !== JSON.stringify(orig.options)) entry.options = q.options;
+      if (Object.keys(entry).length) overrides[q.id] = entry;
+    });
+    localStorage.setItem("rootstory_question_overrides", JSON.stringify(overrides));
+    setFlash(true);
+    setTimeout(() => setFlash(false), 1600);
+  };
 
   const trCount = lang !== "en" ? Object.keys(trans[lang]||{}).filter(k => trans[lang][k]?.label).length : 0;
 
