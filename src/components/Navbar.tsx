@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 
 const NAV_LINKS = ["How It Works", "Who We Serve", "Evidence", "About"];
 
+
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
