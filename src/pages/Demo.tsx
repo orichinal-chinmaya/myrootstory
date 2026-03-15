@@ -11,21 +11,20 @@ type Tab = "demo" | "admin";
 const GateCard = ({
   title,
   subtitle,
+  code,
   onUnlock,
 }: {
   title: string;
   subtitle: string;
+  code: string;
   onUnlock: () => void;
 }) => {
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
-  const [correct] = useState(() =>
-    title === "Interactive Demo" ? DEMO_CODE : ADMIN_CODE
-  );
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (input.trim() === correct) {
+    if (input.trim() === code) {
       onUnlock();
     } else {
       setError("Incorrect access code. Please try again.");
