@@ -32,9 +32,14 @@ const Navbar = () => {
         }`}
       >
         <div className="container mx-auto flex items-center justify-between py-5 px-6">
-          <div className="flex items-center gap-2">
-            <img src={rootstoryIcon} alt="Rootstory" className="w-7 h-7 rounded-sm" />
-            <span className="font-display text-cream text-[22px] font-semibold tracking-tight">
+          <div className="flex items-end gap-2">
+            <img
+              src={rootstoryIcon}
+              alt="Rootstory"
+              className="w-auto"
+              style={{ height: 44, marginBottom: -4, objectFit: "cover", objectPosition: "center top" }}
+            />
+            <span className="font-display text-cream text-[22px] font-semibold tracking-tight leading-none pb-1">
               root<span className="text-amber">story</span>
             </span>
           </div>
