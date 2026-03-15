@@ -1192,7 +1192,7 @@ export default function RootstoryInterview() {
               </div>
             )}
 
-            {/* IIT Madras sampling stripe */}
+            {/* Sampling metadata stripe */}
             {isSetupMeta&&(
               <div style={{background:`linear-gradient(90deg,${C.purpleLight},transparent)`,borderLeft:`3px solid ${C.purple}`,padding:"6px 12px",borderRadius:"0 5px 5px 0",display:"flex",alignItems:"center",gap:6}}>
                 <span style={{fontSize:12,color:C.purple,fontStyle:"italic"}}>Researcher fills — do not read this question to the participant</span>
