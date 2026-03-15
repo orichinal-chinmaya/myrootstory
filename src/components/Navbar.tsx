@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 
 const NAV_LINKS = ["How It Works", "Who We Serve", "Evidence", "About"];
 
+
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -51,6 +52,12 @@ const Navbar = () => {
             >
               Journal
             </Link>
+            <Link
+              to="/demo"
+              className="font-body text-sm text-cream/70 hover:text-cream transition-colors duration-200"
+            >
+              Demo
+            </Link>
           </div>
 
           <a
@@ -89,6 +96,13 @@ const Navbar = () => {
               onClick={() => setMenuOpen(false)}
             >
               Journal
+            </Link>
+            <Link
+              to="/demo"
+              className="font-body text-sm text-cream/70 hover:text-cream transition-colors duration-200"
+              onClick={() => setMenuOpen(false)}
+            >
+              Demo
             </Link>
             <a
               href="#contact"
