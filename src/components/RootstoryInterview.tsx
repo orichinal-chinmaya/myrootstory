@@ -34,16 +34,23 @@ function useOnline() {
 
 // ─── PALETTE ──────────────────────────────────────────────────────────────────
 const C = {
-  teal:"#1A7A7A", tealDark:"#0F5555", tealLight:"#E6F4F4", tealMid:"#A8D4D4",
-  ink:"#1A1A2E", inkLight:"#3A3A5C",
+  // Rootstory brand: dark forest green + amber gold + white
+  teal:"#0D2818",     // primary brand green (replaces old teal throughout)
+  tealDark:"#071A0E", // darker green for gradients/hover
+  tealLight:"#E8F5EE",// very light green tint for backgrounds
+  tealMid:"#6A9A7A",  // muted green for dividers and subtle accents
+  ink:"#0D2818",      // body text — brand green
+  inkLight:"#2A4A2A", // secondary text
   paper:"#F9F7F4", paperDark:"#EDE9E3",
   sand:"#C8B89A", sandLight:"#F5F0E8", sandDark:"#8A7060",
-  amber:"#C47A0A", amberLight:"#FEF3DC",
-  green:"#2E7D52", greenLight:"#E8F5EE",
+  amber:"#E8A020",    // brand amber — "story" gold
+  amberLight:"#FEF3DC",
+  green:"#0D2818",    // reuse brand green for success states
+  greenLight:"#E8F5EE",
   purple:"#5B3A8C", purpleLight:"#F0EBF8",
   white:"#FFFFFF", grey:"#8A8A9A", greyLight:"#F0EEF0",
   red:"#B03020", redLight:"#FDECEA",
-  border:"#D8D4CC",
+  border:"#C8D8C8",   // light green-tinted border
 };
 
 // ─── 9 COMPOSITE SCORES ───────────────────────────────────────────────────────
@@ -51,7 +58,7 @@ const C = {
 // real-world phenomenon are grouped together.
 // Savings ≠ Livelihood. Nutrition ≠ Stabilisation. Banking ≠ Confidence.
 const EC = {
-  "Household Stability":     {bg:"#E6F4F4", b:"#1A7A7A", t:"#0F5555"},
+  "Household Stability":     {bg:"#E8F5EE", b:"#0D2818", t:"#071A0E"},
   "Debt & Credit Relief":    {bg:"#FEF3DC", b:"#C47A0A", t:"#8A4A00"},
   "Savings & Assets":        {bg:"#E8F5EE", b:"#2E7D52", t:"#1B5E3A"},
   "Nutrition & Health":      {bg:"#FFF0E8", b:"#C85000", t:"#8A2800"},
@@ -108,69 +115,84 @@ const MH_SCHEMES = [
 // Weight: 1=supporting, 2=strong signal, 3=primary measure.
 
 const SCORE_MAP = {
+  // Scoring convention:
+  //   Positive effect  → 0.4–1.0  (proportional to strength)
+  //   Weak positive    → 0.3
+  //   No effect/neutral → 0.0     (no contribution to score)
+  //   Negative effect  → -0.2     (reduces composite score)
+  // P3/P4 scale5: UI stores "1"–"5" (position), not label text
+
   // ── HOUSEHOLD STABILITY ──
-  // P3/P4 are scale5 — UI stores "1"–"5" (position), not label text
-  // P3: 1=Very difficult baseline → 1.0 (high need);  5=Very easy → 0.0
+  // P3: baseline difficulty — higher = more room for improvement (context weight)
   P3: { "1":1.0, "2":0.75, "3":0.5, "4":0.25, "5":0.0 },
-  // P4: 1=Still very difficult → 0.0;  5=Very easy now → 1.0
-  P4: { "1":0.0, "2":0.25, "3":0.5, "4":0.75, "5":1.0 },
-  P5: { "Yes, much more stable":1.0, "Yes, somewhat more stable":0.6, "No change":0.2, "No, less stable":0.0 },
-  P7: { "Yes, managed without borrowing":1.0, "Yes, but had to borrow":0.4, "No, could not manage it":0.0, "Not applicable":0.5 },
-  P8: { "Yes, significantly":1.0, "Yes, a little":0.6, "No difference":0.2, "Pressure has increased":0.0 },
+  // P4: relative relief felt — see rephrased question
+  P4: { "1":-0.2, "2":0.0, "3":0.4, "4":0.75, "5":1.0 },
+  // P5: stability change
+  P5: { "Yes, much more stable":1.0, "Yes, somewhat more stable":0.6, "No change":0.0, "No, less stable":-0.2 },
+  // P7: shock absorption (only shown if P6=Yes)
+  P7: { "Yes, managed without borrowing":1.0, "Yes, but had to borrow":0.4, "No, could not manage it":-0.2, "Not applicable":0.0 },
+  // P8: month-end pressure
+  P8: { "Yes, significantly":1.0, "Yes, a little":0.6, "No difference":0.0, "Pressure has increased":-0.2 },
 
   // ── DEBT & CREDIT RELIEF ──
-  // P9: higher baseline borrowing = more scope for relief (used as context weight)
+  // P9: baseline borrowing frequency (context — higher baseline = more scope for relief)
   P9:  { "Never":0.0, "Rarely — once or twice a year":0.3, "Sometimes — every few months":0.6, "Often — every month or more":1.0 },
-  P10: { "Stopped completely":1.0, "Reduced significantly":0.75, "Reduced a little":0.4, "No change":0.1, "Increased":0.0 },
-  P11: { "Yes, avoided at least one loan":1.0, "Possibly":0.5, "No":0.0, "Not applicable":0.3 },
-  A1b: { "Yes, significantly reduced":1.0, "Yes, somewhat reduced":0.65, "No change":0.2, "Debt has increased":0.0 },
-  A1c: { "Yes, much less dependent":1.0, "Yes, a little less":0.6, "About the same":0.2, "More dependent":0.0 },
+  // P10: borrowing change
+  P10: { "Stopped completely":1.0, "Reduced significantly":0.75, "Reduced a little":0.4, "No change":0.0, "Increased":-0.2 },
+  // P11: loan avoidance
+  P11: { "Yes, avoided at least one loan":1.0, "Possibly":0.5, "No":0.0, "Not applicable":0.0 },
+  // A1b: total debt change
+  A1b: { "Yes, significantly reduced":1.0, "Yes, somewhat reduced":0.65, "No change":0.0, "Debt has increased":-0.2 },
+  // A1c: borrowing dependence
+  A1c: { "Yes, much less dependent":1.0, "Yes, a little less":0.6, "About the same":0.0, "More dependent":-0.2 },
 
   // ── SAVINGS & ASSETS ──
-  // Savings is a forward-looking financial behaviour — not livelihood, not relief
   N1:  { "Yes, saving regularly":1.0, "Yes, saving occasionally":0.65, "Tried but couldn't":0.3, "No":0.0 },
-  // Asset creation is a distinct outcome from savings or income generation
   N2:  { "Yes, multiple assets":1.0, "Yes, one asset":0.7, "No":0.0 },
+
   // ── NUTRITION & HEALTH ──
-  // Health spend increase is a consumption quality indicator, not household stability
-  N3:  { "Yes, significantly more":1.0, "Yes, a little more":0.65, "About the same":0.2, "Less":0.0 },
-  // Nutrition quality — a direct welfare outcome distinct from expense stability
-  N4:  { "Yes, much better":1.0, "Yes, a little better":0.65, "About the same":0.2, "Worse":0.0 },
+  N3:  { "Yes, significantly more":1.0, "Yes, a little more":0.65, "About the same":0.0, "Less":-0.2 },
+  N4:  { "Yes, much better":1.0, "Yes, a little better":0.65, "About the same":0.0, "Worse":-0.2 },
 
   // ── EDUCATION ──
-  // Education spend is a developmental investment category, not stabilisation
-  N5:  { "Yes, significantly more":1.0, "Yes, a little more":0.65, "No change":0.1, "Not applicable — no children in school":0.4 },
+  N5:  { "Yes, significantly more":1.0, "Yes, a little more":0.65, "No change":0.0, "Not applicable — no children in school":0.0 },
 
-  // ── WOMEN'S EMPOWERMENT ──
-  // P13 is scale5 — stores "1"–"5"; 1=not at all confident, 5=very confident
-  P13: { "1":0.0, "2":0.25, "3":0.5, "4":0.75, "5":1.0 },
-  P14: { "Yes, much more confident":1.0, "Yes, a little more confident":0.65, "No change":0.2, "Less confident":0.0 },
-  P15: { "Yes, a lot more":1.0, "Yes, a little more":0.6, "No change":0.2, "Less say than before":0.0 },
+  // ── FINANCIAL CONFIDENCE ──
+  // P13 scale5: 1=not at all, 5=very confident
+  P13: { "1":-0.2, "2":0.0, "3":0.5, "4":0.75, "5":1.0 },
+  P14: { "Yes, much more confident":1.0, "Yes, a little more confident":0.65, "No change":0.0, "Less confident":-0.2 },
+
+  // ── HOUSEHOLD AGENCY ──
+  // E1: whose account (new always-shown question)
+  E1:  { "Directly into my own account":1.0, "Joint account I can access":0.6, "My husband's account":0.0, "Another family member's account":0.0 },
+  // E2: who decides spending (new always-shown question)
+  E2:  { "I decide":1.0, "Jointly with my husband":0.7, "Mostly my husband":0.0, "My husband or family decides":-0.2 },
+  // P15: more say since receiving
+  P15: { "Yes, a lot more":1.0, "Yes, a little more":0.6, "No change":0.0, "Less say than before":-0.2 },
+  // P16: planning ahead
   P16: { "Yes, regularly":1.0, "Yes, sometimes":0.65, "Not yet but she wants to":0.3, "No":0.0 },
-  A6b: { "Yes, I decide alone":1.0, "Yes, jointly with my husband":0.8, "My husband decides":0.2, "Another family member decides":0.1 },
-  A6c: { "Yes, I have much more say":1.0, "Yes, a little more say":0.6, "No change":0.2, "Less say":0.0 },
-  A6d: { "Yes, much more":1.0, "Yes, a little":0.6, "No change":0.2, "Less respected":0.0 },
-  N7:  { "I feel much more valued":1.0, "I feel somewhat more valued":0.65, "No change":0.2, "I feel less valued":0.0 },
-  // Intra-household respect and consultation
-  // Financial independence from family — agency, not credit relief
-  N12: { "Yes, much more independent":1.0, "Yes, somewhat more independent":0.65, "No change":0.2, "More dependent than before":0.0 },
+  // A6b: spending decisions (adaptive)
+  A6b: { "Yes, I have much more say now":1.0, "Yes, a little more say":0.6, "No change":0.0, "I have even less say now":-0.2 },
+  // A6c: decision role change (adaptive, max 1 follow-up after E1/E2)
+  A6c: { "Yes, I have much more say":1.0, "Yes, a little more say":0.6, "No change":0.0, "Less say":-0.2 },
+
+  // ── SOCIAL EMPOWERMENT ──
+  N7:  { "I feel much more valued":1.0, "I feel somewhat more valued":0.65, "No change":0.0, "I feel less valued":-0.2 },
+  N12: { "Yes, much more independent":1.0, "Yes, somewhat more independent":0.65, "No change":0.0, "More dependent than before":-0.2 },
 
   // ── FINANCIAL INCLUSION ──
-  // Banking adoption is a behavioural/inclusion outcome — distinct from confidence or debt
-  N8:  { "I use it regularly now — didn't before":1.0, "I use it more than before":0.7, "About the same as before":0.3, "I don't have or use a bank account":0.0 },
-  // Financial planning behaviour — literacy and habit formation
+  N8:  { "I use it regularly now — didn't before":1.0, "I use it more than before":0.7, "About the same as before":0.0, "I don't have or use a bank account":0.0 },
   N9:  { "Yes, I keep a record or budget":1.0, "Yes, I set aside money for specific purposes":0.8, "Yes, I use an SHG or savings group":0.7, "No specific practice":0.0 },
 
   // ── LIVELIHOOD & ENTERPRISE ──
-  // These only score if she selected livelihood/farm use in P1 (adaptive branch)
   A4b: { "Yes, generating regular income":1.0, "Yes, some additional income":0.65, "Not yet but she expects it to":0.3, "No income generated":0.0 },
   A4c: { "Yes, for household members":0.8, "Yes, for community members":1.0, "No":0.0 },
   A4d: { "Yes, expand":1.0, "Yes, continue at same level":0.65, "Uncertain":0.3, "No":0.0 },
 
   // ── COMMUNITY & SOCIAL ──
-  CS1: { "Yes, spending more":1.0, "About the same":0.3, "Spending less locally":0.0 },
+  CS1: { "Yes, spending more":1.0, "About the same":0.0, "Spending less locally":-0.2 },
   CS3: { "Yes, regularly":1.0, "Yes, occasionally":0.6, "No":0.0 },
-  CS5: { "Yes, more active":1.0, "About the same":0.3, "Less active":0.0 },
+  CS5: { "Yes, more active":1.0, "About the same":0.0, "Less active":-0.2 },
 };
 
 // Which composite(s) each question feeds, and its weight within that composite
@@ -205,11 +227,12 @@ const Q_EFFECTS = {
   P14: [["Financial Confidence",3]],   // confidence change since DBT — primary
 
   // ── HOUSEHOLD AGENCY ── (decision-making power and control over household money)
-  P15: [["Household Agency",3]],       // more say in household spending — primary
+  E1:  [["Household Agency",3]],       // whose account DBT lands in — primary structural signal
+  E2:  [["Household Agency",3]],       // who decides spending — primary agency signal
+  P15: [["Household Agency",2]],       // perceived change in say since receiving
   P16: [["Household Agency",2]],       // forward financial planning behaviour
-  A6b: [["Household Agency",3]],       // adaptive: who decides how money is spent — primary
-  A6c: [["Household Agency",2]],       // adaptive: role in household financial decisions
-  A6d: [["Household Agency",1]],       // adaptive: household respect signal
+  A6b: [["Household Agency",2]],       // adaptive: spending decisions confirmed
+  A6c: [["Household Agency",2]],       // adaptive: role change confirmed (max 1 follow-up after E1/E2)
 
   // ── SOCIAL EMPOWERMENT ── (mobility, dignity, family dynamics, independence)
   N7:  [["Social Empowerment",3]],     // self-worth and dignity — primary
@@ -243,15 +266,15 @@ const OPEN_BOOST = {
   V4:  ["Household Stability","Financial Confidence","Social Empowerment","Community & Social","Nutrition & Health","Education"],
 };
 
-function calcScores(answers: Record<string, unknown>) {
-  const totals: Record<string, number> = {}, weights: Record<string, number> = {};
+function calcScores(answers) {
+  const totals = {}, weights = {};
   Object.keys(EC).forEach(k => { totals[k]=0; weights[k]=0; });
 
   // Structured question scoring via Q_EFFECTS
   Object.entries(Q_EFFECTS).forEach(([qid, effs]) => {
-    const val = (SCORE_MAP as Record<string, Record<string, number>>)[qid]?.[answers[qid] as string];
+    const val = SCORE_MAP[qid]?.[answers[qid]];
     if (val === undefined) return;
-    effs.forEach(([eff, w]) => { totals[eff] += val*(w as number); weights[eff] += (w as number); });
+    effs.forEach(([eff, w]) => { totals[eff] += val*w; weights[eff] += w; });
   });
 
   // P1 multi-select: each selection type feeds the correct composite
@@ -288,23 +311,26 @@ function calcScores(answers: Record<string, unknown>) {
     effs.forEach(eff => { totals[eff]+=5; weights[eff]+=5; });
   });
 
-  const result: Record<string, number> = {};
+  const result = {};
   Object.keys(EC).forEach(k => {
-    result[k] = weights[k] > 0 ? Math.min(100, Math.round((totals[k]/weights[k])*100)) : 0;
+    if (weights[k] === 0) { result[k] = 0; return; }
+    const raw = (totals[k] / weights[k]) * 100;
+    // Clamp: negative responses can pull below 0, floor at -20
+    result[k] = Math.max(-20, Math.min(100, Math.round(raw)));
   });
   return result;
 }
 
 // Rollup Rootstory scores → IIT Madras 4-dimension scores
-function calcIITMScores(scores: Record<string, number>): Record<string, number> {
-  const dims: Record<string, number> = {};
-  const dimWeights: Record<string, number> = {};
+function calcIITMScores(scores) {
+  const dims = {};
+  const dimWeights = {};
   Object.entries(IITM_DIMS).forEach(([rs, dim]) => {
-    if (dims[dim] === undefined) { dims[dim]=0; dimWeights[dim]=0; }
+    if (!dims[dim]) { dims[dim]=0; dimWeights[dim]=0; }
     dims[dim] += scores[rs];
     dimWeights[dim]++;
   });
-  const result: Record<string, number> = {};
+  const result = {};
   Object.keys(dims).forEach(d => { result[d] = Math.round(dims[d]/dimWeights[d]); });
   return result;
 }
@@ -391,6 +417,10 @@ const ALL_QUESTIONS = [
   { id:"S2",  module:"setup", label:"District", type:"select", options:MH_DISTRICTS, required:true },
   { id:"S4",  module:"setup", label:"Village / Area", type:"text", placeholder:"Enter village or area name", required:true },
   { id:"S5",  module:"setup", label:"Location", type:"location", required:false },
+
+  // ── MODULE: CONSENT — moved here so researcher gets consent before scheme/sampling details ──
+  { id:"C1", module:"consent", label:"Consent confirmed", type:"consent", required:true },
+
   { id:"S8",  module:"setup", label:"Which DBT scheme is she receiving?", type:"select", options:MH_SCHEMES, required:true },
   { id:"S9",  module:"setup", label:"Household type", type:"single",
     options:["Lives alone","Nuclear family","Joint family","Female-headed household"], required:false },
@@ -417,9 +447,6 @@ const ALL_QUESTIONS = [
     options:["Married","Widowed","Separated / divorced","Single / never married"],
     hint:"Researcher fills — from observation or records", required:true },
 
-  // ── MODULE: CONSENT ───────────────────────────────────────────────────────
-  { id:"C1", module:"consent", label:"Consent confirmed", type:"consent", required:true },
-
   // ── MODULE: CORE — Fund use & importance ─────────────────────────────────
   { id:"P1", module:"core",
     label:"How did she mainly use the DBT money she received?", hint:"Select all that apply",
@@ -435,8 +462,9 @@ const ALL_QUESTIONS = [
     label:"Before receiving this money, how difficult was it to cover essential household expenses each month?",
     type:"scale5", scaleLabels:["Very difficult","Difficult","Neither easy nor hard","Easy","Very easy"], required:true },
   { id:"P4", module:"core",
-    label:"Since receiving this money, how difficult is it now?",
-    type:"scale5", scaleLabels:["Very difficult","Difficult","Neither easy nor hard","Easy","Very easy"], required:true },
+    label:"Compared to before — has the pressure of covering household expenses felt any different since this money started coming?",
+    hint:"₹1,500 may not make expenses easy — we are asking about the feeling of relief relative to before, not whether things are now comfortable.",
+    type:"scale5", scaleLabels:["Still just as hard","A little easier","Somewhat easier","Much easier","Completely different — real relief"], required:true },
 
   // DEPTH — Before Moment (always)
   { id:"D1", module:"depth",
@@ -501,6 +529,19 @@ const ALL_QUESTIONS = [
     label:"Has she been able to spend more on her children's education — fees, books, uniforms, or tuition?",
     type:"single", options:["Yes, significantly more","Yes, a little more","No change","Not applicable — no children in school"],
     required:true },
+  // ── CORE — Account & Spending Control (always shown — core agency signals) ─
+  { id:"E1", module:"core",
+    label:"Does the Ladki Bahin payment come directly into her own bank account?",
+    hint:"Ask whose account the money goes into — this is the most basic indicator of financial access",
+    type:"single",
+    options:["Directly into my own account","Joint account I can access","My husband's account","Another family member's account"],
+    required:true },
+  { id:"E2", module:"core",
+    label:"When this money arrives — who decides how it is spent?",
+    type:"single",
+    options:["I decide","Jointly with my husband","Mostly my husband","My husband or family decides"],
+    required:true },
+
   // ── CORE — Confidence & Agency ────────────────────────────────────────────
   { id:"P13", module:"core",
     label:"On a scale of 1–5, how confident does she feel in managing her household's finances today?",
@@ -538,43 +579,45 @@ const ALL_QUESTIONS = [
     trigger:(a)=>["4","5"].includes(a["P13"])||["Yes, much more confident","Yes, a little more confident"].includes(a["P14"])||["Yes, a lot more","Yes, a little more"].includes(a["P15"]),
     depthCategory:"Predictability & Dignity", badge:"✦ Story Depth" },
 
-  // ── ADAPTIVE — Debt repayment ─────────────────────────────────────────────
-  { id:"A1a", module:"adaptive", label:"What type of debt did she repay with this money?", type:"multi",
-    options:["Moneylender","Microfinance / SHG loan","Bank loan","Family or friend","Other"],
-    trigger:(a)=>Array.isArray(a["P1"])&&a["P1"].includes("Repaying a loan or debt") },
-  { id:"A1b", module:"adaptive", label:"Has she been able to reduce the total debt her household carries?",
+  // ── ADAPTIVE — Debt (max 2 follow-ups, triggered after P10 shows change) ────
+  // A1b: Has debt reduced? — triggered when P10 shows any reduction AND P1 includes debt
+  { id:"A1b", module:"adaptive",
+    label:"Has she been able to reduce the total amount of debt her household carries?",
     type:"single", options:["Yes, significantly reduced","Yes, somewhat reduced","No change","Debt has increased"],
-    trigger:(a)=>Array.isArray(a["P1"])&&a["P1"].includes("Repaying a loan or debt") },
-  { id:"A1c", module:"adaptive", label:"Does she feel less dependent on borrowing to get through the month?",
+    trigger:(a)=>Array.isArray(a["P1"])&&a["P1"].includes("Repaying a loan or debt")&&["Stopped completely","Reduced significantly","Reduced a little"].includes(a["P10"]) },
+  // A1c: Less dependent on borrowing? — triggered same context, 2nd and final debt follow-up
+  { id:"A1c", module:"adaptive",
+    label:"Does she feel less dependent on borrowing to get through the month now?",
     type:"single", options:["Yes, much less dependent","Yes, a little less","About the same","More dependent"],
-    trigger:(a)=>Array.isArray(a["P1"])&&a["P1"].includes("Repaying a loan or debt") },
+    trigger:(a)=>Array.isArray(a["P1"])&&a["P1"].includes("Repaying a loan or debt")&&["Stopped completely","Reduced significantly","Reduced a little"].includes(a["P10"]) },
 
-  // ── ADAPTIVE — Livelihood ─────────────────────────────────────────────────
-  { id:"A4a", module:"adaptive", label:"What type of livelihood or farm activity did she use the money for?", type:"multi",
-    options:["Seeds or fertiliser","Livestock or poultry","Small shop or trade","Tools or equipment","Skills or training","Other"],
-    trigger:(a)=>Array.isArray(a["P1"])&&a["P1"].includes("Starting or running a business or farm activity") },
-  { id:"A4b", module:"adaptive", label:"Did this activity generate income or improve the household's productive capacity?",
+  // ── ADAPTIVE — Livelihood (max 2 follow-ups after P1 livelihood selection) ─
+  // A4b: Income generated? — primary livelihood outcome
+  { id:"A4b", module:"adaptive",
+    label:"Did this activity generate income or improve the household's productive capacity?",
     type:"single", options:["Yes, generating regular income","Yes, some additional income","Not yet but she expects it to","No income generated"],
     trigger:(a)=>Array.isArray(a["P1"])&&a["P1"].includes("Starting or running a business or farm activity") },
-  { id:"A4c", module:"adaptive", label:"Did this activity create paid work for others in her household or community?",
-    type:"single", options:["Yes, for household members","Yes, for community members","No"],
-    trigger:(a)=>Array.isArray(a["P1"])&&a["P1"].includes("Starting or running a business or farm activity") },
-  { id:"A4d", module:"adaptive", label:"Does she plan to continue or expand this activity in the next 6 months?",
+  // A4d: Plans to continue? — sustainability signal, 2nd and final livelihood follow-up
+  { id:"A4d", module:"adaptive",
+    label:"Does she plan to continue or expand this activity in the next 6 months?",
     type:"single", options:["Yes, expand","Yes, continue at same level","Uncertain","No"],
     trigger:(a)=>Array.isArray(a["P1"])&&a["P1"].includes("Starting or running a business or farm activity") },
 
-  // ── ADAPTIVE — Women's agency ─────────────────────────────────────────────
-  { id:"A6b", module:"adaptive", label:"Does she personally decide how the money is spent?",
-    type:"single", options:["Yes, I decide alone","Yes, jointly with my husband","My husband decides","Another family member decides"],
-    trigger:(a)=>["Yes, a lot more","Yes, a little more"].includes(a["P15"]) },
-  { id:"A6c", module:"adaptive", label:"Has her role in household financial decisions changed since receiving this money?",
+  // ── ADAPTIVE — Agency (max 2 follow-ups, contextually triggered after E1/E2) ─
+  // A6b: Spending decisions detail — triggered when E2 shows limited agency (husband/family decides)
+  //      to understand if this is a change from before or a structural constraint
+  { id:"A6b", module:"adaptive",
+    label:"Has that changed at all since she started receiving this money — does she have more of a say now?",
+    type:"single", options:["Yes, I have much more say now","Yes, a little more say","No change","I have even less say now"],
+    trigger:(a)=>["My husband or family decides","Mostly my husband"].includes(a["E2"]) },
+  // A6c: Role change confirmation — triggered when P15 shows positive change
+  //      to get specifics on how the change manifests
+  { id:"A6c", module:"adaptive",
+    label:"Has her role in household financial decisions changed since receiving this money?",
     type:"single", options:["Yes, I have much more say","Yes, a little more say","No change","Less say"],
     trigger:(a)=>["Yes, a lot more","Yes, a little more"].includes(a["P15"]) },
-  { id:"A6d", module:"adaptive", label:"Does she feel more respected or listened to in the household since she started receiving this payment?",
-    type:"single", options:["Yes, much more","Yes, a little","No change","Less respected"],
-    trigger:(a)=>["Yes, a lot more","Yes, a little more"].includes(a["P15"]) },
 
-  // N11–N12: intra-household dynamics + independence (after agency branch or always)
+  // N12: Financial independence — always shown (core social empowerment signal)
   { id:"N12", module:"adaptive",
     label:"Does she feel more financially independent — less dependent on her husband or family — since receiving this payment?",
     type:"single", options:["Yes, much more independent","Yes, somewhat more independent","No change","More dependent than before"],
@@ -819,9 +862,9 @@ export default function RootstoryInterview() {
     }, 700);
   }
 
-  const moduleBreakpoints: Record<string, number> = {};
-  visibleQuestions.forEach((q,i) => { if (moduleBreakpoints[q.module] === undefined) moduleBreakpoints[q.module]=i; });
-  const completedModules = Object.entries(moduleBreakpoints).filter(([,i])=>(i as number)<currentIdx).map(([m])=>m);
+  const moduleBreakpoints = {};
+  visibleQuestions.forEach((q,i) => { if (!moduleBreakpoints[q.module]) moduleBreakpoints[q.module]=i; });
+  const completedModules = Object.entries(moduleBreakpoints).filter(([,i])=>i<currentIdx).map(([m])=>m);
 
   function resetAll() {
     setAnswers({}); setCurrentIdx(0); setNarrative(""); setNarLoading(false);
@@ -835,8 +878,9 @@ export default function RootstoryInterview() {
   if (phase === "login") return (
     <div style={SS.shell}>
       <div style={SS.loginCard}>
-        <div style={SS.logoRing}><span style={{fontSize:24,fontWeight:"bold",color:C.white,fontFamily:"Georgia,serif"}}>R</span></div>
-        <h1 style={{fontSize:26,color:C.ink,margin:0,letterSpacing:1.5,fontWeight:"normal",fontFamily:"Georgia,serif"}}>Rootstory</h1>
+        <div style={{padding:"14px 20px",background:C.teal,borderRadius:8,marginBottom:4}}>
+          <span style={{fontSize:28,fontWeight:"bold",color:C.white,fontFamily:"Trebuchet MS,Arial,sans-serif",letterSpacing:0}}>root</span><span style={{fontSize:28,fontWeight:"normal",color:C.amber,fontFamily:"Trebuchet MS,Arial,sans-serif"}}>story</span>
+        </div>
         <p style={{fontSize:12,color:C.grey,margin:0,textAlign:"center"}}>Ladki Bahin Yojana · IIT Madras Social Audit · Researcher Login</p>
         <div style={{width:32,height:2,background:C.tealMid,borderRadius:1}} />
         {!otpSent ? (
@@ -880,7 +924,7 @@ export default function RootstoryInterview() {
     const depthLabels = {D1:"Before Moment",D2:"Turning Point",D4:"Predictability & Dignity",D6:"Own Words",D7:"What Would Be Lost"};
     const collected = depthIds.map(id=>({id,label:depthLabels[id],a:answers[id]})).filter(x=>x.a);
     const iitmColors = {
-      "Economic Security":              {bg:C.tealLight,  b:C.teal,   t:C.tealDark},
+      "Economic Security":              {bg:"#E8F5EE",    b:"#0D2818",t:"#071A0E"},
       "Women's Empowerment":           {bg:"#F0EBF8",    b:"#5B3A8C",t:"#3A1A6A"},
       "Consumption Quality & Multiplier":{bg:C.greenLight,b:C.green,  t:C.green},
       "Social Transformation":          {bg:"#FFF3E0",    b:"#E65100",t:"#BF360C"},
@@ -1056,7 +1100,7 @@ export default function RootstoryInterview() {
   const isDepth = current.module==="depth"||current.module==="narrative";
   const isNarrativeDisplay = current.type==="narrative_display";
   const isSetupMeta = current.researcherOnly === true;
-  const effArr = (current as { effect?: string | string[] }).effect ? (Array.isArray((current as { effect?: string | string[] }).effect)?(current as { effect?: string[] }).effect!:[(current as { effect?: string }).effect!]) : [];
+  const effArr = current.effect ? (Array.isArray(current.effect)?current.effect:[current.effect]) : [];
 
   return (
     <div style={SS.shell}>
@@ -1070,7 +1114,9 @@ export default function RootstoryInterview() {
         {/* SIDEBAR */}
         <div style={{width:200,flexShrink:0,display:"flex",flexDirection:"column",gap:12}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",paddingBottom:8,borderBottom:`2px solid ${C.tealMid}`}}>
-            <span style={{fontSize:16,fontWeight:"bold",color:C.teal,letterSpacing:2,fontFamily:"Georgia,serif"}}>Rootstory</span>
+            <span style={{fontFamily:"Trebuchet MS,Arial,sans-serif",fontSize:16,letterSpacing:0}}>
+              <span style={{fontWeight:"bold",color:C.teal}}>root</span><span style={{fontWeight:"normal",color:C.amber}}>story</span>
+            </span>
             <span title={online?"Online":"Offline"} style={{width:8,height:8,borderRadius:"50%",background:online?C.green:C.red,flexShrink:0}} />
           </div>
           <div style={{fontSize:9,color:C.grey,lineHeight:1.6}}>
@@ -1333,12 +1379,10 @@ export default function RootstoryInterview() {
   );
 }
 
-import type { CSSProperties } from "react";
-
-const SS: Record<string, CSSProperties> = {
-  shell:{ minHeight:"100vh", background:C.paper, fontFamily:"Georgia,serif", display:"flex", flexDirection:"column" as const },
-  loginCard:{ maxWidth:420, margin:"80px auto", background:C.white, borderRadius:14, padding:"40px 44px", boxShadow:"0 8px 40px rgba(26,26,46,0.1)", display:"flex", flexDirection:"column" as const, alignItems:"center", gap:14, border:`1px solid ${C.border}` },
+const SS = {
+  shell:{ minHeight:"100vh", background:C.paper, fontFamily:"Georgia,serif", display:"flex", flexDirection:"column" },
+  loginCard:{ maxWidth:420, margin:"80px auto", background:C.white, borderRadius:14, padding:"40px 44px", boxShadow:"0 8px 40px rgba(26,26,46,0.1)", display:"flex", flexDirection:"column", alignItems:"center", gap:14, border:`1px solid ${C.border}` },
   logoRing:{ width:48, height:48, borderRadius:"50%", background:C.teal, display:"flex", alignItems:"center", justifyContent:"center" },
-  primaryBtn:{ width:"100%", padding:"12px", borderRadius:7, border:"none", background:C.teal, color:C.white, fontSize:14, fontFamily:"Georgia,serif", cursor:"pointer", letterSpacing:0.3, transition:"opacity 0.15s" },
-  completeWrap:{ maxWidth:880, margin:"0 auto", width:"100%", padding:"20px 20px 40px", display:"flex", flexDirection:"column" as const, gap:0 },
+  primaryBtn:{ width:"100%", padding:"12px", borderRadius:7, border:"none", background:C.teal, color:C.white, fontSize:14, fontFamily:"Trebuchet MS,Arial,sans-serif", cursor:"pointer", letterSpacing:0.3, transition:"opacity 0.15s" },
+  completeWrap:{ maxWidth:880, margin:"0 auto", width:"100%", padding:"20px 20px 40px", display:"flex", flexDirection:"column", gap:0 },
 };
