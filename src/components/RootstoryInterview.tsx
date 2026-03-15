@@ -819,9 +819,9 @@ export default function RootstoryInterview() {
     }, 700);
   }
 
-  const moduleBreakpoints = {};
-  visibleQuestions.forEach((q,i) => { if (!moduleBreakpoints[q.module]) moduleBreakpoints[q.module]=i; });
-  const completedModules = Object.entries(moduleBreakpoints).filter(([,i])=>i<currentIdx).map(([m])=>m);
+  const moduleBreakpoints: Record<string, number> = {};
+  visibleQuestions.forEach((q,i) => { if (moduleBreakpoints[q.module] === undefined) moduleBreakpoints[q.module]=i; });
+  const completedModules = Object.entries(moduleBreakpoints).filter(([,i])=>(i as number)<currentIdx).map(([m])=>m);
 
   function resetAll() {
     setAnswers({}); setCurrentIdx(0); setNarrative(""); setNarLoading(false);
