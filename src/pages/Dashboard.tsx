@@ -97,7 +97,7 @@ function scoreColor(v: number): string {
 // No local seed — data lives in the database
 
 // ─── MAIN DASHBOARD ───────────────────────────────────────────────────────────
-export default function Dashboard() {
+export default function Dashboard({ embedded = false }: { embedded?: boolean }) {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
