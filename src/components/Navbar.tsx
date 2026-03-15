@@ -33,7 +33,7 @@ const Navbar = () => {
       >
         <div className="container mx-auto flex items-center justify-between py-5 px-6">
           <div className="flex items-center gap-2">
-            <img src={rootstoryIcon} alt="Rootstory" className="w-7 h-7" style={{ mixBlendMode: "screen" }} />
+            <img src={rootstoryIcon} alt="Rootstory" className="w-7 h-7 rounded-sm" />
             <span className="font-display text-cream text-[22px] font-semibold tracking-tight">
               root<span className="text-amber">story</span>
             </span>
