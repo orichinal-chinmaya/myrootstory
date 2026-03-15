@@ -882,7 +882,7 @@ export default function RootstoryInterview() {
         <div style={{padding:"14px 20px",background:C.teal,borderRadius:8,marginBottom:4}}>
           <span style={{fontSize:28,fontWeight:"bold",color:C.white,fontFamily:"Trebuchet MS,Arial,sans-serif",letterSpacing:0}}>root</span><span style={{fontSize:28,fontWeight:"normal",color:C.amber,fontFamily:"Trebuchet MS,Arial,sans-serif"}}>story</span>
         </div>
-        <p style={{fontSize:12,color:C.grey,margin:0,textAlign:"center"}}>Ladki Bahin Yojana · IIT Madras Social Audit · Researcher Login</p>
+        <p style={{fontSize:12,color:C.grey,margin:0,textAlign:"center"}}>Ladki Bahin Yojana · Social Audit · Researcher Login</p>
         <div style={{width:32,height:2,background:C.tealMid,borderRadius:1}} />
         {!otpSent ? (
           <div style={{width:"100%",display:"flex",flexDirection:"column",gap:10}}>
