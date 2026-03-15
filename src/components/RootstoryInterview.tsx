@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
+import type { CSSProperties } from "react";
 
 // ─── OFFLINE QUEUE ────────────────────────────────────────────────────────────
 const QUEUE_KEY = "rootstory_queue";
