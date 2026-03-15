@@ -288,7 +288,7 @@ function calcScores(answers: Record<string, unknown>) {
     effs.forEach(eff => { totals[eff]+=5; weights[eff]+=5; });
   });
 
-  const result = {};
+  const result: Record<string, number> = {};
   Object.keys(EC).forEach(k => {
     result[k] = weights[k] > 0 ? Math.min(100, Math.round((totals[k]/weights[k])*100)) : 0;
   });
@@ -296,15 +296,15 @@ function calcScores(answers: Record<string, unknown>) {
 }
 
 // Rollup Rootstory scores → IIT Madras 4-dimension scores
-function calcIITMScores(scores) {
-  const dims = {};
-  const dimWeights = {};
+function calcIITMScores(scores: Record<string, number>): Record<string, number> {
+  const dims: Record<string, number> = {};
+  const dimWeights: Record<string, number> = {};
   Object.entries(IITM_DIMS).forEach(([rs, dim]) => {
-    if (!dims[dim]) { dims[dim]=0; dimWeights[dim]=0; }
+    if (dims[dim] === undefined) { dims[dim]=0; dimWeights[dim]=0; }
     dims[dim] += scores[rs];
     dimWeights[dim]++;
   });
-  const result = {};
+  const result: Record<string, number> = {};
   Object.keys(dims).forEach(d => { result[d] = Math.round(dims[d]/dimWeights[d]); });
   return result;
 }
