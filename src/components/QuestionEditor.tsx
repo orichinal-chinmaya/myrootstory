@@ -425,9 +425,9 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
             <MetaCell label="Composite">
               <span style={{fontSize:12,fontWeight:500,padding:"2px 9px",borderRadius:4,background:cc.bg,color:cc.text}}>{q.composite}</span>
             </MetaCell>
-            {IITM_DIM[q.composite] && (
-              <MetaCell label="IIT Madras">
-                <span style={{fontSize:12,color:"#8A8A9A"}}>{IITM_DIM[q.composite]}</span>
+            {IMPACT_DIM[q.composite] && (
+              <MetaCell label="Impact Dimension">
+                <span style={{fontSize:12,color:"#8A8A9A"}}>{IMPACT_DIM[q.composite]}</span>
               </MetaCell>
             )}
             {q.weight && (
