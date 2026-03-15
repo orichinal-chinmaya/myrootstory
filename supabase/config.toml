@@ -1,1 +1,7 @@
 project_id = "xosiqalbfjkjcruwmjuh"
+
+[functions.generate-narrative]
+verify_jwt = false
+
+[functions.analyze-themes]
+verify_jwt = false
