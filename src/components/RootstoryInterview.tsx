@@ -808,8 +808,34 @@ export default function RootstoryInterview() {
     impactSnap: Record<string, number>
   ) {
     try {
-      const { error } = await supabase.from("stories").upsert({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase as any).from("stories").upsert({
         id:               String(answersSnap["S1"] || Date.now()),
+        timestamp:        String(answersSnap["timestamp"] || new Date().toISOString()),
+        researcher_id:    researcher?.id || null,
+        district:         String(answersSnap["S2"] || ""),
+        village:          String(answersSnap["S4"] || ""),
+        scheme:           String(answersSnap["S8"] || ""),
+        narrative:        narrative || null,
+        validated:        false,
+        answers:          answersSnap,
+        scores:           scoresSnap,
+        impact_scores:    impactSnap,
+        settlement_type:  String(answersSnap["SM1"] || ""),
+        income_range:     String(answersSnap["SM2"] || ""),
+        age_group:        String(answersSnap["SM3"] || ""),
+        education_level:  String(answersSnap["SM4"] || ""),
+        social_category:  String(answersSnap["SM5"] || ""),
+        marital_status:   String(answersSnap["SM6"] || ""),
+        household_type:   String(answersSnap["S9"]  || ""),
+        livelihood:       String(answersSnap["S10"] || ""),
+        themes:           [],
+      });
+      if (error) console.error("DB save error:", error);
+    } catch (e) {
+      console.error("saveToDatabase:", e);
+    }
+  }
         timestamp:        String(answersSnap["timestamp"] || new Date().toISOString()),
         researcher_id:    researcher?.id || null,
         district:         String(answersSnap["S2"] || ""),
