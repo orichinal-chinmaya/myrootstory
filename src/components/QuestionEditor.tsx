@@ -197,8 +197,146 @@ export default function QuestionEditor() {
     })), []);
 
   const handleExport = () => {
-    const blob = new Blob([JSON.stringify({questions,translations:trans,exportedAt:new Date().toISOString()},null,2)],{type:"application/json"});
-    const a = Object.assign(document.createElement("a"),{href:URL.createObjectURL(blob),download:"rootstory_questions.json"});
+    // ─── Build WhatsApp Flow JSON ───────────────────────────────────────────────
+    // Group questions into screens of max ~8 components (leave room for Footer)
+    const SCREEN_SIZE = 6;
+    const scorableQs  = questions.filter(q => q.type !== "location" && q.type !== "consent" && q.type !== "open");
+    const chunks: Question[][] = [];
+    for (let i = 0; i < scorableQs.length; i += SCREEN_SIZE)
+      chunks.push(scorableQs.slice(i, i + SCREEN_SIZE));
+
+    const getLang = (qid: string, key: "label"): string =>
+      (lang !== "en" && trans[lang]?.[qid]?.label) ? trans[lang][qid].label! : "";
+    const getOptLang = (qid: string, opt: string): string =>
+      (lang !== "en" && trans[lang]?.[qid]?.opts?.[opt]) ? trans[lang][qid].opts![opt] : "";
+
+    const buildDataSource = (q: Question) =>
+      q.options.map((opt, idx) => ({
+        id: `${q.id}_opt_${idx}`,
+        title: (getOptLang(q.id, opt) || opt),
+        ...(q.scores && q.scores[opt] !== undefined
+          ? { metadata: { score: q.scores[opt], composite: q.composite } }
+          : {}),
+      }));
+
+    const buildChildren = (qs: Question[]) => {
+      const children: object[] = [];
+      qs.forEach(q => {
+        const displayLabel = getLang(q.id, "label") || q.label;
+        if (q.type === "multi") {
+          children.push({
+            type: "CheckboxGroup",
+            label: displayLabel,
+            name: q.id,
+            required: q.always,
+            "data-source": buildDataSource(q),
+            ...(q.hint ? { description: q.hint } : {}),
+          });
+        } else if (q.type === "single" || q.type === "scale5") {
+          children.push({
+            type: "RadioButtonsGroup",
+            label: displayLabel,
+            name: q.id,
+            required: q.always,
+            "data-source": buildDataSource(q),
+            ...(q.hint ? { description: q.hint } : {}),
+          });
+        } else if (q.type === "text") {
+          children.push({
+            type: "TextInput",
+            label: displayLabel,
+            name: q.id,
+            required: q.always,
+            "input-type": "text",
+          });
+        } else if (q.type === "select") {
+          children.push({
+            type: "Dropdown",
+            label: displayLabel,
+            name: q.id,
+            required: q.always,
+            "data-source": buildDataSource(q),
+          });
+        }
+      });
+      return children;
+    };
+
+    const screenIds = chunks.map((_, i) => `SCREEN_${String(i + 1).padStart(2, "0")}`);
+    const routingModel: Record<string, string[]> = {};
+    screenIds.forEach((sid, i) => {
+      routingModel[sid] = i < screenIds.length - 1 ? [screenIds[i + 1]] : [];
+    });
+
+    const screens = chunks.map((qs, i) => {
+      const sid   = screenIds[i];
+      const isLast = i === chunks.length - 1;
+      const compositeSet = [...new Set(qs.map(q => q.composite))];
+      const children = buildChildren(qs);
+
+      // Wrap in Form for all screens
+      const formChildren: object[] = [
+        ...children,
+        {
+          type: "Footer",
+          label: isLast ? "Submit" : "Next",
+          "on-click-action": {
+            name: isLast ? "complete" : "navigate",
+            ...(isLast ? {} : { next: { type: "screen", name: screenIds[i + 1] } }),
+            payload: Object.fromEntries(
+              qs.filter(q => q.options.length > 0).map(q => [q.id, `\${form.${q.id}}`])
+            ),
+          },
+        },
+      ];
+
+      return {
+        id: sid,
+        title: compositeSet.join(" · ").substring(0, 60),
+        layout: {
+          type: "SingleColumnLayout",
+          children: [
+            {
+              type: "Form",
+              name: `form_${sid.toLowerCase()}`,
+              children: formChildren,
+            },
+          ],
+        },
+      };
+    });
+
+    // Build scoring metadata as a separate data block for reference
+    const scoringMetadata = questions
+      .filter(q => q.scores && Object.keys(q.scores).length > 0)
+      .map(q => ({
+        id: q.id,
+        composite: q.composite,
+        weight: q.weight,
+        impact_dimension: IMPACT_DIM[q.composite] || null,
+        scores: q.scores,
+      }));
+
+    const waFlow = {
+      version: "6.0",
+      data_api_version: "3.0",
+      routing_model: routingModel,
+      screens,
+      // ── Rootstory-specific metadata (not rendered by WhatsApp) ──────────────
+      _rootstory_metadata: {
+        exportedAt: new Date().toISOString(),
+        language: lang,
+        total_questions: questions.length,
+        scoring_map: scoringMetadata,
+        translations: lang !== "en" ? trans : undefined,
+      },
+    };
+
+    const blob = new Blob([JSON.stringify(waFlow, null, 2)], { type: "application/json" });
+    const a = Object.assign(document.createElement("a"), {
+      href: URL.createObjectURL(blob),
+      download: `rootstory_whatsapp_flow_${lang}.json`,
+    });
     a.click();
   };
 
@@ -241,7 +379,7 @@ export default function QuestionEditor() {
           ))}
         </div>
         <button onClick={handleExport} style={{padding:"5px 14px",borderRadius:5,border:"1px solid rgba(255,255,255,0.2)",background:"transparent",color:"rgba(255,255,255,0.75)",cursor:"pointer",fontSize:12,fontFamily:"Georgia, serif"}}>
-          ↓ Export JSON
+          ↓ WhatsApp Flow JSON
         </button>
         <button onClick={handleSave} style={{padding:"5px 16px",borderRadius:5,border:"none",fontFamily:"Georgia, serif",cursor:"pointer",fontSize:12,fontWeight:500,background:flash?"#2E7D52":"#E8A020",color:flash?"#fff":"#0D2818",transition:"background 0.2s"}}>
           {flash?"✓ Saved":"Save"}
