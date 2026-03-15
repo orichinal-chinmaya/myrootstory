@@ -6,6 +6,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
   RadarChart, Radar, PolarGrid, PolarAngleAxis,
 } from "recharts";
+import MaharashtraMap from "@/components/MaharashtraMap";
 
 // ─── TYPES ────────────────────────────────────────────────────────────────────
 interface Story {
