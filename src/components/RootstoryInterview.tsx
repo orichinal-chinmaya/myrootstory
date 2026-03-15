@@ -126,69 +126,51 @@ const MH_SCHEMES = [
 // Weight: 1=supporting, 2=strong signal, 3=primary measure.
 
 const SCORE_MAP = {
-  // Scoring convention:
-  //   Positive effect  → 0.4–1.0  (proportional to strength)
-  //   Weak positive    → 0.3
-  //   No effect/neutral → 0.0     (no contribution to score)
-  //   Negative effect  → -0.2     (reduces composite score)
-  // P3/P4 scale5: UI stores "1"–"5" (position), not label text
-
   // ── HOUSEHOLD STABILITY ──
-  // P3: baseline difficulty — higher = more room for improvement (context weight)
   P3: { "1":1.0, "2":0.75, "3":0.5, "4":0.25, "5":0.0 },
-  // P4: relative relief felt — see rephrased question
   P4: { "1":-0.2, "2":0.0, "3":0.4, "4":0.75, "5":1.0 },
-  // P5: stability change
   P5: { "Yes, much more stable":1.0, "Yes, somewhat more stable":0.6, "No change":0.0, "No, less stable":-0.2 },
-  // P7: shock absorption (only shown if P6=Yes)
   P7: { "Yes, managed without borrowing":1.0, "Yes, but had to borrow":0.4, "No, could not manage it":-0.2, "Not applicable":0.0 },
-  // P8: month-end pressure
-  P8: { "Yes, significantly":1.0, "Yes, a little":0.6, "No difference":0.0, "Pressure has increased":-0.2 },
+  P7b: { "Yes, she's confident she could":1.0, "Maybe, depends on the size":0.6, "Probably not":0.0, "Don't know / uncertain":0.3 },
+  P8: { "Yes, significantly more breathing room":1.0, "Yes, a little more breathing room":0.6, "No difference":0.0, "Less breathing room than before":-0.2 },
 
   // ── DEBT & CREDIT RELIEF ──
-  // P9: baseline borrowing frequency (context — higher baseline = more scope for relief)
   P9:  { "Never":0.0, "Rarely — once or twice a year":0.3, "Sometimes — every few months":0.6, "Often — every month or more":1.0 },
-  // P10: borrowing change
   P10: { "Stopped completely":1.0, "Reduced significantly":0.75, "Reduced a little":0.4, "No change":0.0, "Increased":-0.2 },
-  // P11: loan avoidance
   P11: { "Yes, avoided at least one loan":1.0, "Possibly":0.5, "No":0.0, "Not applicable":0.0 },
-  // A1b: total debt change
+  P12: { "Much better":1.0, "Somewhat better":0.65, "About the same":0.0, "Worse":-0.2 },
   A1b: { "Yes, significantly reduced":1.0, "Yes, somewhat reduced":0.65, "No change":0.0, "Debt has increased":-0.2 },
-  // A1c: borrowing dependence
   A1c: { "Yes, much less dependent":1.0, "Yes, a little less":0.6, "About the same":0.0, "More dependent":-0.2 },
 
   // ── SAVINGS & ASSETS ──
   N1:  { "Yes, saving regularly":1.0, "Yes, saving occasionally":0.65, "Tried but couldn't":0.3, "No":0.0 },
   N2:  { "Yes, multiple assets":1.0, "Yes, one asset":0.7, "No":0.0 },
+  CQ6: { "Most of it (more than half)":1.0, "About half":0.65, "Less than half":0.3, "Almost none — it covers daily survival":0.0 },
 
   // ── NUTRITION & HEALTH ──
   N3:  { "Yes, significantly more":1.0, "Yes, a little more":0.65, "About the same":0.0, "Less":-0.2 },
   N4:  { "Yes, much better":1.0, "Yes, a little better":0.65, "About the same":0.0, "Worse":-0.2 },
 
   // ── EDUCATION ──
-  N5:  { "Yes, significantly more":1.0, "Yes, a little more":0.65, "No change":0.0, "Not applicable — no children in school":0.0 },
+  N5:  { "Yes, significantly more":1.0, "Yes, a little more":0.65, "No change":0.0, "Not applicable — no children in school":0.4 },
 
   // ── FINANCIAL CONFIDENCE ──
-  // P13 scale5: 1=not at all, 5=very confident
   P13: { "1":-0.2, "2":0.0, "3":0.5, "4":0.75, "5":1.0 },
   P14: { "Yes, much more confident":1.0, "Yes, a little more confident":0.65, "No change":0.0, "Less confident":-0.2 },
 
   // ── HOUSEHOLD AGENCY ──
-  // E1: whose account (new always-shown question)
   E1:  { "Directly into my own account":1.0, "Joint account I can access":0.6, "My husband's account":0.0, "Another family member's account":0.0 },
-  // E2: who decides spending (new always-shown question)
   E2:  { "I decide":1.0, "Jointly with my husband":0.7, "Mostly my husband":0.0, "My husband or family decides":-0.2 },
-  // P15: more say since receiving
   P15: { "Yes, a lot more":1.0, "Yes, a little more":0.6, "No change":0.0, "Less say than before":-0.2 },
-  // P16: planning ahead
   P16: { "Yes, regularly":1.0, "Yes, sometimes":0.65, "Not yet but she wants to":0.3, "No":0.0 },
-  // A6b: spending decisions (adaptive)
   A6b: { "Yes, I have much more say now":1.0, "Yes, a little more say":0.6, "No change":0.0, "I have even less say now":-0.2 },
-  // A6c: decision role change (adaptive, max 1 follow-up after E1/E2)
   A6c: { "Yes, I have much more say":1.0, "Yes, a little more say":0.6, "No change":0.0, "Less say":-0.2 },
+  WE8: { "Yes, much more":1.0, "Yes, a little":0.6, "No change":0.0, "Less respected":0.0 },
 
   // ── SOCIAL EMPOWERMENT ──
   N7:  { "I feel much more valued":1.0, "I feel somewhat more valued":0.65, "No change":0.0, "I feel less valued":-0.2 },
+  WE9: { "Yes, much freer":1.0, "Yes, somewhat freer":0.65, "No change":0.0, "Less free than before":-0.2 },
+  WE11:{ "Yes, they respect me more":1.0, "Yes, they consult me more on decisions":0.8, "No change":0.0, "The relationship has become more difficult":-0.2 },
   N12: { "Yes, much more independent":1.0, "Yes, somewhat more independent":0.65, "No change":0.0, "More dependent than before":-0.2 },
 
   // ── FINANCIAL INCLUSION ──
@@ -204,6 +186,8 @@ const SCORE_MAP = {
   CS1: { "Yes, spending more":1.0, "About the same":0.0, "Spending less locally":-0.2 },
   CS3: { "Yes, regularly":1.0, "Yes, occasionally":0.6, "No":0.0 },
   CS5: { "Yes, more active":1.0, "About the same":0.0, "Less active":-0.2 },
+  ST2: { "Yes, she feels more respected":1.0, "About the same":0.3, "She feels less respected":0.0 },
+  ST3: { "Yes, regularly":1.0, "Yes, occasionally":0.55, "No":0.0 },
 };
 
 // Which composite(s) each question feeds, and its weight within that composite
