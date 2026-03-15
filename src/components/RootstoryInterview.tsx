@@ -715,6 +715,9 @@ export default function RootstoryInterview() {
   const online = useOnline();
   const cardRef = useRef(null);
 
+  // Load questions with any overrides saved by QuestionEditor
+  const QUESTIONS = useMemo(() => applyEditorOverrides(ALL_QUESTIONS), []);
+
   // Refresh queue display whenever we return to complete screen
   useEffect(() => {
     setQueue(loadQueue());
@@ -725,7 +728,7 @@ export default function RootstoryInterview() {
     if (online && loadQueue().length > 0) syncQueue();
   }, [online]);
 
-  const visibleQuestions = ALL_QUESTIONS.filter(q => {
+  const visibleQuestions = QUESTIONS.filter(q => {
     if (!q.trigger) return true;
     try { return q.trigger(answers); } catch { return false; }
   });
