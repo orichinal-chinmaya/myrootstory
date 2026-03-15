@@ -672,6 +672,26 @@ const MODULE_ICONS = {
 };
 
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
+// ─── APPLY QUESTION EDITOR OVERRIDES ─────────────────────────────────────────
+function applyEditorOverrides(questions: typeof ALL_QUESTIONS) {
+  try {
+    const raw = localStorage.getItem("rootstory_question_overrides");
+    if (!raw) return questions;
+    const overrides: Record<string, { label?: string; options?: string[] }> = JSON.parse(raw);
+    return questions.map(q => {
+      const ov = overrides[q.id];
+      if (!ov) return q;
+      return {
+        ...q,
+        ...(ov.label    !== undefined ? { label:   ov.label }   : {}),
+        ...(ov.options  !== undefined ? { options: ov.options } : {}),
+        // keep scaleLabels in sync if options replaced
+        ...((ov.options !== undefined && (q as any).scaleLabels) ? { scaleLabels: ov.options } : {}),
+      };
+    });
+  } catch { return questions; }
+}
+
 export default function RootstoryInterview() {
   const [phase, setPhase]             = useState("login");
   const [researcher, setResearcher]   = useState(null);
