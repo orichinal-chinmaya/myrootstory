@@ -123,10 +123,8 @@ export default function Dashboard() {
         .order("timestamp", { ascending: false });
       if (error) {
         console.error(error);
-        setStories(SEED_STORIES);
         setIsDemo(true);
       } else if (!data || data.length === 0) {
-        setStories(SEED_STORIES);
         setIsDemo(true);
       } else {
         setStories(data as Story[]);
