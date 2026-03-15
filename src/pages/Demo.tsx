@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import RootstoryInterview from "@/components/RootstoryInterview";
 import QuestionEditor from "@/components/QuestionEditor";
+import Dashboard from "@/pages/Dashboard";
 
 const DEMO_CODE  = "rootstorydemo";
 const ADMIN_CODE = "Orichinal2026!";
 
-type Tab = "demo" | "admin";
+type Tab = "demo" | "dashboard" | "admin";
 
 const GateCard = ({
   title,
@@ -46,6 +47,8 @@ const GateCard = ({
       <p className="text-sm text-[#3A3A5C] text-center leading-relaxed">
         {title === "Interactive Demo"
           ? "Enter your access code to explore the Rootstory interview tool — a live demonstration of adaptive AI-assisted narrative capture."
+          : title === "Dashboard"
+          ? "Enter your access code to explore the Policy Intelligence Dashboard — quantitative scores, story map, and AI-powered theme discovery."
           : "Enter the admin code to access the question editor and scoring configuration."}
       </p>
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-3">
@@ -77,14 +80,22 @@ const GateCard = ({
   );
 };
 
+const TAB_META: { id: Tab; label: string; subtitle: string }[] = [
+  { id: "demo",      label: "Interview",  subtitle: "Interactive Demo" },
+  { id: "dashboard", label: "Dashboard",  subtitle: "Policy Intelligence" },
+  { id: "admin",     label: "Admin",      subtitle: "Question Editor" },
+];
+
 const Demo = () => {
   const [activeTab, setActiveTab] = useState<Tab>("demo");
-  const [demoUnlocked,  setDemoUnlocked]  = useState(false);
-  const [adminUnlocked, setAdminUnlocked] = useState(false);
+  const [demoUnlocked,      setDemoUnlocked]      = useState(false);
+  const [dashboardUnlocked, setDashboardUnlocked] = useState(false);
+  const [adminUnlocked,     setAdminUnlocked]     = useState(false);
 
-  // Once unlocked, render the full-screen tool
-  if (activeTab === "demo"  && demoUnlocked)  return <RootstoryInterview />;
-  if (activeTab === "admin" && adminUnlocked) return <QuestionEditor />;
+  // Full-screen unlocked views
+  if (activeTab === "demo"      && demoUnlocked)      return <RootstoryInterview />;
+  if (activeTab === "dashboard" && dashboardUnlocked) return <Dashboard embedded />;
+  if (activeTab === "admin"     && adminUnlocked)     return <QuestionEditor />;
 
   return (
     <div
@@ -100,36 +111,36 @@ const Demo = () => {
 
       {/* Tab switcher */}
       <div className="flex gap-1 mb-8 bg-white border border-[#D8D4CC] rounded-lg p-1">
-        {(["demo", "admin"] as Tab[]).map((tab) => (
+        {TAB_META.map(({ id, label }) => (
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
+            key={id}
+            onClick={() => setActiveTab(id)}
             className="px-5 py-2 rounded-md text-sm transition-colors"
             style={{
               fontFamily: "Georgia, serif",
-              background: activeTab === tab ? "#1A7A7A" : "transparent",
-              color: activeTab === tab ? "#fff" : "#8A8A9A",
+              background: activeTab === id ? "#1A7A7A" : "transparent",
+              color: activeTab === id ? "#fff" : "#8A8A9A",
             }}
           >
-            {tab === "demo" ? "Demo" : "Admin"}
+            {label}
           </button>
         ))}
       </div>
 
-      {activeTab === "demo" ? (
-        <GateCard
-          title="Interactive Demo"
-          subtitle="Interactive Demo"
-          code={DEMO_CODE}
-          onUnlock={() => setDemoUnlocked(true)}
-        />
-      ) : (
-        <GateCard
-          title="Admin"
-          subtitle="Question Editor"
-          code={ADMIN_CODE}
-          onUnlock={() => setAdminUnlocked(true)}
-        />
+      {TAB_META.map(({ id, label, subtitle }) =>
+        activeTab === id ? (
+          <GateCard
+            key={id}
+            title={label}
+            subtitle={subtitle}
+            code={id === "admin" ? ADMIN_CODE : DEMO_CODE}
+            onUnlock={() => {
+              if (id === "demo")      setDemoUnlocked(true);
+              if (id === "dashboard") setDashboardUnlocked(true);
+              if (id === "admin")     setAdminUnlocked(true);
+            }}
+          />
+        ) : null
       )}
     </div>
   );
