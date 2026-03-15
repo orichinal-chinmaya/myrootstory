@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import roosterImg from "@/assets/rooster.png";
+import rootstoryIcon from "@/assets/rootstory-icon.png";
 
 const Blog = () => {
   return (

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import RootstoryInterview from "@/components/RootstoryInterview";
+import rootstoryIcon from "@/assets/rootstory-icon.png";
 import QuestionEditor from "@/components/QuestionEditor";
 import Dashboard from "@/pages/Dashboard";
 
