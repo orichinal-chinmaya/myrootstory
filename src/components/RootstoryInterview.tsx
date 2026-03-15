@@ -1153,7 +1153,7 @@ export default function RootstoryInterview() {
           {/* DATA TAB */}
           {activeTab==="data" && (
             <div style={{background:C.white,border:`1px solid ${C.border}`,borderTop:"none",borderRadius:"0 0 12px 12px",display:"flex",flexDirection:"column"}}>
-              {[{id:"S1",label:"Participant ID"},{id:"timestamp",label:"Timestamp"},...ALL_QUESTIONS].filter(q=>answers[q.id]).map((q,i)=>(
+              {[{id:"S1",label:"Participant ID"},{id:"timestamp",label:"Timestamp"},...QUESTIONS].filter(q=>answers[q.id]).map((q,i)=>(
                 <div key={q.id} style={{display:"flex",gap:10,padding:"9px 20px",background:i%2===0?C.greyLight:C.white,alignItems:"flex-start",borderBottom:`1px solid ${C.paperDark}`}}>
                   <span style={{fontFamily:"monospace",fontSize:10,color:C.teal,width:40,flexShrink:0,marginTop:1}}>{q.id}</span>
                   <span style={{fontSize:11,color:C.grey,flex:"0 0 220px",lineHeight:1.4}}>{(q.label||"").slice(0,55)}{(q.label||"").length>55?"…":""}</span>
