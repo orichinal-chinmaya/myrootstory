@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import rootstoryIcon from "@/assets/rootstory-icon-dark.png";
+import rootstoryIcon from "@/assets/rootstory-icon.png";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
