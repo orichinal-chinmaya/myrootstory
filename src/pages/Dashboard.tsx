@@ -577,15 +577,25 @@ export default function Dashboard({ embedded = false }: { embedded?: boolean }) 
 
               {showCustom && (
                 <div style={{ marginTop:14, display:"flex", flexDirection:"column" as const, gap:8 }}>
-                  <label style={{ fontSize:11, fontWeight:"bold", color:C.grey, textTransform:"uppercase" as const, letterSpacing:0.5 }}>Custom analysis prompt</label>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                    <label style={{ fontSize:11, fontWeight:"bold", color:C.grey, textTransform:"uppercase" as const, letterSpacing:0.5 }}>Custom analysis question</label>
+                    <button onClick={() => setCustomPrompt("")}
+                      style={{ fontSize:11, color:C.grey, background:"transparent", border:`1px solid ${C.border}`, borderRadius:4, padding:"2px 8px", cursor:"pointer" }}>
+                      Clear
+                    </button>
+                  </div>
                   <textarea value={customPrompt} onChange={e => setCustomPrompt(e.target.value)}
-                    placeholder="e.g. Identify how this programme has affected children's outcomes. Focus on education, nutrition, and social mobility signals."
-                    rows={3}
-                    style={{ width:"100%", padding:"10px 12px", border:`1px solid ${C.border}`, borderRadius:6, fontSize:13, fontFamily:"Georgia,serif", resize:"vertical", boxSizing:"border-box" as const }} />
-                  <button onClick={() => runAnalysis("custom")} disabled={analysisLoading || !customPrompt.trim()}
-                    style={{ alignSelf:"flex-start", padding:"7px 16px", borderRadius:6, border:"none", background:C.amber, color:C.teal, cursor:"pointer", fontSize:12, fontFamily:"Georgia,serif", opacity:(!customPrompt.trim()||analysisLoading)?0.5:1 }}>
-                    Run Custom Analysis
-                  </button>
+                    rows={7}
+                    style={{ width:"100%", padding:"10px 12px", border:`1.5px solid ${C.teal}`, borderRadius:6, fontSize:13, fontFamily:"Georgia,serif", resize:"vertical", boxSizing:"border-box" as const, lineHeight:1.6, outline:"none" }} />
+                  <div style={{ display:"flex", gap:8, alignItems:"center", flexWrap:"wrap" as const }}>
+                    <button onClick={() => runAnalysis("custom")} disabled={analysisLoading || !customPrompt.trim()}
+                      style={{ padding:"9px 20px", borderRadius:6, border:"none", background:C.amber, color:C.teal, cursor:(!customPrompt.trim()||analysisLoading)?"not-allowed":"pointer", fontSize:13, fontWeight:"bold", fontFamily:"Georgia,serif", opacity:(!customPrompt.trim()||analysisLoading)?0.5:1 }}>
+                      {analysisLoading ? "Analysing…" : selectedStories.size > 0 ? `✦ Run on ${selectedStories.size} selected` : `✦ Run on ${Math.min(filtered.length,20)} stories`}
+                    </button>
+                    <span style={{ fontSize:11, color:C.grey }}>
+                      {selectedStories.size > 0 ? `${selectedStories.size} stories selected` : `Using up to ${Math.min(filtered.length,20)} filtered stories`}
+                    </span>
+                  </div>
                 </div>
               )}
             </div>
