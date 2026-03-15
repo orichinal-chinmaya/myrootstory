@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import rootstoryIcon from "@/assets/rootstory-icon-dark.png";
+import rootstoryIcon from "@/assets/rootstory-icon.png";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -261,7 +261,7 @@ export default function Dashboard({ embedded = false }: { embedded?: boolean }) 
       {!embedded && (
         <div style={{ background:C.teal, padding:"0 24px", height:56, display:"flex", alignItems:"center", gap:16, flexShrink:0 }}>
           <div style={{ display:"flex", alignItems:"center", gap:10, fontFamily:"Georgia,serif", fontSize:18 }}>
-            <img src={rootstoryIcon} alt="Rootstory" style={{ width:28, height:28, objectFit:"contain" }} />
+            <img src={rootstoryIcon} alt="Rootstory" style={{ width:28, height:28, objectFit:"contain", mixBlendMode:"screen" }} />
             <span><span style={{ fontWeight:"bold", color:"#fff" }}>root</span><span style={{ color:C.amber }}>story</span></span>
             <span style={{ color:"rgba(255,255,255,0.35)", fontSize:12, marginLeft:4 }}>Narrative Intelligence</span>
           </div>
