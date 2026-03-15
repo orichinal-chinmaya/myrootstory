@@ -6,6 +6,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
   RadarChart, Radar, PolarGrid, PolarAngleAxis,
 } from "recharts";
+import MaharashtraMap from "@/components/MaharashtraMap";
 
 // ─── TYPES ────────────────────────────────────────────────────────────────────
 interface Story {
@@ -93,63 +94,7 @@ function scoreColor(v: number): string {
   return "#B03020";
 }
 
-// ─── SEED DATA (shown when table is empty) ───────────────────────────────────
-const SEED_STORIES: Story[] = [
-  {
-    id: "DEMO-001", timestamp: "2025-03-01T08:00:00Z", researcher_id: "R1234",
-    district: "Nashik", village: "Sinnar", scheme: "Mukhyamantri Majhi Ladki Bahin Yojana (₹1,500/month)",
-    narrative: "Before this money came I had to ask my husband for every small purchase — even a bottle of oil. Now ₹1,500 arrives in my own account every month and I decide. I have started saving ₹500 each time. Last October I bought a sewing machine. I am teaching two neighbours. My husband has stopped asking me to borrow from the moneylender.",
-    validated: true, answers: {}, themes: ["Financial Autonomy", "Asset Creation", "Peer Learning"],
-    scores: { "Household Stability":72,"Debt & Credit Relief":80,"Savings & Assets":85,"Nutrition & Health":55,"Education":40,"Financial Confidence":78,"Household Agency":90,"Social Empowerment":70,"Financial Inclusion":75,"Livelihood & Enterprise":68,"Community & Social":60 },
-    impact_scores: { "Economic Security":79,"Consumption Quality":47,"Women's Empowerment":78,"Social Transformation":60 },
-    settlement_type:"Semi-urban", income_range:"₹5,000–10,000", age_group:"26–35", education_level:"Secondary (Class 6–10)", social_category:"OBC", marital_status:"Married", household_type:"Nuclear family", livelihood:"Small business / trade", created_at:"2025-03-01T08:00:00Z",
-  },
-  {
-    id: "DEMO-002", timestamp: "2025-03-02T09:30:00Z", researcher_id: "R5678",
-    district: "Pune", village: "Baramati", scheme: "Mukhyamantri Majhi Ladki Bahin Yojana (₹1,500/month)",
-    narrative: "My daughter missed school fees twice before. Now I keep the DBT money separate and her fees are paid on the first day. She has not missed a single exam. My mother-in-law used to say I could not manage money. Now I show her the passbook.",
-    validated: true, answers: {}, themes: ["Education Investment", "Dignity & Respect", "Intergenerational Change"],
-    scores: { "Household Stability":65,"Debt & Credit Relief":50,"Savings & Assets":60,"Nutrition & Health":70,"Education":95,"Financial Confidence":72,"Household Agency":65,"Social Empowerment":80,"Financial Inclusion":60,"Livelihood & Enterprise":30,"Community & Social":45 },
-    impact_scores: { "Economic Security":58,"Consumption Quality":82,"Women's Empowerment":69,"Social Transformation":45 },
-    settlement_type:"Rural", income_range:"Below ₹5,000", age_group:"36–45", education_level:"Primary (up to Class 5)", social_category:"SC", marital_status:"Married", household_type:"Joint family", livelihood:"Agriculture (own land)", created_at:"2025-03-02T09:30:00Z",
-  },
-  {
-    id: "DEMO-003", timestamp: "2025-03-03T10:00:00Z", researcher_id: "R1234",
-    district: "Nagpur", village: "Kamptee", scheme: "Mukhyamantri Majhi Ladki Bahin Yojana (₹1,500/month)",
-    narrative: "When my husband fell ill in November I did not have to go to a moneylender. I had saved three months of the payment. The doctor bill was covered. This is the first time in twelve years of marriage that a crisis did not leave us in debt.",
-    validated: true, answers: {}, themes: ["Shock Absorption", "Debt Avoidance", "Crisis Resilience"],
-    scores: { "Household Stability":88,"Debt & Credit Relief":92,"Savings & Assets":78,"Nutrition & Health":62,"Education":50,"Financial Confidence":75,"Household Agency":60,"Social Empowerment":65,"Financial Inclusion":70,"Livelihood & Enterprise":40,"Community & Social":55 },
-    impact_scores: { "Economic Security":86,"Consumption Quality":56,"Women's Empowerment":67,"Social Transformation":55 },
-    settlement_type:"Urban", income_range:"₹5,000–10,000", age_group:"36–45", education_level:"Secondary (Class 6–10)", social_category:"General", marital_status:"Married", household_type:"Nuclear family", livelihood:"Daily wage labour", created_at:"2025-03-03T10:00:00Z",
-  },
-  {
-    id: "DEMO-004", timestamp: "2025-03-05T11:00:00Z", researcher_id: "R9012",
-    district: "Aurangabad", village: "Paithan", scheme: "Mukhyamantri Majhi Ladki Bahin Yojana (₹1,500/month)",
-    narrative: "I joined the SHG six months ago because other Ladki Bahin women were in it. Together we pool some of the payment every month. We have given three members a small loan this year — no interest. The bank manager now knows my name.",
-    validated: false, answers: {}, themes: ["Collective Action", "Informal Finance", "Banking Dignity"],
-    scores: { "Household Stability":60,"Debt & Credit Relief":55,"Savings & Assets":70,"Nutrition & Health":65,"Education":45,"Financial Confidence":80,"Household Agency":72,"Social Empowerment":88,"Financial Inclusion":85,"Livelihood & Enterprise":55,"Community & Social":92 },
-    impact_scores: { "Economic Security":62,"Consumption Quality":55,"Women's Empowerment":81,"Social Transformation":92 },
-    settlement_type:"Rural", income_range:"Below ₹5,000", age_group:"26–35", education_level:"No formal education", social_category:"ST", marital_status:"Married", household_type:"Joint family", livelihood:"Agricultural labour", created_at:"2025-03-05T11:00:00Z",
-  },
-  {
-    id: "DEMO-005", timestamp: "2025-03-07T14:00:00Z", researcher_id: "R5678",
-    district: "Kolhapur", village: "Ichalkaranji", scheme: "Mukhyamantri Majhi Ladki Bahin Yojana (₹1,500/month)",
-    narrative: "My husband used to take whatever came into the house. When the Ladki Bahin money started coming to my own account he tried the same thing. I told him it was my account and my money. After two months he stopped asking. He now brings his wage to me first.",
-    validated: true, answers: {}, themes: ["Financial Autonomy", "Intra-household Negotiation", "Power Shift"],
-    scores: { "Household Stability":55,"Debt & Credit Relief":45,"Savings & Assets":50,"Nutrition & Health":60,"Education":50,"Financial Confidence":70,"Household Agency":95,"Social Empowerment":90,"Financial Inclusion":80,"Livelihood & Enterprise":35,"Community & Social":50 },
-    impact_scores: { "Economic Security":50,"Consumption Quality":55,"Women's Empowerment":84,"Social Transformation":50 },
-    settlement_type:"Semi-urban", income_range:"₹5,000–10,000", age_group:"26–35", education_level:"Higher Secondary (Class 11–12)", social_category:"OBC", marital_status:"Married", household_type:"Nuclear family", livelihood:"No paid work", created_at:"2025-03-07T14:00:00Z",
-  },
-  {
-    id: "DEMO-006", timestamp: "2025-03-10T09:00:00Z", researcher_id: "R9012",
-    district: "Nashik", village: "Igatpuri", scheme: "Mukhyamantri Majhi Ladki Bahin Yojana (₹1,500/month)",
-    narrative: "I started buying vegetables in bulk and selling to the women in my lane. I earn ₹800 extra each month. I used the first three Ladki Bahin payments to buy a small weighing scale and two crates. The business is small but it is mine.",
-    validated: true, answers: {}, themes: ["Micro-enterprise", "Asset Creation", "Income Generation"],
-    scores: { "Household Stability":70,"Debt & Credit Relief":60,"Savings & Assets":75,"Nutrition & Health":65,"Education":40,"Financial Confidence":85,"Household Agency":75,"Social Empowerment":72,"Financial Inclusion":68,"Livelihood & Enterprise":88,"Community & Social":78 },
-    impact_scores: { "Economic Security":68,"Consumption Quality":52,"Women's Empowerment":75,"Social Transformation":78 },
-    settlement_type:"Rural", income_range:"Below ₹5,000", age_group:"36–45", education_level:"Primary (up to Class 5)", social_category:"OBC", marital_status:"Widowed", household_type:"Female-headed household", livelihood:"Small business / trade", created_at:"2025-03-10T09:00:00Z",
-  },
-];
+// No local seed — data lives in the database
 
 // ─── MAIN DASHBOARD ───────────────────────────────────────────────────────────
 export default function Dashboard() {
@@ -165,7 +110,7 @@ export default function Dashboard() {
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [customPrompt, setCustomPrompt] = useState("");
   const [showCustom, setShowCustom] = useState(false);
-  const [activeTab, setActiveTab] = useState<"overview"|"stories"|"themes"|"policy">("overview");
+  const [activeTab, setActiveTab] = useState<"overview"|"stories"|"themes"|"policy"|"map">("overview");
   const [isDemo, setIsDemo] = useState(false);
 
   // Load stories
@@ -178,10 +123,8 @@ export default function Dashboard() {
         .order("timestamp", { ascending: false });
       if (error) {
         console.error(error);
-        setStories(SEED_STORIES);
         setIsDemo(true);
       } else if (!data || data.length === 0) {
-        setStories(SEED_STORIES);
         setIsDemo(true);
       } else {
         setStories(data as Story[]);
@@ -303,6 +246,7 @@ export default function Dashboard() {
 
   const TABS = [
     { id:"overview", label:"Overview" },
+    { id:"map",      label:"◉ Map" },
     { id:"stories",  label:`Stories (${filtered.length})` },
     { id:"themes",   label:"AI Theme Discovery" },
     { id:"policy",   label:"Policy Signals" },
@@ -463,6 +407,31 @@ export default function Dashboard() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* ═══════════════════ MAP ═══════════════════ */}
+        {activeTab === "map" && (
+          <div style={{ display:"flex", flexDirection:"column" as const, gap:20, animation:"fadeIn 0.3s ease" }}>
+            <div style={{ background:C.white, border:`1px solid ${C.border}`, borderRadius:12, padding:"18px 20px" }}>
+              <h2 style={{ fontSize:15, fontWeight:"bold", color:C.teal, margin:"0 0 4px" }}>
+                Maharashtra Story Map
+              </h2>
+              <p style={{ fontSize:12, color:C.grey, margin:"0 0 16px", lineHeight:1.6 }}>
+                {totalStories} stories across {totalDistricts} district{totalDistricts !== 1 ? "s" : ""}. Click a district to read its narratives. Toggle between story count and impact score views.
+              </p>
+              <MaharashtraMap
+                stories={stories.map(s => ({
+                  id: s.id,
+                  district: s.district,
+                  validated: s.validated,
+                  scores: s.scores || {},
+                  narrative: s.narrative || "",
+                  themes: s.themes || [],
+                }))}
+                onDistrictClick={d => { setFilterDistrict(d); }}
+              />
+            </div>
           </div>
         )}
 
