@@ -246,6 +246,7 @@ export default function Dashboard() {
 
   const TABS = [
     { id:"overview", label:"Overview" },
+    { id:"map",      label:"◉ Map" },
     { id:"stories",  label:`Stories (${filtered.length})` },
     { id:"themes",   label:"AI Theme Discovery" },
     { id:"policy",   label:"Policy Signals" },
