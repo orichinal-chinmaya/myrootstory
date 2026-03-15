@@ -33,12 +33,14 @@ const Navbar = () => {
       >
         <div className="container mx-auto flex items-center justify-between py-5 px-6">
           <div className="flex items-end gap-2">
-            <img
-              src={rootstoryIcon}
-              alt="Rootstory"
-              className="w-auto"
-              style={{ height: 44, marginBottom: -4, objectFit: "cover", objectPosition: "center top" }}
-            />
+            <div className="bg-forest-deep" style={{ height: 44, display:"inline-flex", alignItems:"center", justifyContent:"center" }}>
+              <img
+                src={rootstoryIcon}
+                alt="Rootstory"
+                className="w-auto"
+                style={{ height: 44, objectFit: "cover", objectPosition: "center top" }}
+              />
+            </div>
             <span className="font-display text-cream text-[22px] font-semibold tracking-tight leading-none pb-1">
               root<span className="text-amber">story</span>
             </span>
