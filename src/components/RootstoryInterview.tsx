@@ -273,9 +273,9 @@ function calcScores(answers) {
 
   // Structured question scoring via Q_EFFECTS
   Object.entries(Q_EFFECTS).forEach(([qid, effs]) => {
-    const val = SCORE_MAP[qid]?.[answers[qid]];
+    const val = (SCORE_MAP as Record<string, Record<string, number>>)[qid]?.[answers[qid] as string];
     if (val === undefined) return;
-    effs.forEach(([eff, w]) => { totals[eff] += val*w; weights[eff] += w; });
+    effs.forEach(([eff, w]) => { totals[eff] += (val as number)*(w as number); weights[eff] += (w as number); });
   });
 
   // P1 multi-select: each selection type feeds the correct composite
