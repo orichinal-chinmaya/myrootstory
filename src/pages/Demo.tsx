@@ -120,12 +120,14 @@ const Demo = () => {
         <GateCard
           title="Interactive Demo"
           subtitle="Interactive Demo"
+          code={DEMO_CODE}
           onUnlock={() => setDemoUnlocked(true)}
         />
       ) : (
         <GateCard
           title="Admin"
           subtitle="Question Editor"
+          code={ADMIN_CODE}
           onUnlock={() => setAdminUnlocked(true)}
         />
       )}
