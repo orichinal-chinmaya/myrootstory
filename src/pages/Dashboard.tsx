@@ -260,10 +260,10 @@ export default function Dashboard({ embedded = false }: { embedded?: boolean }) 
       {/* ── TOP BAR ── */}
       {!embedded && (
         <div style={{ background:C.teal, padding:"0 24px", height:56, display:"flex", alignItems:"center", gap:16, flexShrink:0 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:10, fontFamily:"Trebuchet MS,sans-serif", fontSize:18 }}>
-            <img src={rootstoryIcon} alt="Rootstory" style={{ width:30, height:30, objectFit:"contain" }} />
-            <span style={{ fontWeight:"bold", color:"#fff" }}>root</span><span style={{ color:C.amber }}>story</span>
-            <span style={{ color:"rgba(255,255,255,0.35)", fontSize:12, marginLeft:4 }}>Policy Intelligence</span>
+          <div style={{ display:"flex", alignItems:"center", gap:10, fontFamily:"Georgia,serif", fontSize:18 }}>
+            <img src={rootstoryIcon} alt="Rootstory" style={{ width:28, height:28, objectFit:"contain" }} />
+            <span><span style={{ fontWeight:"bold", color:"#fff" }}>root</span><span style={{ color:C.amber }}>story</span></span>
+            <span style={{ color:"rgba(255,255,255,0.35)", fontSize:12, marginLeft:4 }}>Narrative Intelligence</span>
           </div>
           <div style={{ flex:1 }} />
           {isDemo && (
