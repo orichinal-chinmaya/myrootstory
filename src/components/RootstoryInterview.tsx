@@ -731,8 +731,10 @@ export default function RootstoryInterview() {
       setCurrentIdx(i => i + 1);
       setTimeout(() => cardRef.current?.scrollTo(0,0), 50);
     } else {
-      // Always save record to queue on completion (as backup + for offline narrative)
-      saveToQueue(answers, calcScores(answers));
+      const finalScores = calcScores(answers);
+      const finalIitm   = calcIITMScores(answers);
+      saveToQueue(answers, finalScores);
+      saveToDatabase(answers, finalScores, finalIitm);
       setPhase("complete");
     }
   }
