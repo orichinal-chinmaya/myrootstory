@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import type { CSSProperties } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 // ─── OFFLINE QUEUE ────────────────────────────────────────────────────────────
 const QUEUE_KEY = "rootstory_queue";
@@ -729,8 +731,10 @@ export default function RootstoryInterview() {
       setCurrentIdx(i => i + 1);
       setTimeout(() => cardRef.current?.scrollTo(0,0), 50);
     } else {
-      // Always save record to queue on completion (as backup + for offline narrative)
-      saveToQueue(answers, calcScores(answers));
+      const finalScores = calcScores(answers);
+      const finalIitm   = calcIITMScores(answers);
+      saveToQueue(answers, finalScores);
+      saveToDatabase(answers, finalScores, finalIitm);
       setPhase("complete");
     }
   }
@@ -754,28 +758,36 @@ export default function RootstoryInterview() {
   async function generateNarrative() {
     setNarLoading(true); setNarError(""); setNarrative(""); setValidated(false);
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method:"POST", headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({
-          model:"claude-sonnet-4-20250514", max_tokens:1000,
-          messages:[{ role:"user", content: buildPrompt(answers) }]
-        })
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-narrative`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ answers }),
+        }
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        if (res.status === 429) { toast.error("Rate limit reached. Please try again shortly."); }
+        if (res.status === 402) { toast.error("Usage credits needed. Contact your administrator."); }
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
       const data = await res.json();
-      const text = data?.content?.find(b=>b.type==="text")?.text || "";
+      const text = data?.narrative || "";
       if (!text) throw new Error("empty");
       setNarrative(text.trim());
       setQueued(false);
     } catch {
-      // Generation failed — save to offline queue so it's not lost
       setNarError("No connection. Story will generate when you sync.");
       setQueued(true);
     } finally { setNarLoading(false); }
   }
 
   // Save completed interview to offline queue (called when phase becomes "complete")
-  function saveToQueue(answersSnap, scoresSnap) {
+  function saveToQueue(answersSnap: Record<string, unknown>, scoresSnap: Record<string, number>) {
     const record = {
       id: answersSnap["S1"] || Date.now().toString(),
       timestamp: answersSnap["timestamp"] || new Date().toISOString(),
@@ -789,6 +801,42 @@ export default function RootstoryInterview() {
     setQueue(loadQueue());
   }
 
+  // Persist completed interview to the backend database
+  async function saveToDatabase(
+    answersSnap: Record<string, unknown>,
+    scoresSnap: Record<string, number>,
+    impactSnap: Record<string, number>
+  ) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase as any).from("stories").upsert({
+        id:               String(answersSnap["S1"] || Date.now()),
+        timestamp:        String(answersSnap["timestamp"] || new Date().toISOString()),
+        researcher_id:    researcher?.id || null,
+        district:         String(answersSnap["S2"] || ""),
+        village:          String(answersSnap["S4"] || ""),
+        scheme:           String(answersSnap["S8"] || ""),
+        narrative:        narrative || null,
+        validated:        false,
+        answers:          answersSnap,
+        scores:           scoresSnap,
+        impact_scores:    impactSnap,
+        settlement_type:  String(answersSnap["SM1"] || ""),
+        income_range:     String(answersSnap["SM2"] || ""),
+        age_group:        String(answersSnap["SM3"] || ""),
+        education_level:  String(answersSnap["SM4"] || ""),
+        social_category:  String(answersSnap["SM5"] || ""),
+        marital_status:   String(answersSnap["SM6"] || ""),
+        household_type:   String(answersSnap["S9"]  || ""),
+        livelihood:       String(answersSnap["S10"] || ""),
+        themes:           [],
+      });
+      if (error) console.error("DB save error:", error);
+    } catch (e) {
+      console.error("saveToDatabase:", e);
+    }
+  }
+
   async function syncQueue() {
     const pending = loadQueue();
     if (pending.length === 0 || !navigator.onLine) return;
@@ -796,23 +844,22 @@ export default function RootstoryInterview() {
     let done = 0, failed = 0;
     for (const record of pending) {
       try {
-        const res = await fetch("https://api.anthropic.com/v1/messages", {
-          method:"POST", headers:{"Content-Type":"application/json"},
-          body: JSON.stringify({
-            model:"claude-sonnet-4-20250514", max_tokens:1000,
-            messages:[{ role:"user", content: record.prompt }]
-          })
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-narrative`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+            body: JSON.stringify({ answers: record.answers }),
+          }
+        );
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        const text = data?.content?.find(b=>b.type==="text")?.text || "";
+        const text = data?.narrative || "";
         if (!text) throw new Error("empty");
-        // Mark as done in queue with narrative attached
-        const q = loadQueue().map(r =>
+        const q = loadQueue().map((r: Record<string, unknown>) =>
           r.id === record.id ? {...r, narrative: text.trim(), narrativeGenerated: true} : r
         );
         saveQueue(q);
-        // If this is the current interview, update live narrative
         if (record.id === answers["S1"]) {
           setNarrative(text.trim());
           setQueued(false);
@@ -822,8 +869,7 @@ export default function RootstoryInterview() {
         failed++;
       }
     }
-    // Remove successfully generated records from queue
-    const q = loadQueue().filter(r => !r.narrativeGenerated);
+    const q = loadQueue().filter((r: Record<string, unknown>) => !r.narrativeGenerated);
     saveQueue(q);
     setQueue(q);
     setSyncing(false);
