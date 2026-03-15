@@ -1175,7 +1175,7 @@ export default function RootstoryInterview() {
                 <span style={{fontFamily:"monospace",fontSize:10,color:isSetupMeta?C.purple:C.teal,fontWeight:"bold",background:isSetupMeta?C.purpleLight:C.tealLight,padding:"2px 6px",borderRadius:3}}>{current.id}</span>
                 <span style={{fontSize:10,color:C.grey}}>{MODULE_LABELS[current.module]}</span>
                 {current.badge&&<span style={{fontSize:10,fontWeight:"bold",color:C.amber,background:C.amberLight,padding:"2px 7px",borderRadius:3}}>{current.badge}</span>}
-                {isSetupMeta&&<span style={{fontSize:9,fontWeight:"bold",color:C.purple,background:C.purpleLight,padding:"2px 7px",borderRadius:3}}>IIT Madras Sampling</span>}
+                {isSetupMeta&&<span style={{fontSize:9,fontWeight:"bold",color:C.purple,background:C.purpleLight,padding:"2px 7px",borderRadius:3}}>Sampling Data</span>}
               </div>
               {effArr.length>0&&!effArr.includes("All")&&(
                 <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
