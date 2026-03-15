@@ -836,31 +836,6 @@ export default function RootstoryInterview() {
       console.error("saveToDatabase:", e);
     }
   }
-        timestamp:        String(answersSnap["timestamp"] || new Date().toISOString()),
-        researcher_id:    researcher?.id || null,
-        district:         String(answersSnap["S2"] || ""),
-        village:          String(answersSnap["S4"] || ""),
-        scheme:           String(answersSnap["S8"] || ""),
-        narrative:        narrative || null,
-        validated:        false,
-        answers:          answersSnap,
-        scores:           scoresSnap,
-        impact_scores:    impactSnap,
-        settlement_type:  String(answersSnap["SM1"] || ""),
-        income_range:     String(answersSnap["SM2"] || ""),
-        age_group:        String(answersSnap["SM3"] || ""),
-        education_level:  String(answersSnap["SM4"] || ""),
-        social_category:  String(answersSnap["SM5"] || ""),
-        marital_status:   String(answersSnap["SM6"] || ""),
-        household_type:   String(answersSnap["S9"]  || ""),
-        livelihood:       String(answersSnap["S10"] || ""),
-        themes:           [],
-      });
-      if (error) console.error("DB save error:", error);
-    } catch (e) {
-      console.error("saveToDatabase:", e);
-    }
-  }
 
   async function syncQueue() {
     const pending = loadQueue();
@@ -869,23 +844,22 @@ export default function RootstoryInterview() {
     let done = 0, failed = 0;
     for (const record of pending) {
       try {
-        const res = await fetch("https://api.anthropic.com/v1/messages", {
-          method:"POST", headers:{"Content-Type":"application/json"},
-          body: JSON.stringify({
-            model:"claude-sonnet-4-20250514", max_tokens:1000,
-            messages:[{ role:"user", content: record.prompt }]
-          })
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-narrative`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+            body: JSON.stringify({ answers: record.answers }),
+          }
+        );
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        const text = data?.content?.find(b=>b.type==="text")?.text || "";
+        const text = data?.narrative || "";
         if (!text) throw new Error("empty");
-        // Mark as done in queue with narrative attached
-        const q = loadQueue().map(r =>
+        const q = loadQueue().map((r: Record<string, unknown>) =>
           r.id === record.id ? {...r, narrative: text.trim(), narrativeGenerated: true} : r
         );
         saveQueue(q);
-        // If this is the current interview, update live narrative
         if (record.id === answers["S1"]) {
           setNarrative(text.trim());
           setQueued(false);
@@ -895,8 +869,7 @@ export default function RootstoryInterview() {
         failed++;
       }
     }
-    // Remove successfully generated records from queue
-    const q = loadQueue().filter(r => !r.narrativeGenerated);
+    const q = loadQueue().filter((r: Record<string, unknown>) => !r.narrativeGenerated);
     saveQueue(q);
     setQueue(q);
     setSyncing(false);
