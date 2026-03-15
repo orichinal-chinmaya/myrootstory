@@ -756,21 +756,29 @@ export default function RootstoryInterview() {
   async function generateNarrative() {
     setNarLoading(true); setNarError(""); setNarrative(""); setValidated(false);
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method:"POST", headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({
-          model:"claude-sonnet-4-20250514", max_tokens:1000,
-          messages:[{ role:"user", content: buildPrompt(answers) }]
-        })
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-narrative`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ answers }),
+        }
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        if (res.status === 429) { toast.error("Rate limit reached. Please try again shortly."); }
+        if (res.status === 402) { toast.error("Usage credits needed. Contact your administrator."); }
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
       const data = await res.json();
-      const text = data?.content?.find(b=>b.type==="text")?.text || "";
+      const text = data?.narrative || "";
       if (!text) throw new Error("empty");
       setNarrative(text.trim());
       setQueued(false);
     } catch {
-      // Generation failed — save to offline queue so it's not lost
       setNarError("No connection. Story will generate when you sync.");
       setQueued(true);
     } finally { setNarLoading(false); }
