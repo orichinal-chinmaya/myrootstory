@@ -1054,13 +1054,14 @@ export default function RootstoryInterview() {
               <p style={{fontSize:13,color:C.inkLight,margin:0,lineHeight:1.6}}>IIT Madras reporting dimensions — rolled up from Rootstory effect scores for the Social Impact Audit of Mukhyamantri Majhi Ladki Bahin Yojana.</p>
               <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
                 {Object.entries(iitmScores).map(([dim,sc])=>{
+                  const scNum = sc as number;
                   const col=iitmColors[dim]||{bg:C.greyLight,b:C.grey,t:C.grey};
                   return (
                     <div key={dim} style={{flex:"1 1 180px",borderRadius:10,padding:"18px",border:`1.5px solid ${col.b}`,background:col.bg,display:"flex",flexDirection:"column",gap:6,alignItems:"center"}}>
-                      <div style={{fontSize:36,fontWeight:"bold",color:col.t,fontFamily:"Georgia,serif"}}>{sc}</div>
+                      <div style={{fontSize:36,fontWeight:"bold",color:col.t,fontFamily:"Georgia,serif"}}>{scNum}</div>
                       <div style={{fontSize:11,fontWeight:"bold",textAlign:"center",color:col.t}}>{dim}</div>
                       <div style={{width:"100%",height:4,background:"rgba(0,0,0,0.08)",borderRadius:2}}>
-                        <div style={{height:"100%",borderRadius:2,background:col.b,width:`${sc}%`,transition:"width 0.5s"}} />
+                        <div style={{height:"100%",borderRadius:2,background:col.b,width:`${scNum}%`,transition:"width 0.5s"}} />
                       </div>
                     </div>
                   );
