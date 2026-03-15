@@ -193,59 +193,67 @@ const SCORE_MAP = {
 // Which composite(s) each question feeds, and its weight within that composite
 const Q_EFFECTS = {
   // ── HOUSEHOLD STABILITY ──
-  P3:  [["Household Stability",1]],   // baseline context (higher need = more room)
-  P4:  [["Household Stability",3]],   // current difficulty — primary measure
-  P5:  [["Household Stability",3]],   // self-reported stability change
-  P7:  [["Household Stability",2], ["Debt & Credit Relief",1]], // shock management
-  P8:  [["Household Stability",2]],   // month-end pressure reduction
+  P3:  [["Household Stability",1]],
+  P4:  [["Household Stability",3]],
+  P5:  [["Household Stability",3]],
+  P7:  [["Household Stability",2], ["Debt & Credit Relief",1]],
+  P7b: [["Household Stability",2], ["Debt & Credit Relief",1]],
+  P8:  [["Household Stability",2]],
 
   // ── DEBT & CREDIT RELIEF ──
-  P9:  [["Debt & Credit Relief",1]],  // baseline borrowing (context)
-  P10: [["Debt & Credit Relief",3]],  // change in borrowing — primary
-  P11: [["Debt & Credit Relief",2]],  // concrete loan avoidance
-  A1b: [["Debt & Credit Relief",2]],  // adaptive: total debt reduced
-  A1c: [["Debt & Credit Relief",2]],  // adaptive: less dependent on borrowing
+  P9:  [["Debt & Credit Relief",1]],
+  P10: [["Debt & Credit Relief",3]],
+  P11: [["Debt & Credit Relief",2]],
+  P12: [["Debt & Credit Relief",2]],
+  A1b: [["Debt & Credit Relief",2]],
+  A1c: [["Debt & Credit Relief",2]],
 
   // ── SAVINGS & ASSETS ──
-  N1:  [["Savings & Assets",3]],      // savings behaviour — primary
-  N2:  [["Savings & Assets",2]],      // asset creation
+  N1:  [["Savings & Assets",3]],
+  N2:  [["Savings & Assets",2]],
+  CQ6: [["Savings & Assets",2]],
 
   // ── NUTRITION & HEALTH ──
-  N3:  [["Nutrition & Health",3]],    // health expenditure increase — primary
-  N4:  [["Nutrition & Health",3]],    // food quality / meal frequency — primary
+  N3:  [["Nutrition & Health",3]],
+  N4:  [["Nutrition & Health",3]],
 
   // ── EDUCATION ──
-  N5:  [["Education",3]],             // education spending — primary (only question)
+  N5:  [["Education",3]],
 
-  // ── FINANCIAL CONFIDENCE ── (subjective sense of capability with money)
-  P13: [["Financial Confidence",3]],   // confidence scale today — primary
-  P14: [["Financial Confidence",3]],   // confidence change since DBT — primary
+  // ── FINANCIAL CONFIDENCE ──
+  P13: [["Financial Confidence",3]],
+  P14: [["Financial Confidence",3]],
 
-  // ── HOUSEHOLD AGENCY ── (decision-making power and control over household money)
-  E1:  [["Household Agency",3]],       // whose account DBT lands in — primary structural signal
-  E2:  [["Household Agency",3]],       // who decides spending — primary agency signal
-  P15: [["Household Agency",2]],       // perceived change in say since receiving
-  P16: [["Household Agency",2]],       // forward financial planning behaviour
-  A6b: [["Household Agency",2]],       // adaptive: spending decisions confirmed
-  A6c: [["Household Agency",2]],       // adaptive: role change confirmed (max 1 follow-up after E1/E2)
+  // ── HOUSEHOLD AGENCY ──
+  E1:  [["Household Agency",3]],
+  E2:  [["Household Agency",3]],
+  P15: [["Household Agency",3]],
+  P16: [["Household Agency",2]],
+  A6b: [["Household Agency",2]],
+  A6c: [["Household Agency",2]],
+  WE8: [["Household Agency",1]],
 
-  // ── SOCIAL EMPOWERMENT ── (mobility, dignity, family dynamics, independence)
-  N7:  [["Social Empowerment",3]],     // self-worth and dignity — primary
-  N12: [["Social Empowerment",2]],     // financial independence from family
+  // ── SOCIAL EMPOWERMENT ──
+  N7:  [["Social Empowerment",3]],
+  WE9: [["Social Empowerment",3]],
+  WE11:[["Social Empowerment",2]],
+  N12: [["Social Empowerment",2]],
 
   // ── FINANCIAL INCLUSION ──
-  N8:  [["Financial Inclusion",3]],   // formal banking adoption — primary
-  N9:  [["Financial Inclusion",3]],   // financial planning behaviour — primary
+  N8:  [["Financial Inclusion",3]],
+  N9:  [["Financial Inclusion",3]],
 
   // ── LIVELIHOOD & ENTERPRISE ──
-  A4b: [["Livelihood & Enterprise",3]],               // income generated
-  A4c: [["Livelihood & Enterprise",2], ["Community & Social",1]], // job creation
-  A4d: [["Livelihood & Enterprise",2]],               // sustainability intent
+  A4b: [["Livelihood & Enterprise",3]],
+  A4c: [["Livelihood & Enterprise",2], ["Community & Social",1]],
+  A4d: [["Livelihood & Enterprise",2]],
 
   // ── COMMUNITY & SOCIAL ──
-  CS1: [["Community & Social",3]],    // local spending — primary
-  CS3: [["Community & Social",2]],    // peer financial support
-  CS5: [["Community & Social",2]],    // SHG / community participation
+  CS1: [["Community & Social",3]],
+  CS3: [["Community & Social",2]],
+  CS5: [["Community & Social",2]],
+  ST2: [["Community & Social",2]],
+  ST3: [["Community & Social",2]],
 };
 
 
