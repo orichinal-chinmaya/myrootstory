@@ -17,7 +17,7 @@ const COMPOSITES: Record<string, { bg: string; border: string; text: string }> =
   "Narrative":              { bg:"#F5F0E8", border:"#C8A060", text:"#5A3A10" },
 };
 
-const IITM_DIM: Record<string, string> = {
+const IMPACT_DIM: Record<string, string> = {
   "Household Stability":"Economic Security",
   "Debt & Credit Relief":"Economic Security",
   "Savings & Assets":"Economic Security",
