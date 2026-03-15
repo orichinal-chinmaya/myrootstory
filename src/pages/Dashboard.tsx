@@ -97,7 +97,7 @@ function scoreColor(v: number): string {
 // No local seed — data lives in the database
 
 // ─── MAIN DASHBOARD ───────────────────────────────────────────────────────────
-export default function Dashboard() {
+export default function Dashboard({ embedded = false }: { embedded?: boolean }) {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -257,23 +257,25 @@ export default function Dashboard() {
       <style>{`@keyframes spin{to{transform:rotate(360deg)}} @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}`}</style>
 
       {/* ── TOP BAR ── */}
-      <div style={{ background:C.teal, padding:"0 24px", height:56, display:"flex", alignItems:"center", gap:16, flexShrink:0 }}>
-        <div style={{ fontFamily:"Trebuchet MS,sans-serif", fontSize:18 }}>
-          <span style={{ fontWeight:"bold", color:"#fff" }}>root</span>
-          <span style={{ color:C.amber }}>story</span>
-          <span style={{ color:"rgba(255,255,255,0.35)", fontSize:12, marginLeft:10 }}>Policy Intelligence</span>
+      {!embedded && (
+        <div style={{ background:C.teal, padding:"0 24px", height:56, display:"flex", alignItems:"center", gap:16, flexShrink:0 }}>
+          <div style={{ fontFamily:"Trebuchet MS,sans-serif", fontSize:18 }}>
+            <span style={{ fontWeight:"bold", color:"#fff" }}>root</span>
+            <span style={{ color:C.amber }}>story</span>
+            <span style={{ color:"rgba(255,255,255,0.35)", fontSize:12, marginLeft:10 }}>Policy Intelligence</span>
+          </div>
+          <div style={{ flex:1 }} />
+          {isDemo && (
+            <span style={{ fontSize:11, padding:"3px 10px", borderRadius:10, background:"rgba(232,160,32,0.2)", color:C.amber, border:`1px solid ${C.amber}` }}>
+              Demo data — conduct interviews to populate
+            </span>
+          )}
+          <Link to="/demo" style={{ fontSize:12, padding:"5px 14px", borderRadius:5, border:"1px solid rgba(255,255,255,0.2)", color:"rgba(255,255,255,0.75)", textDecoration:"none" }}>
+            + New Interview
+          </Link>
+          <Link to="/" style={{ fontSize:12, color:"rgba(255,255,255,0.5)", textDecoration:"none" }}>← Home</Link>
         </div>
-        <div style={{ flex:1 }} />
-        {isDemo && (
-          <span style={{ fontSize:11, padding:"3px 10px", borderRadius:10, background:"rgba(232,160,32,0.2)", color:C.amber, border:`1px solid ${C.amber}` }}>
-            Demo data — conduct interviews to populate
-          </span>
-        )}
-        <Link to="/demo" style={{ fontSize:12, padding:"5px 14px", borderRadius:5, border:"1px solid rgba(255,255,255,0.2)", color:"rgba(255,255,255,0.75)", textDecoration:"none" }}>
-          + New Interview
-        </Link>
-        <Link to="/" style={{ fontSize:12, color:"rgba(255,255,255,0.5)", textDecoration:"none" }}>← Home</Link>
-      </div>
+      )}
 
       {/* ── STAT STRIP ── */}
       <div style={{ background:C.white, borderBottom:`1px solid ${C.border}`, padding:"12px 24px", display:"flex", gap:32, alignItems:"center", flexWrap:"wrap" }}>
