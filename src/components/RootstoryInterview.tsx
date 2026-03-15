@@ -975,7 +975,7 @@ export default function RootstoryInterview() {
 
           {/* Tabs */}
           <div style={{display:"flex",borderBottom:`2px solid ${C.paperDark}`}}>
-            {[["story","📖 Rootstory"],["scores","◈ Scores"],["iitm","IIT Madras"],["data","≡ Data"]].map(([tab,lbl])=>(
+            {[["story","📖 Rootstory"],["scores","◈ Scores"],["impact","◈ Impact Dims"],["data","≡ Data"]].map(([tab,lbl])=>(
               <button key={tab} onClick={()=>setActiveTab(tab)}
                 style={{padding:"10px 18px",border:"none",background:"transparent",cursor:"pointer",fontSize:12,
                   color:activeTab===tab?C.teal:C.grey,fontFamily:"Georgia,serif",
