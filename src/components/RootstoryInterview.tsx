@@ -1048,10 +1048,10 @@ export default function RootstoryInterview() {
             </div>
           )}
 
-          {/* IIT MADRAS DIMENSIONS TAB */}
-          {activeTab==="iitm" && (
+          {/* IMPACT DIMENSIONS TAB */}
+          {activeTab==="impact" && (
             <div style={{background:C.white,border:`1px solid ${C.border}`,borderTop:"none",borderRadius:"0 0 12px 12px",padding:"24px 28px",display:"flex",flexDirection:"column",gap:16}}>
-              <p style={{fontSize:13,color:C.inkLight,margin:0,lineHeight:1.6}}>IIT Madras reporting dimensions — rolled up from Rootstory effect scores for the Social Impact Audit of Mukhyamantri Majhi Ladki Bahin Yojana.</p>
+              <p style={{fontSize:13,color:C.inkLight,margin:0,lineHeight:1.6}}>Impact reporting dimensions — rolled up from Rootstory effect scores for the Social Impact Audit of Mukhyamantri Majhi Ladki Bahin Yojana.</p>
               <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
                 {Object.entries(iitmScores).map(([dim,sc])=>{
                   const scNum = sc as number;
