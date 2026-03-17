@@ -968,7 +968,7 @@ function BranchingLogic({questions, editMode, updateField}: {questions: Question
             {/* Child branches */}
             <div>
               {children.map((q,ci) => {
-                const qcc = COMPOSITES[q.composite] || COMPOSITES["Setup / Admin"];
+                const qcc = COMPOSITES[getPrimaryComposite(q)] || COMPOSITES["Setup / Admin"];
                 return (
                   <div key={q.id} style={{display:"flex",alignItems:"stretch",borderTop:ci>0?"0.5px solid #E0DDD8":"none"}}>
                     <div style={{width:48,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",position:"relative"}}>
