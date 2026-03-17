@@ -503,7 +503,7 @@ export default function QuestionEditor() {
         <div style={{width:190,flexShrink:0,background:"#fff",borderRight:"0.5px solid #E0DDD8",overflowY:"auto",padding:"10px 0"}}>
           <div style={{fontSize:10,fontWeight:500,color:"#8A8A9A",letterSpacing:0.7,padding:"0 12px 8px",textTransform:"uppercase"}}>Composite</div>
           {["All",...Object.keys(COMPOSITES)].map(comp=>{
-            const cnt   = comp==="All"?questions.length:questions.filter(q=>q.composite===comp).length;
+            const cnt   = comp==="All"?questions.length:questions.filter(q=>getComposites(q).includes(comp)).length;
             const isAct = filterComp===comp;
             const cc    = COMPOSITES[comp];
             return (
