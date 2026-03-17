@@ -127,149 +127,133 @@ const MH_SCHEMES = [
 
 const SCORE_MAP = {
   // ── HOUSEHOLD STABILITY ──
-  P3: { "1":1.0, "2":0.75, "3":0.5, "4":0.25, "5":0.0 },
-  P4: { "1":-0.2, "2":0.0, "3":0.4, "4":0.75, "5":1.0 },
-  P5: { "Yes, much more stable":1.0, "Yes, somewhat more stable":0.6, "No change":0.0, "No, less stable":-0.2 },
-  P7: { "Yes, managed without borrowing":1.0, "Yes, but had to borrow":0.4, "No, could not manage it":-0.2, "Not applicable":0.0 },
-  P7b: { "Yes, she's confident she could":1.0, "Maybe, depends on the size":0.6, "Probably not":0.0, "Don't know / uncertain":0.3 },
-  P8: { "Yes, significantly more breathing room":1.0, "Yes, a little more breathing room":0.6, "No difference":0.0, "Less breathing room than before":-0.2 },
+  "ES-1": { "1":1.0, "2":0.75, "3":0.5, "4":0.25, "5":0.0 },
+  "ES-2": { "1":0.0, "2":0.25, "3":0.5, "4":0.75, "5":1.0 },
+  "ES-4": { "Yes, much more stable":1.0, "Yes, somewhat more stable":0.6, "No change":0.2, "No, less stable":0.0 },
+  "ES-6": { "Yes, managed without borrowing":1.0, "Yes, but had to borrow":0.4, "No, could not manage it":0.0 },
+  "ES-6b":{ "Yes, she's confident she could":1.0, "Maybe, depends on the size":0.6, "Probably not":0.0, "Don't know / uncertain":0.3 },
+  "ES-7": { "Yes, significantly more breathing room":1.0, "Yes, a little more breathing room":0.6, "No difference":0.2, "Less breathing room than before":0.0 },
 
   // ── DEBT & CREDIT RELIEF ──
-  P9:  { "Never":0.0, "Rarely — once or twice a year":0.3, "Sometimes — every few months":0.6, "Often — every month or more":1.0 },
-  P10: { "Stopped completely":1.0, "Reduced significantly":0.75, "Reduced a little":0.4, "No change":0.0, "Increased":-0.2 },
-  P11: { "Yes, avoided at least one loan":1.0, "Possibly":0.5, "No":0.0, "Not applicable":0.0 },
-  P12: { "Much better":1.0, "Somewhat better":0.65, "About the same":0.0, "Worse":-0.2 },
-  A1b: { "Yes, significantly reduced":1.0, "Yes, somewhat reduced":0.65, "No change":0.0, "Debt has increased":-0.2 },
-  A1c: { "Yes, much less dependent":1.0, "Yes, a little less":0.6, "About the same":0.0, "More dependent":-0.2 },
+  "ES-9":  { "Never":0.0, "Rarely — once or twice a year":0.3, "Sometimes — every few months":0.6, "Often — every month or more":1.0 },
+  "ES-10": { "Stopped completely":1.0, "Reduced significantly":0.75, "Reduced a little":0.4, "No change":0.1, "Increased":0.0 },
+  "ES-12": { "Yes, avoided at least one loan":1.0, "Possibly":0.5, "No":0.0, "Not applicable":0.3 },
+  "ES-13": { "Much better":1.0, "Somewhat better":0.65, "About the same":0.25, "Worse":0.0 },
+  "ES-15": { "Yes, significantly reduced":1.0, "Yes, somewhat reduced":0.65, "No change":0.2, "Debt has increased":0.0 },
+  "ES-16": { "Yes, much less dependent":1.0, "Yes, a little less":0.6, "About the same":0.2, "More dependent":0.0 },
 
   // ── SAVINGS & ASSETS ──
-  N1:  { "Yes, saving regularly":1.0, "Yes, saving occasionally":0.65, "Tried but couldn't":0.3, "No":0.0 },
-  N2:  { "Yes, multiple assets":1.0, "Yes, one asset":0.7, "No":0.0 },
-  CQ6: { "Most of it (more than half)":1.0, "About half":0.65, "Less than half":0.3, "Almost none — it covers daily survival":0.0 },
+  "ES-17": { "Yes, saving regularly":1.0, "Yes, saving occasionally":0.65, "Tried but couldn't":0.3, "No":0.0 },
+  "ES-18": { "Yes, multiple assets":1.0, "Yes, one asset":0.7, "No":0.0 },
+  "CQ-6":  { "Most of it (more than half)":1.0, "About half":0.65, "Less than half":0.3, "Almost none — it covers daily survival":0.0 },
 
   // ── NUTRITION & HEALTH ──
-  N3:  { "Yes, significantly more":1.0, "Yes, a little more":0.65, "About the same":0.0, "Less":-0.2 },
-  N4:  { "Yes, much better":1.0, "Yes, a little better":0.65, "About the same":0.0, "Worse":-0.2 },
+  "CQ-3": { "Yes, significantly more":1.0, "Yes, a little more":0.65, "About the same":0.2, "Less":0.0 },
+  "CQ-4": { "Yes, much better":1.0, "Yes, a little better":0.65, "About the same":0.2, "Worse":0.0 },
 
   // ── EDUCATION ──
-  N5:  { "Yes, significantly more":1.0, "Yes, a little more":0.65, "No change":0.0, "Not applicable — no children in school":0.4 },
+  "CQ-5": { "Yes, significantly more":1.0, "Yes, a little more":0.65, "No change":0.1, "Not applicable — no children in school":0.4 },
 
   // ── FINANCIAL CONFIDENCE ──
-  P13: { "1":-0.2, "2":0.0, "3":0.5, "4":0.75, "5":1.0 },
-  P14: { "Yes, much more confident":1.0, "Yes, a little more confident":0.65, "No change":0.0, "Less confident":-0.2 },
+  "WE-1": { "1":0.0, "2":0.25, "3":0.5, "4":0.75, "5":1.0 },
+  "WE-2": { "Yes, much more confident":1.0, "Yes, a little more confident":0.65, "No change":0.2, "Less confident":0.0 },
 
   // ── HOUSEHOLD AGENCY ──
-  E1:  { "Directly into my own account":1.0, "Joint account I can access":0.6, "My husband's account":0.0, "Another family member's account":0.0 },
-  E2:  { "I decide":1.0, "Jointly with my husband":0.7, "Mostly my husband":0.0, "My husband or family decides":-0.2 },
-  P15: { "Yes, a lot more":1.0, "Yes, a little more":0.6, "No change":0.0, "Less say than before":-0.2 },
-  P16: { "Yes, regularly":1.0, "Yes, sometimes":0.65, "Not yet but she wants to":0.3, "No":0.0 },
-  A6b: { "Yes, I have much more say now":1.0, "Yes, a little more say":0.6, "No change":0.0, "I have even less say now":-0.2 },
-  A6c: { "Yes, I have much more say":1.0, "Yes, a little more say":0.6, "No change":0.0, "Less say":-0.2 },
-  WE8: { "Yes, much more":1.0, "Yes, a little":0.6, "No change":0.0, "Less respected":0.0 },
+  "WE-3": { "Yes, I decide alone":1.0, "Yes, jointly with my husband":0.8, "My husband decides":0.0, "Another family member decides":0.0 },
+  "WE-4": { "Yes, a lot more":1.0, "Yes, a little more":0.6, "No change":0.2, "Less say than before":0.0 },
+  "WE-5": { "Yes, regularly":1.0, "Yes, sometimes":0.65, "Not yet but she wants to":0.3, "No":0.0 },
+  "WE-7": { "Yes, I have much more say":1.0, "Yes, a little more say":0.6, "No change":0.2, "Less say":0.0 },
+  "WE-8": { "Yes, much more":1.0, "Yes, a little":0.6, "No change":0.2, "Less respected":0.0 },
 
   // ── SOCIAL EMPOWERMENT ──
-  N7:  { "I feel much more valued":1.0, "I feel somewhat more valued":0.65, "No change":0.0, "I feel less valued":-0.2 },
-  WE9: { "Yes, much freer":1.0, "Yes, somewhat freer":0.65, "No change":0.0, "Less free than before":-0.2 },
-  WE11:{ "Yes, they respect me more":1.0, "Yes, they consult me more on decisions":0.8, "No change":0.0, "The relationship has become more difficult":-0.2 },
-  N12: { "Yes, much more independent":1.0, "Yes, somewhat more independent":0.65, "No change":0.0, "More dependent than before":-0.2 },
+  "WE-9":  { "Yes, much freer":1.0, "Yes, somewhat freer":0.65, "No change":0.2, "Less free than before":0.0 },
+  "WE-10": { "I feel much more valued":1.0, "I feel somewhat more valued":0.65, "No change":0.2, "I feel less valued":0.0 },
+  "WE-11": { "Yes, they respect me more":1.0, "Yes, they consult me more on decisions":0.8, "No change":0.2, "The relationship has become more difficult":0.0 },
+  "WE-12": { "Yes, much more independent":1.0, "Yes, somewhat more independent":0.65, "No change":0.2, "More dependent than before":0.0 },
 
   // ── FINANCIAL INCLUSION ──
-  N8:  { "I use it regularly now — didn't before":1.0, "I use it more than before":0.7, "About the same as before":0.0, "I don't have or use a bank account":0.0 },
-  N9:  { "Yes, I keep a record or budget":1.0, "Yes, I set aside money for specific purposes":0.8, "Yes, I use an SHG or savings group":0.7, "No specific practice":0.0 },
+  "ES-19": { "I use it regularly now — didn't before":1.0, "I use it more than before":0.7, "About the same as before":0.3, "I don't have or use a bank account":0.0 },
+  "ES-20": { "Yes, I keep a record or budget":1.0, "Yes, I set aside money for specific purposes":0.8, "Yes, I use an SHG or savings group":0.7, "No specific practice":0.0 },
 
   // ── LIVELIHOOD & ENTERPRISE ──
-  A4b: { "Yes, generating regular income":1.0, "Yes, some additional income":0.65, "Not yet but she expects it to":0.3, "No income generated":0.0 },
-  A4c: { "Yes, for household members":0.8, "Yes, for community members":1.0, "No":0.0 },
-  A4d: { "Yes, expand":1.0, "Yes, continue at same level":0.65, "Uncertain":0.3, "No":0.0 },
+  "CQ-8":  { "Yes, generating regular income":1.0, "Yes, some additional income":0.65, "Not yet but she expects it to":0.3, "No income generated":0.0 },
+  "CQ-9":  { "Yes, for household members":0.8, "Yes, for community members":1.0, "No":0.0 },
+  "CQ-10": { "Yes, expand":1.0, "Yes, continue at same level":0.65, "Uncertain":0.3, "No":0.0 },
 
   // ── COMMUNITY & SOCIAL ──
-  CS1: { "Yes, spending more":1.0, "About the same":0.0, "Spending less locally":-0.2 },
-  CS3: { "Yes, regularly":1.0, "Yes, occasionally":0.6, "No":0.0 },
-  CS5: { "Yes, more active":1.0, "About the same":0.0, "Less active":-0.2 },
-  ST2: { "Yes, she feels more respected":1.0, "About the same":0.3, "She feels less respected":0.0 },
-  ST3: { "Yes, regularly":1.0, "Yes, occasionally":0.55, "No":0.0 },
+  "CQ-11": { "Yes, spending more":1.0, "About the same":0.0, "Spending less locally":0.0 },
+  "CQ-12": { "Yes, regularly":1.0, "Yes, occasionally":0.6, "No":0.0 },
+  "CQ-13": { "Yes, more active":1.0, "About the same":0.3, "Less active":0.0 },
+  "ST-2":  { "Yes, she feels more respected":1.0, "About the same":0.3, "She feels less respected":0.0 },
+  "ST-3":  { "Yes, regularly":1.0, "Yes, occasionally":0.55, "No":0.0 },
 };
 
 // Which composite(s) each question feeds, and its weight within that composite
 const Q_EFFECTS = {
-  // ── HOUSEHOLD STABILITY ──
-  P3:  [["Household Stability",1]],
-  P4:  [["Household Stability",3]],
-  P5:  [["Household Stability",3]],
-  P7:  [["Household Stability",2], ["Debt & Credit Relief",1]],
-  P7b: [["Household Stability",2], ["Debt & Credit Relief",1]],
-  P8:  [["Household Stability",2]],
+  "ES-1":  [["Household Stability",1]],
+  "ES-2":  [["Household Stability",3]],
+  "ES-4":  [["Household Stability",3]],
+  "ES-6":  [["Household Stability",2], ["Debt & Credit Relief",1]],
+  "ES-6b": [["Household Stability",2], ["Debt & Credit Relief",1]],
+  "ES-7":  [["Household Stability",2]],
 
-  // ── DEBT & CREDIT RELIEF ──
-  P9:  [["Debt & Credit Relief",1]],
-  P10: [["Debt & Credit Relief",3]],
-  P11: [["Debt & Credit Relief",2]],
-  P12: [["Debt & Credit Relief",2]],
-  A1b: [["Debt & Credit Relief",2]],
-  A1c: [["Debt & Credit Relief",2]],
+  "ES-9":  [["Debt & Credit Relief",1]],
+  "ES-10": [["Debt & Credit Relief",3]],
+  "ES-12": [["Debt & Credit Relief",2]],
+  "ES-13": [["Debt & Credit Relief",2]],
+  "ES-15": [["Debt & Credit Relief",2]],
+  "ES-16": [["Debt & Credit Relief",2]],
 
-  // ── SAVINGS & ASSETS ──
-  N1:  [["Savings & Assets",3]],
-  N2:  [["Savings & Assets",2]],
-  CQ6: [["Savings & Assets",2]],
+  "ES-17": [["Savings & Assets",3]],
+  "ES-18": [["Savings & Assets",2]],
+  "CQ-6":  [["Savings & Assets",2]],
 
-  // ── NUTRITION & HEALTH ──
-  N3:  [["Nutrition & Health",3]],
-  N4:  [["Nutrition & Health",3]],
+  "CQ-3":  [["Nutrition & Health",3]],
+  "CQ-4":  [["Nutrition & Health",3]],
 
-  // ── EDUCATION ──
-  N5:  [["Education",3]],
+  "CQ-5":  [["Education",3]],
 
-  // ── FINANCIAL CONFIDENCE ──
-  P13: [["Financial Confidence",3]],
-  P14: [["Financial Confidence",3]],
+  "WE-1":  [["Financial Confidence",3]],
+  "WE-2":  [["Financial Confidence",3]],
 
-  // ── HOUSEHOLD AGENCY ──
-  E1:  [["Household Agency",3]],
-  E2:  [["Household Agency",3]],
-  P15: [["Household Agency",3]],
-  P16: [["Household Agency",2]],
-  A6b: [["Household Agency",2]],
-  A6c: [["Household Agency",2]],
-  WE8: [["Household Agency",1]],
+  "WE-3":  [["Household Agency",3]],
+  "WE-4":  [["Household Agency",3]],
+  "WE-5":  [["Household Agency",2]],
+  "WE-7":  [["Household Agency",2]],
+  "WE-8":  [["Household Agency",1]],
 
-  // ── SOCIAL EMPOWERMENT ──
-  N7:  [["Social Empowerment",3]],
-  WE9: [["Social Empowerment",3]],
-  WE11:[["Social Empowerment",2]],
-  N12: [["Social Empowerment",2]],
+  "WE-9":  [["Social Empowerment",3]],
+  "WE-10": [["Social Empowerment",3]],
+  "WE-11": [["Social Empowerment",2]],
+  "WE-12": [["Social Empowerment",2]],
 
-  // ── FINANCIAL INCLUSION ──
-  N8:  [["Financial Inclusion",3]],
-  N9:  [["Financial Inclusion",3]],
+  "ES-19": [["Financial Inclusion",3]],
+  "ES-20": [["Financial Inclusion",3]],
 
-  // ── LIVELIHOOD & ENTERPRISE ──
-  A4b: [["Livelihood & Enterprise",3]],
-  A4c: [["Livelihood & Enterprise",2], ["Community & Social",1]],
-  A4d: [["Livelihood & Enterprise",2]],
+  "CQ-8":  [["Livelihood & Enterprise",3]],
+  "CQ-9":  [["Livelihood & Enterprise",2], ["Community & Social",1]],
+  "CQ-10": [["Livelihood & Enterprise",2]],
 
-  // ── COMMUNITY & SOCIAL ──
-  CS1: [["Community & Social",3]],
-  CS3: [["Community & Social",2]],
-  CS5: [["Community & Social",2]],
-  ST2: [["Community & Social",2]],
-  ST3: [["Community & Social",2]],
+  "CQ-11": [["Community & Social",3]],
+  "CQ-12": [["Community & Social",2]],
+  "CQ-13": [["Community & Social",2]],
+  "ST-2":  [["Community & Social",2]],
+  "ST-3":  [["Community & Social",2]],
 };
 
 
 // Open text depth questions: flat +5 boost to relevant composites when ≥15 chars answered
-// Mapped to the specific composite each depth question is most relevant to
 const OPEN_BOOST = {
-  P2:  ["Household Stability","Debt & Credit Relief","Savings & Assets","Financial Confidence","Community & Social"],
-  D1:  ["Household Stability","Debt & Credit Relief"],
-  D2:  ["Household Stability"],
-  D3:  ["Debt & Credit Relief"],
-  D4:  ["Financial Confidence","Household Agency"],
-  D6:  ["Social Empowerment","Household Agency","Community & Social"],
-  D7:  ["Household Stability","Household Agency","Social Empowerment","Debt & Credit Relief"],
-  V3:  ["Household Stability","Debt & Credit Relief","Savings & Assets","Nutrition & Health","Education","Financial Confidence","Household Agency","Social Empowerment","Financial Inclusion","Livelihood & Enterprise","Community & Social"],
-  V4:  ["Household Stability","Financial Confidence","Social Empowerment","Community & Social","Nutrition & Health","Education"],
-  CQ14:["Community & Social","Household Stability"],
+  "CQ-2":  ["Household Stability","Debt & Credit Relief","Savings & Assets","Financial Confidence","Community & Social"],
+  "ES-3":  ["Household Stability","Debt & Credit Relief"],
+  "ES-8":  ["Household Stability"],
+  "ES-11": ["Debt & Credit Relief"],
+  "ES-21": ["Financial Confidence","Household Agency"],
+  "ST-1":  ["Social Empowerment","Household Agency","Community & Social"],
+  "ST-4":  ["Household Stability","Household Agency","Social Empowerment","Debt & Credit Relief"],
+  "V-3":   ["Household Stability","Debt & Credit Relief","Savings & Assets","Nutrition & Health","Education","Financial Confidence","Household Agency","Social Empowerment","Financial Inclusion","Livelihood & Enterprise","Community & Social"],
+  "V-4":   ["Household Stability","Financial Confidence","Social Empowerment","Community & Social","Nutrition & Health","Education"],
+  "CQ-14": ["Community & Social","Household Stability"],
 };
 
 function calcScores(answers) {
