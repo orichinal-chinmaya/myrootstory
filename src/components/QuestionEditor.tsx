@@ -514,6 +514,8 @@ export default function QuestionEditor() {
         <div style={{flex:1,overflowY:"auto",padding:"14px 20px",display:"flex",flexDirection:"column",gap:8}}>
           {viewMode==="matrix"
             ? <ScoreMatrix questions={questions}/>
+            : viewMode==="branching"
+            ? <BranchingLogic questions={questions} editMode={globalEdit} updateField={updateField}/>
             : visible.length===0
               ? <div style={{padding:"48px",textAlign:"center",color:"#8A8A9A",fontSize:14}}>No questions match.</div>
               : visible.map(q=>(
