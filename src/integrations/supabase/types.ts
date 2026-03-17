@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      question_schema: {
+        Row: {
+          id: string
+          questions: Json
+          translations: Json
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          questions?: Json
+          translations?: Json
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          questions?: Json
+          translations?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       stories: {
         Row: {
           age_group: string | null
