@@ -979,7 +979,7 @@ function BranchingLogic({questions, editMode, updateField}: {questions: Question
                     <div style={{flex:1,padding:"10px 14px 10px 0",minWidth:0}}>
                       <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3,flexWrap:"wrap"}}>
                         <span style={{fontSize:11,fontWeight:500,padding:"1px 7px",borderRadius:4,background:qcc.bg,color:qcc.text,fontFamily:"monospace"}}>{q.id}</span>
-                        <span style={{fontSize:10,color:"#8A8A9A"}}>{q.composite}</span>
+                        <span style={{fontSize:10,color:"#8A8A9A"}}>{getComposites(q).join(" · ")}</span>
                         {q.weight && <WeightDots w={q.weight}/>}
                       </div>
                       <div style={{fontSize:12,color:"#1A1A2E",lineHeight:1.5,marginBottom:4}}>
