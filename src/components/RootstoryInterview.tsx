@@ -692,8 +692,8 @@ export default function RootstoryInterview() {
   }, [online]);
 
   const visibleQuestions = QUESTIONS.filter(q => {
-    if (!q.trigger) return true;
-    try { return q.trigger(answers); } catch { return false; }
+    if (!(q as any).conditionRule) return true;
+    try { return evaluateCondition((q as any).conditionRule, answers); } catch { return false; }
   });
   const current  = visibleQuestions[currentIdx];
   const progress = visibleQuestions.length > 0 ? (currentIdx / visibleQuestions.length) * 100 : 0;
