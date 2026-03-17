@@ -274,8 +274,8 @@ function calcScores(answers) {
   // Savings → Savings & Assets (forward-looking behaviour)
   // Business/farm → Livelihood & Enterprise
   // Debt repayment → Debt & Credit Relief
-  if (Array.isArray(answers["P1"])) {
-    const p1 = answers["P1"];
+  if (Array.isArray(answers["CQ-1"])) {
+    const p1 = answers["CQ-1"];
     const map = [
       { items:["Food & household groceries","Clothing or household items"], eff:"Household Stability", w:1 },
       { items:["Healthcare or medicines"],              eff:"Nutrition & Health",     w:1 },
