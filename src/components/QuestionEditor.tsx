@@ -174,7 +174,7 @@ export default function QuestionEditor() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [lang,       setLang]       = useState("en");
   const [trans,      setTrans]      = useState<TranslationStore>({});
-  const [viewMode,   setViewMode]   = useState<"list"|"matrix">("list");
+  const [viewMode,   setViewMode]   = useState<"list"|"matrix"|"branching">("list");
   const [flash,      setFlash]      = useState(false);
   const [saving,     setSaving]     = useState(false);
   const [loaded,     setLoaded]     = useState(false);
