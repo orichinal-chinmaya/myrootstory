@@ -384,15 +384,15 @@ export default function QuestionEditor() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Upsert the full question set + translations to the database
+      const payload = {
+        id: "default" as string,
+        questions: JSON.parse(JSON.stringify(questions)),
+        translations: JSON.parse(JSON.stringify(trans)),
+        updated_at: new Date().toISOString(),
+      };
       const { error } = await supabase
         .from("question_schema")
-        .upsert({
-          id: "default",
-          questions: questions as unknown as Record<string, unknown>[],
-          translations: trans as unknown as Record<string, unknown>,
-          updated_at: new Date().toISOString(),
-        }, { onConflict: "id" });
+        .upsert(payload, { onConflict: "id" });
 
       if (error) {
         console.error("Failed to save question schema:", error);
