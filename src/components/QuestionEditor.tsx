@@ -1,4 +1,5 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 // ─── COMPOSITE COLOUR MAP ─────────────────────────────────────────────────────
 const COMPOSITES: Record<string, { bg: string; border: string; text: string }> = {
@@ -174,8 +175,33 @@ export default function QuestionEditor() {
   const [trans,      setTrans]      = useState<TranslationStore>({});
   const [viewMode,   setViewMode]   = useState<"list"|"matrix">("list");
   const [flash,      setFlash]      = useState(false);
+  const [saving,     setSaving]     = useState(false);
+  const [loaded,     setLoaded]     = useState(false);
   const [globalEdit, setGlobalEdit] = useState(false);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
+
+  // Load questions & translations from database on mount
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("question_schema")
+          .select("questions, translations")
+          .eq("id", "default")
+          .maybeSingle();
+        if (error) { console.error("Failed to load question schema:", error); return; }
+        if (data) {
+          if (data.questions && Array.isArray(data.questions) && data.questions.length > 0) {
+            setQuestions(data.questions as unknown as Question[]);
+          }
+          if (data.translations && typeof data.translations === "object" && Object.keys(data.translations).length > 0) {
+            setTrans(data.translations as unknown as TranslationStore);
+          }
+        }
+      } catch (e) { console.error("Error loading question schema:", e); }
+      finally { setLoaded(true); }
+    })();
+  }, []);
 
   const toggleEditQ = (id: string) => {
     setEditingIds(prev => {
@@ -355,19 +381,42 @@ export default function QuestionEditor() {
     a.click();
   };
 
-  const handleSave = () => {
-    const overrides: Record<string, { label?: string; options?: string[] }> = {};
-    questions.forEach(q => {
-      const orig = INITIAL_QS.find(o => o.id === q.id);
-      if (!orig) return;
-      const entry: { label?: string; options?: string[] } = {};
-      if (q.label !== orig.label) entry.label = q.label;
-      if (JSON.stringify(q.options) !== JSON.stringify(orig.options)) entry.options = q.options;
-      if (Object.keys(entry).length) overrides[q.id] = entry;
-    });
-    localStorage.setItem("rootstory_question_overrides", JSON.stringify(overrides));
-    setFlash(true);
-    setTimeout(() => setFlash(false), 1600);
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const payload = {
+        id: "default" as string,
+        questions: JSON.parse(JSON.stringify(questions)),
+        translations: JSON.parse(JSON.stringify(trans)),
+        updated_at: new Date().toISOString(),
+      };
+      const { error } = await supabase
+        .from("question_schema")
+        .upsert(payload, { onConflict: "id" });
+
+      if (error) {
+        console.error("Failed to save question schema:", error);
+        alert("Save failed: " + error.message);
+        return;
+      }
+
+      // Also keep localStorage as fallback for the interview component
+      const overrides: Record<string, { label?: string; options?: string[] }> = {};
+      questions.forEach(q => {
+        const orig = INITIAL_QS.find(o => o.id === q.id);
+        if (!orig) return;
+        const entry: { label?: string; options?: string[] } = {};
+        if (q.label !== orig.label) entry.label = q.label;
+        if (JSON.stringify(q.options) !== JSON.stringify(orig.options)) entry.options = q.options;
+        if (Object.keys(entry).length) overrides[q.id] = entry;
+      });
+      localStorage.setItem("rootstory_question_overrides", JSON.stringify(overrides));
+
+      setFlash(true);
+      setTimeout(() => setFlash(false), 1600);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const trCount = lang !== "en" ? Object.keys(trans[lang]||{}).filter(k => trans[lang][k]?.label).length : 0;
@@ -406,8 +455,8 @@ export default function QuestionEditor() {
         <button onClick={handleExport} style={{padding:"5px 14px",borderRadius:5,border:"1px solid rgba(255,255,255,0.2)",background:"transparent",color:"rgba(255,255,255,0.75)",cursor:"pointer",fontSize:12,fontFamily:"Georgia, serif"}}>
           ↓ WhatsApp Flow JSON
         </button>
-        <button onClick={handleSave} style={{padding:"5px 16px",borderRadius:5,border:"none",fontFamily:"Georgia, serif",cursor:"pointer",fontSize:12,fontWeight:500,background:flash?"#2E7D52":"#E8A020",color:flash?"#fff":"#0D2818",transition:"background 0.2s"}}>
-          {flash?"✓ Saved":"Save"}
+        <button onClick={handleSave} disabled={saving} style={{padding:"5px 16px",borderRadius:5,border:"none",fontFamily:"Georgia, serif",cursor:saving?"wait":"pointer",fontSize:12,fontWeight:500,background:flash?"#2E7D52":saving?"#C8C4BC":"#E8A020",color:flash?"#fff":"#0D2818",transition:"background 0.2s"}}>
+          {flash?"✓ Saved":saving?"Saving…":"Save to Database"}
         </button>
       </div>
 
