@@ -686,7 +686,7 @@ export default function RootstoryInterview() {
   }
 
   useEffect(() => {
-    if (current?.id === "V1" && !narrative && !narLoading && !queued) {
+    if (current?.id === "V-1" && !narrative && !narLoading && !queued) {
       if (navigator.onLine) {
         generateNarrative();
       } else {
