@@ -571,7 +571,7 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
   duplicateQuestion: (qid: string) => void;
   questions: Question[];
 }) {
-  const cc      = COMPOSITES[q.composite]||COMPOSITES["Setup / Admin"];
+  const cc      = COMPOSITES[getPrimaryComposite(q)]||COMPOSITES["Setup / Admin"];
   const hasScore= !!(q.scores && Object.keys(q.scores).length>0 && q.type!=="open");
   const isScale = q.type==="scale5";
   const isEn    = lang==="en";
