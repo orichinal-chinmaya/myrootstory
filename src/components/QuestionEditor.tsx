@@ -848,18 +848,26 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
           )}
 
           <div style={{display:"flex",flexWrap:"wrap",gap:16,padding:"10px 14px",borderTop:"0.5px solid #E0DDD8"}}>
-            <MetaCell label="Composite">
-              <span style={{fontSize:12,fontWeight:500,padding:"2px 9px",borderRadius:4,background:cc.bg,color:cc.text}}>{q.composite}</span>
+            <MetaCell label={getComposites(q).length > 1 ? "Composites" : "Composite"}>
+              <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
+                {getComposites(q).map(comp => {
+                  const cc2 = COMPOSITES[comp] || COMPOSITES["Setup / Admin"];
+                  return <span key={comp} style={{fontSize:12,fontWeight:500,padding:"2px 9px",borderRadius:4,background:cc2.bg,color:cc2.text}}>{comp}</span>;
+                })}
+              </div>
             </MetaCell>
-            {IMPACT_DIMS[q.composite] && IMPACT_DIMS[q.composite].length > 0 && (
-              <MetaCell label={IMPACT_DIMS[q.composite].length > 1 ? "Impact Dimensions" : "Impact Dimension"}>
-                <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
-                  {IMPACT_DIMS[q.composite].map(dim => (
-                    <span key={dim} style={{fontSize:11,padding:"2px 8px",borderRadius:4,background:"#F5F3F0",border:"0.5px solid #E0DDD8",color:"#3A3A5C"}}>{dim}</span>
-                  ))}
-                </div>
-              </MetaCell>
-            )}
+            {(() => {
+              const allDims = [...new Set(getComposites(q).flatMap(c => IMPACT_DIMS[c] || []))];
+              return allDims.length > 0 ? (
+                <MetaCell label={allDims.length > 1 ? "Impact Dimensions" : "Impact Dimension"}>
+                  <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
+                    {allDims.map(dim => (
+                      <span key={dim} style={{fontSize:11,padding:"2px 8px",borderRadius:4,background:"#F5F3F0",border:"0.5px solid #E0DDD8",color:"#3A3A5C"}}>{dim}</span>
+                    ))}
+                  </div>
+                </MetaCell>
+              ) : null;
+            })()}
             {q.weight && (
               <MetaCell label="Weight">
                 <span style={{fontSize:12,color:"#8A8A9A"}}>{q.weight}/3 — {WEIGHT_LABEL[q.weight]}</span>
