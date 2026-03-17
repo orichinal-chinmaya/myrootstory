@@ -841,7 +841,7 @@ export default function RootstoryInterview() {
         const rid = "R" + phone.slice(-4);
         const pid = generateParticipantId(rid);
         setResearcher({ phone, id:rid });
-        setAnswers({ S1:pid, timestamp:new Date().toISOString() });
+        setAnswers({ PID:pid, timestamp:new Date().toISOString() });
         setPhase("interview");
       } else {
         setOtpError("Incorrect OTP. Please try again.");
