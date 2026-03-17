@@ -66,7 +66,7 @@ function scoreAppearance(v: number | null | undefined) {
 
 interface Question {
   id: string;
-  composite: string;
+  composite: string | string[];
   module: string;
   weight: number | null;
   always: boolean;
@@ -77,7 +77,14 @@ interface Question {
   hint: string;
   adminComment?: string;
   researcherDirection?: string;
-  conditionRule?: string; // human-readable branching condition, e.g. "ES-5 = Yes"
+  conditionRule?: string;
+}
+
+function getComposites(q: Question): string[] {
+  return Array.isArray(q.composite) ? q.composite : [q.composite];
+}
+function getPrimaryComposite(q: Question): string {
+  return Array.isArray(q.composite) ? q.composite[0] : q.composite;
 }
 
 // ─── COMPLETE QUESTION DATA ───────────────────────────────────────────────────
