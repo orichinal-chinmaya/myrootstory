@@ -181,7 +181,7 @@ const SCORE_MAP = {
   "CQ-10": { "Yes, expand":1.0, "Yes, continue at same level":0.65, "Uncertain":0.3, "No":0.0 },
 
   // ── COMMUNITY & SOCIAL ──
-  "CQ-11": { "Yes, spending more":1.0, "About the same":0.0, "Spending less locally":0.0 },
+  "CQ-11": { "Yes, spending more":1.0, "About the same":0.3, "Spending less locally":0.0 },
   "CQ-12": { "Yes, regularly":1.0, "Yes, occasionally":0.6, "No":0.0 },
   "CQ-13": { "Yes, more active":1.0, "About the same":0.3, "Less active":0.0 },
   "ST-2":  { "Yes, she feels more respected":1.0, "About the same":0.3, "She feels less respected":0.0 },
