@@ -175,8 +175,33 @@ export default function QuestionEditor() {
   const [trans,      setTrans]      = useState<TranslationStore>({});
   const [viewMode,   setViewMode]   = useState<"list"|"matrix">("list");
   const [flash,      setFlash]      = useState(false);
+  const [saving,     setSaving]     = useState(false);
+  const [loaded,     setLoaded]     = useState(false);
   const [globalEdit, setGlobalEdit] = useState(false);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
+
+  // Load questions & translations from database on mount
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("question_schema")
+          .select("questions, translations")
+          .eq("id", "default")
+          .maybeSingle();
+        if (error) { console.error("Failed to load question schema:", error); return; }
+        if (data) {
+          if (data.questions && Array.isArray(data.questions) && data.questions.length > 0) {
+            setQuestions(data.questions as unknown as Question[]);
+          }
+          if (data.translations && typeof data.translations === "object" && Object.keys(data.translations).length > 0) {
+            setTrans(data.translations as unknown as TranslationStore);
+          }
+        }
+      } catch (e) { console.error("Error loading question schema:", e); }
+      finally { setLoaded(true); }
+    })();
+  }, []);
 
   const toggleEditQ = (id: string) => {
     setEditingIds(prev => {
