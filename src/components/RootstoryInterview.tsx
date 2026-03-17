@@ -621,10 +621,10 @@ async function loadQuestionsFromDB(): Promise<typeof ALL_QUESTIONS | null> {
     if (error || !data?.questions) return null;
     const dbQs = data.questions as any[];
     if (!Array.isArray(dbQs) || dbQs.length === 0) return null;
-    // Map DB question schema back into the interview format
+    // Map DB question schema into the interview format — conditionRule drives visibility
     return dbQs.map((q: any) => ({
       id: q.id,
-      module: q.module || "Core",
+      module: (q.module || "Core").toLowerCase().replace("story depth","depth").replace("her voice","narrative").replace("researcher only","setup"),
       type: q.type || "single",
       label: q.label || "",
       options: q.options || [],
@@ -633,9 +633,10 @@ async function loadQuestionsFromDB(): Promise<typeof ALL_QUESTIONS | null> {
       always: q.always !== false,
       composite: q.composite || "",
       weight: q.weight ?? null,
-      trigger: undefined, // triggers are kept in code logic, not DB
+      conditionRule: q.conditionRule || undefined,
       scaleLabels: q.type === "scale5" ? q.options : undefined,
       researcherDirection: q.researcherDirection || undefined,
+      required: q.always !== false,
     }));
   } catch (e) {
     console.error("Failed to load questions from database:", e);
