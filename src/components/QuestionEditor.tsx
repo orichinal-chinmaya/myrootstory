@@ -455,8 +455,8 @@ export default function QuestionEditor() {
         <button onClick={handleExport} style={{padding:"5px 14px",borderRadius:5,border:"1px solid rgba(255,255,255,0.2)",background:"transparent",color:"rgba(255,255,255,0.75)",cursor:"pointer",fontSize:12,fontFamily:"Georgia, serif"}}>
           ↓ WhatsApp Flow JSON
         </button>
-        <button onClick={handleSave} style={{padding:"5px 16px",borderRadius:5,border:"none",fontFamily:"Georgia, serif",cursor:"pointer",fontSize:12,fontWeight:500,background:flash?"#2E7D52":"#E8A020",color:flash?"#fff":"#0D2818",transition:"background 0.2s"}}>
-          {flash?"✓ Saved":"Save"}
+        <button onClick={handleSave} disabled={saving} style={{padding:"5px 16px",borderRadius:5,border:"none",fontFamily:"Georgia, serif",cursor:saving?"wait":"pointer",fontSize:12,fontWeight:500,background:flash?"#2E7D52":saving?"#C8C4BC":"#E8A020",color:flash?"#fff":"#0D2818",transition:"background 0.2s"}}>
+          {flash?"✓ Saved":saving?"Saving…":"Save to Database"}
         </button>
       </div>
 
