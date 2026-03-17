@@ -730,7 +730,7 @@ export default function RootstoryInterview() {
   // Save completed interview to offline queue (called when phase becomes "complete")
   function saveToQueue(answersSnap: Record<string, unknown>, scoresSnap: Record<string, number>) {
     const record = {
-      id: answersSnap["S1"] || Date.now().toString(),
+      id: answersSnap["PID"] || Date.now().toString(),
       timestamp: answersSnap["timestamp"] || new Date().toISOString(),
       answers: answersSnap,
       scores: scoresSnap,
@@ -751,25 +751,25 @@ export default function RootstoryInterview() {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error } = await (supabase as any).from("stories").upsert({
-        id:               String(answersSnap["S1"] || Date.now()),
+        id:               String(answersSnap["PID"] || Date.now()),
         timestamp:        String(answersSnap["timestamp"] || new Date().toISOString()),
         researcher_id:    researcher?.id || null,
-        district:         String(answersSnap["S2"] || ""),
-        village:          String(answersSnap["S4"] || ""),
-        scheme:           String(answersSnap["S8"] || ""),
+        district:         String(answersSnap["S1"] || ""),
+        village:          String(answersSnap["S1c"] || ""),
+        scheme:           String(answersSnap["S3"] || ""),
         narrative:        narrative || null,
         validated:        false,
         answers:          answersSnap,
         scores:           scoresSnap,
         impact_scores:    impactSnap,
-        settlement_type:  String(answersSnap["SM1"] || ""),
-        income_range:     String(answersSnap["SM2"] || ""),
-        age_group:        String(answersSnap["SM3"] || ""),
-        education_level:  String(answersSnap["SM4"] || ""),
-        social_category:  String(answersSnap["SM5"] || ""),
-        marital_status:   String(answersSnap["SM6"] || ""),
-        household_type:   String(answersSnap["S9"]  || ""),
-        livelihood:       String(answersSnap["S10"] || ""),
+        settlement_type:  String(answersSnap["S6"] || ""),
+        income_range:     String(answersSnap["S7"] || ""),
+        age_group:        String(answersSnap["S8"] || ""),
+        education_level:  String(answersSnap["S9"] || ""),
+        social_category:  String(answersSnap["S10"] || ""),
+        marital_status:   String(answersSnap["S11"] || ""),
+        household_type:   String(answersSnap["S4"]  || ""),
+        livelihood:       String(answersSnap["S5"] || ""),
         themes:           [],
       });
       if (error) console.error("DB save error:", error);
