@@ -847,6 +847,142 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
   );
 }
 
+// ─── BRANCHING LOGIC ──────────────────────────────────────────────────────────
+function BranchingLogic({questions, editMode, updateField}: {questions: Question[]; editMode: boolean; updateField: (qid: string, field: keyof Question, val: any) => void}) {
+  const conditional = questions.filter(q => !q.always);
+  const gateIds = new Set<string>();
+  conditional.forEach(q => {
+    if (!q.conditionRule) return;
+    const matches = q.conditionRule.match(/[A-Z]{1,3}-?\d+[a-z]?/g);
+    if (matches) matches.forEach(m => gateIds.add(m));
+  });
+
+  const branches: Record<string, {gate: Question | undefined; children: Question[]}> = {};
+  conditional.forEach(q => {
+    if (!q.conditionRule) {
+      if (!branches["_unspecified"]) branches["_unspecified"] = {gate: undefined, children: []};
+      branches["_unspecified"].children.push(q);
+      return;
+    }
+    const matches = q.conditionRule.match(/[A-Z]{1,3}-?\d+[a-z]?/g);
+    const primaryGate = matches?.[0] || "_unspecified";
+    if (!branches[primaryGate]) branches[primaryGate] = {gate: questions.find(g => g.id === primaryGate), children: []};
+    branches[primaryGate].children.push(q);
+  });
+
+  return (
+    <div style={{display:"flex",flexDirection:"column",gap:16}}>
+      <div style={{fontSize:13,color:"#8A8A9A",lineHeight:1.6,padding:"4px 0 8px"}}>
+        Visual map of all conditional (branching) questions. Each gate question triggers one or more follow-ups based on the participant's answer.
+      </div>
+
+      {/* Stats bar */}
+      <div style={{display:"flex",gap:16,flexWrap:"wrap",padding:"10px 14px",background:"#fff",border:"0.5px solid #E0DDD8",borderRadius:8}}>
+        {([["Total Questions",questions.length,"#1A1A2E"],["Always Shown",questions.filter(q=>q.always).length,"#2E7D52"],["Conditional",conditional.length,"#C47A0A"],["Gate Questions",gateIds.size,"#3040C0"]] as const).map(([lbl,val,clr])=>(
+          <div key={lbl} style={{display:"flex",flexDirection:"column",gap:2}}>
+            <span style={{fontSize:10,fontWeight:500,color:"#8A8A9A",textTransform:"uppercase",letterSpacing:0.5}}>{lbl}</span>
+            <span style={{fontSize:18,fontWeight:600,color:clr as string}}>{val}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Branch groups */}
+      {Object.entries(branches).map(([gateId, {gate, children}]) => {
+        const cc = gate ? (COMPOSITES[gate.composite] || COMPOSITES["Setup / Admin"]) : {bg:"#F0F4F0",border:"#8A8A9A",text:"#3A4A3A"};
+        return (
+          <div key={gateId} style={{background:"#fff",border:"0.5px solid #E0DDD8",borderRadius:8,overflow:"hidden"}}>
+            {/* Gate header */}
+            <div style={{padding:"12px 16px",background:cc.bg,borderBottom:`1.5px solid ${cc.border}`,display:"flex",alignItems:"flex-start",gap:12}}>
+              <div style={{width:4,minHeight:36,background:cc.border,borderRadius:2,flexShrink:0}}/>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4,flexWrap:"wrap"}}>
+                  <span style={{fontSize:11,fontWeight:600,padding:"2px 8px",borderRadius:4,background:"#fff",color:cc.text,fontFamily:"monospace",border:`1px solid ${cc.border}`}}>
+                    {gateId === "_unspecified" ? "⚠ No rule defined" : `⑂ ${gateId}`}
+                  </span>
+                  <span style={{fontSize:10,color:cc.text,fontWeight:500}}>GATE QUESTION</span>
+                  {gate && <span style={{fontSize:10,color:"#8A8A9A"}}>→ triggers {children.length} follow-up{children.length!==1?"s":""}</span>}
+                </div>
+                {gate ? (
+                  <div style={{fontSize:12,color:"#1A1A2E",lineHeight:1.5}}>{gate.label}</div>
+                ) : gateId !== "_unspecified" ? (
+                  <div style={{fontSize:12,color:"#8A8A9A",fontStyle:"italic"}}>Gate question "{gateId}" referenced but not found in question set</div>
+                ) : null}
+                {gate && gate.options.length > 0 && (
+                  <div style={{display:"flex",flexWrap:"wrap",gap:4,marginTop:6}}>
+                    {gate.options.map(opt => {
+                      const isReferenced = children.some(c => c.conditionRule?.includes(opt.slice(0,20)));
+                      return (
+                        <span key={opt} style={{fontSize:10,padding:"2px 7px",borderRadius:4,
+                          background: isReferenced ? "#FEF3DC" : "#F5F3F0",
+                          border: isReferenced ? "1px solid #C47A0A" : "0.5px solid #E0DDD8",
+                          color: isReferenced ? "#8A4A00" : "#8A8A9A",
+                          fontWeight: isReferenced ? 500 : 400}}>
+                          {opt.length > 35 ? opt.slice(0,33)+"…" : opt}
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Child branches */}
+            <div>
+              {children.map((q,ci) => {
+                const qcc = COMPOSITES[q.composite] || COMPOSITES["Setup / Admin"];
+                return (
+                  <div key={q.id} style={{display:"flex",alignItems:"stretch",borderTop:ci>0?"0.5px solid #E0DDD8":"none"}}>
+                    <div style={{width:48,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",position:"relative"}}>
+                      <div style={{position:"absolute",top:0,bottom:0,left:23,width:2,background:"#E0DDD8"}}/>
+                      <div style={{width:14,height:14,borderRadius:"50%",background:qcc.bg,border:`1.5px solid ${qcc.border}`,position:"relative",zIndex:1}}/>
+                      <div style={{position:"absolute",left:30,width:18,height:2,background:"#E0DDD8",top:"50%"}}/>
+                    </div>
+                    <div style={{flex:1,padding:"10px 14px 10px 0",minWidth:0}}>
+                      <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3,flexWrap:"wrap"}}>
+                        <span style={{fontSize:11,fontWeight:500,padding:"1px 7px",borderRadius:4,background:qcc.bg,color:qcc.text,fontFamily:"monospace"}}>{q.id}</span>
+                        <span style={{fontSize:10,color:"#8A8A9A"}}>{q.composite}</span>
+                        {q.weight && <WeightDots w={q.weight}/>}
+                      </div>
+                      <div style={{fontSize:12,color:"#1A1A2E",lineHeight:1.5,marginBottom:4}}>
+                        {q.label.length > 90 ? q.label.slice(0,88)+"…" : q.label}
+                      </div>
+                      <div style={{display:"flex",alignItems:"flex-start",gap:6}}>
+                        <span style={{fontSize:10,fontWeight:600,color:"#C47A0A",flexShrink:0,paddingTop:1}}>IF</span>
+                        {editMode ? (
+                          <input value={q.conditionRule||""} onChange={e=>updateField(q.id,"conditionRule",e.target.value)}
+                            placeholder="Define condition rule…"
+                            style={{fontSize:11,padding:"2px 8px",border:"1px solid #C47A0A",borderRadius:4,fontFamily:"Georgia, serif",
+                              background:"#FFFBE6",color:"#8A4A00",width:"100%",boxSizing:"border-box"}}/>
+                        ) : (
+                          <span style={{fontSize:11,color:"#8A4A00",background:"#FEF3DC",padding:"1px 8px",borderRadius:4,lineHeight:1.5}}>
+                            {q.conditionRule || "No condition rule defined"}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+              <div style={{height:8,marginLeft:23,width:2,background:"#E0DDD8"}}/>
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Legend */}
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,padding:"12px 14px",background:"#fff",border:"0.5px solid #E0DDD8",borderRadius:8}}>
+        <span style={{fontSize:10,fontWeight:600,color:"#8A8A9A",textTransform:"uppercase",letterSpacing:0.5}}>Legend</span>
+        {[["#3040C0","#EEF0FF","Gate question — triggers branches"],["#C47A0A","#FEF3DC","Conditional — shown based on answer"],["#2E7D52","#E8F5EE","Always shown — no conditions"]].map(([fg,bg,l])=>(
+          <span key={l} style={{display:"flex",alignItems:"center",gap:5,fontSize:10,color:"#8A8A9A"}}>
+            <span style={{width:10,height:10,borderRadius:3,background:bg as string,border:`1px solid ${fg}`,display:"inline-block"}}/>
+            {l}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── SCORE MATRIX ─────────────────────────────────────────────────────────────
 function ScoreMatrix({questions}: {questions: Question[]}) {
   const scored = questions.filter(q=>q.scores&&Object.keys(q.scores).length>0&&q.type!=="open");
