@@ -324,33 +324,33 @@ function calcIITMScores(scores) {
 // ─── PROMPT BUILDER ───────────────────────────────────────────────────────────
 function buildPrompt(answers) {
   const a = answers;
-  const scheme    = a["S8"]  || "a women's DBT scheme";
-  const district  = a["S2"]  || "Maharashtra";
-  const livelihood= a["S10"] || "not specified";
-  const hhType    = a["S9"]  || "household";
-  const fundUse   = Array.isArray(a["P1"]) ? a["P1"].join(", ") : (a["P1"]||"not recorded");
+  const scheme    = a["S3"]  || "a women's DBT scheme";
+  const district  = a["S1"]  || "Maharashtra";
+  const livelihood= a["S5"]  || "not specified";
+  const hhType    = a["S4"]  || "household";
+  const fundUse   = Array.isArray(a["CQ-1"]) ? a["CQ-1"].join(", ") : (a["CQ-1"]||"not recorded");
 
   const depthMap = {
-    D1:"BEFORE THIS MONEY CAME",      D2:"THE MOMENT THINGS CHANGED",
-    D4:"HOW IT FEELS TO KNOW IT IS COMING",
-    D6:"IN MY OWN WORDS",
-    D7:"WHAT I WOULD LOSE IF IT STOPPED", V4:"ANYTHING ELSE I WANT TO SAY"
+    "ES-3":"BEFORE THIS MONEY CAME",      "ES-8":"THE MOMENT THINGS CHANGED",
+    "ES-21":"HOW IT FEELS TO KNOW IT IS COMING",
+    "ST-1":"IN MY OWN WORDS",
+    "ST-4":"WHAT I WOULD LOSE IF IT STOPPED", "V-4":"ANYTHING ELSE I WANT TO SAY"
   };
   const depthLines = Object.entries(depthMap)
     .filter(([id]) => a[id] && String(a[id]).trim().length > 5)
     .map(([id,label]) => `[${label}]: "${a[id]}"`)
     .join("\n");
 
-  // Extra context from new IIT Madras aligned questions
+  // Extra context from v0.4 aligned questions
   const extras = [
-    a["N1"] && `- Saving behaviour: ${a["N1"]}`,
-    a["N2"] && `- Asset purchased since DBT: ${a["N2"]}`,
-    a["N3"] && `- Healthcare spending change: ${a["N3"]}`,
-    a["N4"] && `- Food quality / nutrition change: ${a["N4"]}`,
-    a["N5"] && `- Education spending change: ${a["N5"]}`,
-    a["N7"] && `- Sense of self-worth: ${a["N7"]}`,
-    a["N8"] && `- Formal banking use: ${a["N8"]}`,
-    a["N12"]&& `- Financial independence: ${a["N12"]}`,
+    a["ES-17"] && `- Saving behaviour: ${a["ES-17"]}`,
+    a["ES-18"] && `- Asset purchased since DBT: ${a["ES-18"]}`,
+    a["CQ-3"]  && `- Healthcare spending change: ${a["CQ-3"]}`,
+    a["CQ-4"]  && `- Food quality / nutrition change: ${a["CQ-4"]}`,
+    a["CQ-5"]  && `- Education spending change: ${a["CQ-5"]}`,
+    a["WE-10"] && `- Sense of self-worth: ${a["WE-10"]}`,
+    a["ES-19"] && `- Formal banking use: ${a["ES-19"]}`,
+    a["WE-12"] && `- Financial independence: ${a["WE-12"]}`,
   ].filter(Boolean).join("\n");
 
   return `You are writing a micronarrative for a social audit. The participant will hear this read back to them. It must feel like their own story — not a summary written about them.
@@ -367,19 +367,19 @@ STRICT RULES:
 WHAT SHE SHARED:
 Location: ${district} | Scheme: ${scheme} | Livelihood: ${livelihood}
 Used money for: ${fundUse}
-Most important to her: "${a["P2"]||""}"
-Expenses before → now: ${a["P3"]||"—"} → ${a["P4"]||"—"} | Stable: ${a["P5"]||"—"}
-Pressure reduced: ${a["P8"]||"—"}
-Borrowing: ${a["P9"]||"—"} → ${a["P10"]||"—"}
-Confidence: ${a["P13"]||"—"}/5 → ${a["P14"]||"—"}
-More say at home: ${a["P15"]||"—"} | Planning ahead: ${a["P16"]||"—"}
-Saving: ${a["N1"]||"—"} | Asset: ${a["N2"]||"—"}
-Food: ${a["N4"]||"—"} | Health spend: ${a["N3"]||"—"} | Education: ${a["N5"]||"—"}
-Self-worth: ${a["N7"]||"—"} | Banking: ${a["N8"]||"—"}
-Independence: ${a["N12"]||"—"}
-Community: ${a["CS1"]||"—"} | Supporting others: ${a["CS3"]||"—"}
-${a["A4b"] ? `Livelihood income: ${a["A4b"]}` : ""}
-${a["A6b"] ? `Spending decisions: ${a["A6b"]}` : ""}
+Most important to her: "${a["CQ-2"]||""}"
+Expenses before → now: ${a["ES-1"]||"—"} → ${a["ES-2"]||"—"} | Stable: ${a["ES-4"]||"—"}
+Pressure reduced: ${a["ES-7"]||"—"}
+Borrowing: ${a["ES-9"]||"—"} → ${a["ES-10"]||"—"}
+Confidence: ${a["WE-1"]||"—"}/5 → ${a["WE-2"]||"—"}
+More say at home: ${a["WE-4"]||"—"} | Planning ahead: ${a["WE-5"]||"—"}
+Saving: ${a["ES-17"]||"—"} | Asset: ${a["ES-18"]||"—"}
+Food: ${a["CQ-4"]||"—"} | Health spend: ${a["CQ-3"]||"—"} | Education: ${a["CQ-5"]||"—"}
+Self-worth: ${a["WE-10"]||"—"} | Banking: ${a["ES-19"]||"—"}
+Independence: ${a["WE-12"]||"—"}
+Community: ${a["CQ-11"]||"—"} | Supporting others: ${a["CQ-12"]||"—"}
+${a["CQ-8"] ? `Livelihood income: ${a["CQ-8"]}` : ""}
+${a["WE-7"] ? `Spending decisions: ${a["WE-7"]}` : ""}
 
 HER EXACT WORDS (use these, do not paraphrase):
 ${depthLines || "(none recorded)"}`;
