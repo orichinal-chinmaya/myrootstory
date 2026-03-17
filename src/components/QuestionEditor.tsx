@@ -1,4 +1,5 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 // ─── COMPOSITE COLOUR MAP ─────────────────────────────────────────────────────
 const COMPOSITES: Record<string, { bg: string; border: string; text: string }> = {
