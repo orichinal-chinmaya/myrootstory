@@ -82,19 +82,19 @@ const DOMAIN_COMPOSITES: Record<string, string[]> = {
   "Social Transformation":          ["Social Empowerment", "Household Agency", "Community & Social"],
 };
 
-// Legacy 1:1 map for backward-compat (primary domain per composite)
-const IITM_DIMS: Record<string, string> = {
-  "Household Stability":     "Economic Security",
-  "Debt & Credit Relief":    "Economic Security",
-  "Savings & Assets":        "Economic Security",
-  "Nutrition & Health":      "Consumption Quality & Multiplier",
-  "Education":               "Consumption Quality & Multiplier",
-  "Financial Confidence":    "Women's Empowerment",
-  "Household Agency":        "Women's Empowerment",
-  "Social Empowerment":      "Women's Empowerment",
-  "Financial Inclusion":     "Women's Empowerment",
-  "Livelihood & Enterprise": "Consumption Quality & Multiplier",
-  "Community & Social":      "Consumption Quality & Multiplier",
+// Composite → Impact Dimensions (v0.4: composites can feed MULTIPLE domains)
+const COMPOSITE_DIMS: Record<string, string[]> = {
+  "Household Stability":     ["Economic Security"],
+  "Debt & Credit Relief":    ["Economic Security"],
+  "Savings & Assets":        ["Economic Security"],
+  "Nutrition & Health":      ["Consumption Quality & Multiplier"],
+  "Education":               ["Consumption Quality & Multiplier"],
+  "Financial Confidence":    ["Women's Empowerment"],
+  "Household Agency":        ["Women's Empowerment", "Social Transformation"],
+  "Social Empowerment":      ["Women's Empowerment", "Social Transformation"],
+  "Financial Inclusion":     ["Women's Empowerment"],
+  "Livelihood & Enterprise": ["Consumption Quality & Multiplier"],
+  "Community & Social":      ["Consumption Quality & Multiplier", "Social Transformation"],
 };
 
 // ─── MAHARASHTRA DATA ─────────────────────────────────────────────────────────
@@ -1098,13 +1098,13 @@ export default function RootstoryInterview() {
                 })}
               </div>
               <div style={{background:C.greyLight,borderRadius:8,padding:"12px 16px",display:"flex",flexDirection:"column",gap:6}}>
-                <div style={{fontSize:10,fontWeight:"bold",color:C.grey,textTransform:"uppercase",letterSpacing:1}}>Dimension Mapping</div>
-                {Object.entries(IITM_DIMS).map(([rs,dim])=>(
-                  <div key={rs} style={{display:"flex",gap:8,fontSize:12,alignItems:"center"}}>
-                    <span style={{color:C.teal,fontWeight:"bold",width:180,flexShrink:0}}>{rs}</span>
+                <div style={{fontSize:10,fontWeight:"bold",color:C.grey,textTransform:"uppercase",letterSpacing:1}}>Composite → Impact Dimensions</div>
+                {Object.entries(COMPOSITE_DIMS).map(([comp,dims])=>(
+                  <div key={comp} style={{display:"flex",gap:8,fontSize:12,alignItems:"center"}}>
+                    <span style={{color:C.teal,fontWeight:"bold",width:180,flexShrink:0}}>{comp}</span>
                     <span style={{color:C.grey,fontSize:10}}>→</span>
-                    <span style={{color:C.inkLight}}>{dim}</span>
-                    <span style={{marginLeft:"auto",fontFamily:"monospace",fontSize:11,color:EC[rs]?.t||C.grey}}>{scores[rs]}</span>
+                    <span style={{color:C.inkLight}}>{dims.join(" · ")}</span>
+                    <span style={{marginLeft:"auto",fontFamily:"monospace",fontSize:11,color:EC[comp]?.t||C.grey}}>{scores[comp]}</span>
                   </div>
                 ))}
               </div>

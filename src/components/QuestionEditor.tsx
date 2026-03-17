@@ -25,18 +25,19 @@ const DOMAIN_COMPOSITES: Record<string, string[]> = {
   "Social Transformation":          ["Social Empowerment", "Household Agency", "Community & Social"],
 };
 
-const IMPACT_DIM: Record<string, string> = {
-  "Household Stability":"Economic Security",
-  "Debt & Credit Relief":"Economic Security",
-  "Savings & Assets":"Economic Security",
-  "Nutrition & Health":"Consumption Quality & Multiplier",
-  "Education":"Consumption Quality & Multiplier",
-  "Financial Confidence":"Women's Empowerment",
-  "Household Agency":"Women's Empowerment",
-  "Social Empowerment":"Women's Empowerment",
-  "Financial Inclusion":"Women's Empowerment",
-  "Livelihood & Enterprise":"Consumption Quality & Multiplier",
-  "Community & Social":"Consumption Quality & Multiplier",
+// Composite → Impact Dimensions (v0.4: a composite can feed MULTIPLE domains)
+const IMPACT_DIMS: Record<string, string[]> = {
+  "Household Stability":     ["Economic Security"],
+  "Debt & Credit Relief":    ["Economic Security"],
+  "Savings & Assets":        ["Economic Security"],
+  "Nutrition & Health":      ["Consumption Quality & Multiplier"],
+  "Education":               ["Consumption Quality & Multiplier"],
+  "Financial Confidence":    ["Women's Empowerment"],
+  "Household Agency":        ["Women's Empowerment", "Social Transformation"],
+  "Social Empowerment":      ["Women's Empowerment", "Social Transformation"],
+  "Financial Inclusion":     ["Women's Empowerment"],
+  "Livelihood & Enterprise": ["Consumption Quality & Multiplier"],
+  "Community & Social":      ["Consumption Quality & Multiplier", "Social Transformation"],
 };
 
 const LANGS = [
@@ -374,7 +375,7 @@ export default function QuestionEditor() {
       return { id: sid, title: compositeSet.join(" · ").substring(0, 60), layout: { type: "SingleColumnLayout", children: [{ type: "Form", name: `form_${sid.toLowerCase()}`, children: formChildren }] } };
     });
 
-    const scoringMetadata = questions.filter(q => q.scores && Object.keys(q.scores).length > 0).map(q => ({ id: q.id, composite: q.composite, weight: q.weight, impact_dimension: IMPACT_DIM[q.composite] || null, scores: q.scores }));
+    const scoringMetadata = questions.filter(q => q.scores && Object.keys(q.scores).length > 0).map(q => ({ id: q.id, composite: q.composite, weight: q.weight, impact_dimensions: IMPACT_DIMS[q.composite] || [], scores: q.scores }));
     const waFlow = { version: "6.0", data_api_version: "3.0", routing_model: routingModel, screens, _rootstory_metadata: { exportedAt: new Date().toISOString(), language: lang, total_questions: questions.length, scoring_map: scoringMetadata, translations: lang !== "en" ? trans : undefined } };
 
     const blob = new Blob([JSON.stringify(waFlow, null, 2)], { type: "application/json" });
@@ -824,9 +825,13 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
             <MetaCell label="Composite">
               <span style={{fontSize:12,fontWeight:500,padding:"2px 9px",borderRadius:4,background:cc.bg,color:cc.text}}>{q.composite}</span>
             </MetaCell>
-            {IMPACT_DIM[q.composite] && (
-              <MetaCell label="Impact Dimension">
-                <span style={{fontSize:12,color:"#8A8A9A"}}>{IMPACT_DIM[q.composite]}</span>
+            {IMPACT_DIMS[q.composite] && IMPACT_DIMS[q.composite].length > 0 && (
+              <MetaCell label={IMPACT_DIMS[q.composite].length > 1 ? "Impact Dimensions" : "Impact Dimension"}>
+                <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
+                  {IMPACT_DIMS[q.composite].map(dim => (
+                    <span key={dim} style={{fontSize:11,padding:"2px 8px",borderRadius:4,background:"#F5F3F0",border:"0.5px solid #E0DDD8",color:"#3A3A5C"}}>{dim}</span>
+                  ))}
+                </div>
               </MetaCell>
             )}
             {q.weight && (
@@ -999,7 +1004,7 @@ function ScoreMatrix({questions}: {questions: Question[]}) {
           <div key={comp}>
             <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
               <span style={{fontSize:12,fontWeight:500,padding:"3px 10px",borderRadius:4,background:cc.bg,color:cc.text}}>{comp}</span>
-              {IMPACT_DIM[comp] && <span style={{fontSize:11,color:"#8A8A9A"}}>→ {IMPACT_DIM[comp]}</span>}
+              {IMPACT_DIMS[comp] && <span style={{fontSize:11,color:"#8A8A9A"}}>→ {IMPACT_DIMS[comp].join(" · ")}</span>}
             </div>
             <div style={{overflowX:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
