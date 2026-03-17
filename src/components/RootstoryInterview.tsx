@@ -592,6 +592,7 @@ const MODULE_ICONS = {
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
 // ─── APPLY QUESTION EDITOR OVERRIDES ─────────────────────────────────────────
 function applyEditorOverrides(questions: typeof ALL_QUESTIONS) {
+  // localStorage fallback only — database loading happens in the component
   try {
     const raw = localStorage.getItem("rootstory_question_overrides");
     if (!raw) return questions;
@@ -603,11 +604,42 @@ function applyEditorOverrides(questions: typeof ALL_QUESTIONS) {
         ...q,
         ...(ov.label    !== undefined ? { label:   ov.label }   : {}),
         ...(ov.options  !== undefined ? { options: ov.options } : {}),
-        // keep scaleLabels in sync if options replaced
         ...((ov.options !== undefined && (q as any).scaleLabels) ? { scaleLabels: ov.options } : {}),
       };
     });
   } catch { return questions; }
+}
+
+async function loadQuestionsFromDB(): Promise<typeof ALL_QUESTIONS | null> {
+  try {
+    const { data, error } = await supabase
+      .from("question_schema")
+      .select("questions")
+      .eq("id", "default")
+      .maybeSingle();
+    if (error || !data?.questions) return null;
+    const dbQs = data.questions as any[];
+    if (!Array.isArray(dbQs) || dbQs.length === 0) return null;
+    // Map DB question schema back into the interview format
+    return dbQs.map((q: any) => ({
+      id: q.id,
+      module: q.module || "Core",
+      type: q.type || "single",
+      label: q.label || "",
+      options: q.options || [],
+      scores: q.scores || {},
+      hint: q.hint || "",
+      always: q.always !== false,
+      composite: q.composite || "",
+      weight: q.weight ?? null,
+      trigger: undefined, // triggers are kept in code logic, not DB
+      scaleLabels: q.type === "scale5" ? q.options : undefined,
+      researcherDirection: q.researcherDirection || undefined,
+    }));
+  } catch (e) {
+    console.error("Failed to load questions from database:", e);
+    return null;
+  }
 }
 
 export default function RootstoryInterview() {
