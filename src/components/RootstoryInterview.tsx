@@ -908,8 +908,8 @@ export default function RootstoryInterview() {
 
   // ── COMPLETE ───────────────────────────────────────────────────────────────
   if (phase === "complete") {
-    const depthIds = ["D1","D2","D4","D6","D7"];
-    const depthLabels = {D1:"Before Moment",D2:"Turning Point",D4:"Predictability & Dignity",D6:"Own Words",D7:"What Would Be Lost"};
+    const depthIds = ["ES-3","ES-8","ES-21","ST-1","ST-4"];
+    const depthLabels = {"ES-3":"Before Moment","ES-8":"Turning Point","ES-21":"Predictability & Dignity","ST-1":"Own Words","ST-4":"What Would Be Lost"};
     const collected = depthIds.map(id=>({id,label:depthLabels[id],a:answers[id]})).filter(x=>x.a);
     const iitmColors = {
       "Economic Security":              {bg:"#E8F5EE",    b:"#0D2818",t:"#071A0E"},
