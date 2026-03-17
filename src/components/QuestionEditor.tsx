@@ -445,11 +445,11 @@ export default function QuestionEditor() {
         </button>
 
         <div style={{display:"flex",gap:2,background:"rgba(255,255,255,0.08)",padding:3,borderRadius:6}}>
-          {(["list","matrix"] as const).map((v)=>(
+          {([["list","Questions"],["matrix","Score Matrix"],["branching","Branching Logic"]] as const).map(([v,lbl])=>(
             <button key={v} onClick={()=>setViewMode(v)}
               style={{padding:"4px 12px",border:"none",borderRadius:4,cursor:"pointer",fontSize:12,fontFamily:"Georgia, serif",
                 background:viewMode===v?"#fff":"transparent",color:viewMode===v?"#0D2818":"rgba(255,255,255,0.6)"}}>
-              {v === "list" ? "Questions" : "Score Matrix"}
+              {lbl}
             </button>
           ))}
         </div>
