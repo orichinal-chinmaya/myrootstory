@@ -636,10 +636,28 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
                     style={inputSm}/>
                 </EditField>
                 {/* Composite */}
-                <EditField label="Composite / Category">
-                  <select value={q.composite} onChange={e=>updateField(q.id,"composite",e.target.value)} style={inputSm}>
-                    {Object.keys(COMPOSITES).map(c=><option key={c} value={c}>{c}</option>)}
-                  </select>
+                <EditField label="Composite(s) — click to toggle">
+                  <div style={{display:"flex",flexWrap:"wrap",gap:4,padding:"4px 0"}}>
+                    {Object.keys(COMPOSITES).map(c => {
+                      const comps = getComposites(q);
+                      const active = comps.includes(c);
+                      const cc2 = COMPOSITES[c];
+                      return (
+                        <button key={c} type="button" onClick={() => {
+                          const current = getComposites(q);
+                          const next = active ? current.filter(x => x !== c) : [...current, c];
+                          if (next.length === 0) return;
+                          updateField(q.id, "composite", next.length === 1 ? next[0] : next);
+                        }}
+                          style={{fontSize:10,padding:"2px 8px",borderRadius:4,cursor:"pointer",
+                            border: active ? `1.5px solid ${cc2.border}` : "1px solid #E0DDD8",
+                            background: active ? cc2.bg : "transparent",
+                            color: active ? cc2.text : "#8A8A9A", fontFamily:"Georgia, serif"}}>
+                          {active ? "✓ " : ""}{c}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </EditField>
                 {/* Module */}
                 <EditField label="Module">
