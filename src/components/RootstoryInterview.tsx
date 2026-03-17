@@ -557,25 +557,25 @@ const ALL_QUESTIONS = [
   // ── SOCIAL TRANSFORMATION: ST-1 through ST-4 ─────────────────────────────
   { id:"ST-1", module:"narrative", label:"How has her reliance on others — relatives, neighbours, or moneylenders — changed since Ladki Bahin? Does she feel more independent? What does that feel like, and what has changed?",
     hint:"Record her exact language. Listen for shifts in reliance, dignity, autonomy.",
-    type:"open", trigger:()=>true, depthCategory:"Own Words", badge:"🎙 Her Voice" },
+    type:"open", depthCategory:"Own Words", badge:"🎙 Her Voice" },
   { id:"ST-2", module:"community", label:"Since receiving Ladki Bahin, does she feel her position or standing in her community has changed?",
     type:"single", options:["Yes, she feels more respected","About the same","She feels less respected"], required:true },
   { id:"ST-3", module:"community", label:"Since receiving Ladki Bahin, has she been able to provide support — financial or practical — to another woman, relative, or neighbour?",
     type:"single", options:["Yes, regularly","Yes, occasionally","No"], required:true },
   { id:"ST-4", module:"narrative", label:"If this payment stopped tomorrow — what is the first thing in her life that would be affected?",
     hint:"This often reveals what matters most.",
-    type:"open", trigger:()=>true, depthCategory:"What Would Be Lost", badge:"🎙 Her Voice" },
+    type:"open", depthCategory:"What Would Be Lost", badge:"🎙 Her Voice" },
 
   // ── VALIDATION: V-1 through V-4 ──────────────────────────────────────────
-  { id:"V-1", module:"validation", label:"narrative_display", type:"narrative_display", trigger:()=>true, required:false },
+  { id:"V-1", module:"validation", label:"narrative_display", type:"narrative_display", required:false },
   { id:"V-2", module:"validation", label:"Does this story accurately describe her experience?",
     hint:"Read it aloud to her in her language. Does she recognise herself in it?",
     type:"single", options:["Yes, this is my story","Mostly — small details to adjust","This needs to be rewritten"], required:true },
   { id:"V-3", module:"validation", label:"What would she like to correct or add?",
-    type:"open", trigger:(a)=>["Mostly — small details to adjust","This needs to be rewritten"].includes(a["V-2"]),
+    type:"open", conditionRule:'V-2 ≠ "Yes, this is my story"',
     hint:"Record her corrections verbatim" },
   { id:"V-4", module:"validation", label:"Is there anything else she would like to add — anything the story missed?",
-    type:"open", trigger:()=>true, hint:"Final opportunity for her voice." },
+    type:"open", hint:"Final opportunity for her voice." },
 
 ];
 
