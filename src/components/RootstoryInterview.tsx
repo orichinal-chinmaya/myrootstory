@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import type { CSSProperties } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { evaluateCondition } from "@/lib/conditionEvaluator";
 
 // ─── OFFLINE QUEUE ────────────────────────────────────────────────────────────
 const QUEUE_KEY = "rootstory_queue";
@@ -447,18 +448,18 @@ const ALL_QUESTIONS = [
     type:"single", options:["Yes, more active","About the same","Less active"], required:true },
   { id:"CQ-7", module:"adaptive", label:"What type of livelihood or farm activity did she use the money for?", hint:"Select all that apply",
     type:"multi", options:["Seeds or fertiliser","Livestock or poultry","Small shop or trade","Tools or equipment","Skills or training","Other"],
-    trigger:(a)=>Array.isArray(a["CQ-1"])&&(a["CQ-1"].includes("Starting or running a business or farm activity")||a["CQ-1"].includes("Agricultural labour")) },
+    conditionRule:'CQ-1 includes "Starting or running a business or farm activity" OR CQ-1 includes "Agricultural labour"' },
   { id:"CQ-8", module:"adaptive", label:"Did this activity generate income or improve the household's productive capacity?",
     type:"single", options:["Yes, generating regular income","Yes, some additional income","Not yet but she expects it to","No income generated"],
-    trigger:(a)=>Array.isArray(a["CQ-1"])&&(a["CQ-1"].includes("Starting or running a business or farm activity")||a["CQ-1"].includes("Agricultural labour")) },
+    conditionRule:'CQ-1 includes "Starting or running a business or farm activity" OR CQ-1 includes "Agricultural labour"' },
   { id:"CQ-9", module:"adaptive", label:"Did this activity create paid work for others in her household or community?",
     type:"single", options:["Yes, for household members","Yes, for community members","No"],
-    trigger:(a)=>Array.isArray(a["CQ-1"])&&(a["CQ-1"].includes("Starting or running a business or farm activity")||a["CQ-1"].includes("Agricultural labour")) },
+    conditionRule:'CQ-1 includes "Starting or running a business or farm activity" OR CQ-1 includes "Agricultural labour"' },
   { id:"CQ-10", module:"adaptive", label:"Does she plan to continue or expand this activity in the next 6 months?",
     type:"single", options:["Yes, expand","Yes, continue at same level","Uncertain","No"],
-    trigger:(a)=>Array.isArray(a["CQ-1"])&&(a["CQ-1"].includes("Starting or running a business or farm activity")||a["CQ-1"].includes("Agricultural labour")) },
+    conditionRule:'CQ-1 includes "Starting or running a business or farm activity" OR CQ-1 includes "Agricultural labour"' },
   { id:"CQ-14", module:"adaptive", label:"Have there been any changes for her family or neighbours since women started receiving this payment?",
-    type:"open", trigger:(a)=>a["CQ-11"]==="Yes, spending more"||a["CQ-13"]==="Yes, more active" },
+    type:"open", conditionRule:'CQ-11 = "Yes, spending more" OR CQ-13 = "Yes, more active"' },
 
   // ── ECONOMIC SECURITY: ES-1 through ES-22 ─────────────────────────────────
   { id:"ES-1", module:"core", label:"Before receiving this money, how difficult was it to cover essential household expenses each month?",
@@ -476,38 +477,38 @@ const ALL_QUESTIONS = [
     type:"single", options:["Yes","No"], required:true },
   { id:"ES-6", module:"core", label:"Was she able to manage it without borrowing at high interest?",
     type:"single", options:["Yes, managed without borrowing","Yes, but had to borrow","No, could not manage it"],
-    trigger:(a)=>a["ES-5"]==="Yes", required:false },
+    conditionRule:'ES-5 = "Yes"', required:false },
   { id:"ES-6b", module:"core", label:"If she does experience a sudden financial shock in the future — do you think she'd be able to manage without borrowing?",
     type:"single", options:["Yes, she's confident she could","Maybe, depends on the size","Probably not","Don't know / uncertain"],
-    trigger:(a)=>a["ES-5"]==="No", required:false },
+    conditionRule:'ES-5 = "No"', required:false },
   { id:"ES-7", module:"core", label:"Has the DBT payment given her more breathing room during month-end — does she feel less anxious or rushed when bills or expenses come due?",
     type:"single", options:["Yes, significantly more breathing room","Yes, a little more breathing room","No difference","Less breathing room than before"], required:true },
   { id:"ES-8", module:"depth", label:"Was there a specific month or moment when she felt things were different because of this payment? What was happening in her life at that time?",
     hint:"Listen for a named event — a school fee paid on time, a medical bill covered, a moneylender visit avoided.",
-    type:"open", trigger:(a)=>a["ES-4"]!=="No change"||["Yes, significantly more breathing room","Yes, a little more breathing room"].includes(a["ES-7"]),
+    type:"open", conditionRule:'ES-4 ≠ "No change" OR ES-7 = "Yes, significantly more breathing room" OR ES-7 = "Yes, a little more breathing room"',
     depthCategory:"Turning Point", badge:"✦ Story Depth" },
   { id:"ES-9", module:"core", label:"Before receiving this money, how often did she borrow from a moneylender or informal lender?",
     type:"single", options:["Never","Rarely — once or twice a year","Sometimes — every few months","Often — every month or more"], required:true },
   { id:"ES-10", module:"core", label:"Since receiving this money, how has that borrowing changed?",
     type:"single", options:["Stopped completely","Reduced significantly","Reduced a little","No change","Increased"],
-    trigger:(a)=>a["ES-9"]!=="Never", required:false },
+    conditionRule:'ES-9 ≠ "Never"', required:false },
   { id:"ES-11", module:"depth", label:"Before this money came, where did that money come from? Who did she go to, and what did it cost her?",
-    type:"open", trigger:(a)=>["Stopped completely","Reduced significantly","Reduced a little"].includes(a["ES-10"]),
+    type:"open", conditionRule:'ES-10 ∈ {"Stopped completely", "Reduced significantly", "Reduced a little"}',
     depthCategory:"What Money Replaced", badge:"✦ Story Depth" },
   { id:"ES-12", module:"core", label:"Has this money helped her avoid taking a high-interest loan in the last year?",
     type:"single", options:["Yes, avoided at least one loan","Possibly","No","Not applicable"],
-    trigger:(a)=>a["ES-9"]!=="Never" },
+    conditionRule:'ES-9 ≠ "Never"' },
   { id:"ES-13", module:"core", label:"How would she describe her overall financial management now compared to before?",
     type:"single", options:["Much better","Somewhat better","About the same","Worse"], required:true },
   { id:"ES-14", module:"adaptive", label:"What type of debt did she repay with this money?", hint:"Select all that apply",
     type:"multi", options:["Moneylender","Microfinance / SHG loan","Bank loan","Family or friend","Other"],
-    trigger:(a)=>Array.isArray(a["CQ-1"])&&a["CQ-1"].includes("Repaying a loan or debt") },
+    conditionRule:'CQ-1 includes "Repaying a loan or debt"' },
   { id:"ES-15", module:"adaptive", label:"Has she been able to reduce the total amount of debt her household carries?",
     type:"single", options:["Yes, significantly reduced","Yes, somewhat reduced","No change","Debt has increased"],
-    trigger:(a)=>Array.isArray(a["CQ-1"])&&a["CQ-1"].includes("Repaying a loan or debt") },
+    conditionRule:'CQ-1 includes "Repaying a loan or debt"' },
   { id:"ES-16", module:"adaptive", label:"Does she feel less dependent on borrowing to get through the month now?",
     type:"single", options:["Yes, much less dependent","Yes, a little less","About the same","More dependent"],
-    trigger:(a)=>Array.isArray(a["CQ-1"])&&a["CQ-1"].includes("Repaying a loan or debt") },
+    conditionRule:'CQ-1 includes "Repaying a loan or debt"' },
   { id:"ES-17", module:"core", label:"Has she started saving a portion of the DBT money regularly, even a small amount?",
     type:"single", options:["Yes, saving regularly","Yes, saving occasionally","Tried but couldn't","No"], required:true },
   { id:"ES-18", module:"core", label:"Has she purchased any asset since receiving this money — livestock, a tool, furniture, or anything of lasting value?",
@@ -518,10 +519,10 @@ const ALL_QUESTIONS = [
     type:"single", options:["Yes, I keep a record or budget","Yes, I set aside money for specific purposes","Yes, I use an SHG or savings group","No specific practice"], required:true },
   { id:"ES-22", module:"adaptive", label:"What prevents her from using the bank account more often?", hint:"Select all that apply",
     type:"multi", options:["Fear or distrust of banks","Lacks understanding of how to use it","Insufficient balance to maintain account","Bank location or hours are inconvenient","Prefers to keep cash at home","Husband or family member controls the account","No specific barrier","Other"],
-    trigger:(a)=>a["ES-19"]!=="I use it regularly now — didn't before" },
+    conditionRule:'ES-19 ≠ "I use it regularly now — didn\'t before"' },
   { id:"ES-21", module:"depth", label:"How does it feel to know that a payment is coming on a fixed date? Has that changed anything about how she thinks about the future?",
     hint:"Listen for language about dignity, certainty, not having to ask anyone.",
-    type:"open", trigger:(a)=>(Number(a["ES-2"]||0)>Number(a["ES-1"]||0))||a["WE-2"]==="Yes, much more confident",
+    type:"open", conditionRule:'ES-2 > ES-1 OR WE-2 = "Yes, much more confident"',
     depthCategory:"Predictability & Dignity", badge:"✦ Story Depth" },
 
   // ── WOMEN'S EMPOWERMENT: WE-1 through WE-12 ──────────────────────────────
@@ -538,10 +539,10 @@ const ALL_QUESTIONS = [
     type:"single", options:["Yes, regularly","Yes, sometimes","Not yet but she wants to","No"], required:true },
   { id:"WE-6", module:"adaptive", label:"Does the DBT payment come directly to her account?",
     type:"single", options:["Yes, directly to my account","Shared account with husband","Goes to husband's account","Goes to another family member"],
-    trigger:(a)=>["Yes, a lot more","Yes, a little more"].includes(a["WE-4"]) },
+    conditionRule:'WE-4 = "Yes, a lot more" OR WE-4 = "Yes, a little more"' },
   { id:"WE-7", module:"adaptive", label:"Has her role in household financial decisions changed since receiving this money?",
     type:"single", options:["Yes, I have much more say","Yes, a little more say","No change","Less say"],
-    trigger:(a)=>["Yes, a lot more","Yes, a little more"].includes(a["WE-4"]) },
+    conditionRule:'WE-4 = "Yes, a lot more" OR WE-4 = "Yes, a little more"' },
   { id:"WE-8", module:"core", label:"Does she feel more respected or listened to in the household since she started receiving this payment?",
     type:"single", options:["Yes, much more","Yes, a little","No change","Less respected"], required:true },
   { id:"WE-9", module:"core", label:"Since receiving this payment, does she feel freer to move around — to attend meetings, visit family, go to the market, or participate in events on her own?",
@@ -556,25 +557,25 @@ const ALL_QUESTIONS = [
   // ── SOCIAL TRANSFORMATION: ST-1 through ST-4 ─────────────────────────────
   { id:"ST-1", module:"narrative", label:"How has her reliance on others — relatives, neighbours, or moneylenders — changed since Ladki Bahin? Does she feel more independent? What does that feel like, and what has changed?",
     hint:"Record her exact language. Listen for shifts in reliance, dignity, autonomy.",
-    type:"open", trigger:()=>true, depthCategory:"Own Words", badge:"🎙 Her Voice" },
+    type:"open", depthCategory:"Own Words", badge:"🎙 Her Voice" },
   { id:"ST-2", module:"community", label:"Since receiving Ladki Bahin, does she feel her position or standing in her community has changed?",
     type:"single", options:["Yes, she feels more respected","About the same","She feels less respected"], required:true },
   { id:"ST-3", module:"community", label:"Since receiving Ladki Bahin, has she been able to provide support — financial or practical — to another woman, relative, or neighbour?",
     type:"single", options:["Yes, regularly","Yes, occasionally","No"], required:true },
   { id:"ST-4", module:"narrative", label:"If this payment stopped tomorrow — what is the first thing in her life that would be affected?",
     hint:"This often reveals what matters most.",
-    type:"open", trigger:()=>true, depthCategory:"What Would Be Lost", badge:"🎙 Her Voice" },
+    type:"open", depthCategory:"What Would Be Lost", badge:"🎙 Her Voice" },
 
   // ── VALIDATION: V-1 through V-4 ──────────────────────────────────────────
-  { id:"V-1", module:"validation", label:"narrative_display", type:"narrative_display", trigger:()=>true, required:false },
+  { id:"V-1", module:"validation", label:"narrative_display", type:"narrative_display", required:false },
   { id:"V-2", module:"validation", label:"Does this story accurately describe her experience?",
     hint:"Read it aloud to her in her language. Does she recognise herself in it?",
     type:"single", options:["Yes, this is my story","Mostly — small details to adjust","This needs to be rewritten"], required:true },
   { id:"V-3", module:"validation", label:"What would she like to correct or add?",
-    type:"open", trigger:(a)=>["Mostly — small details to adjust","This needs to be rewritten"].includes(a["V-2"]),
+    type:"open", conditionRule:'V-2 ≠ "Yes, this is my story"',
     hint:"Record her corrections verbatim" },
   { id:"V-4", module:"validation", label:"Is there anything else she would like to add — anything the story missed?",
-    type:"open", trigger:()=>true, hint:"Final opportunity for her voice." },
+    type:"open", hint:"Final opportunity for her voice." },
 
 ];
 
@@ -620,10 +621,10 @@ async function loadQuestionsFromDB(): Promise<typeof ALL_QUESTIONS | null> {
     if (error || !data?.questions) return null;
     const dbQs = data.questions as any[];
     if (!Array.isArray(dbQs) || dbQs.length === 0) return null;
-    // Map DB question schema back into the interview format
+    // Map DB question schema into the interview format — conditionRule drives visibility
     return dbQs.map((q: any) => ({
       id: q.id,
-      module: q.module || "Core",
+      module: (q.module || "Core").toLowerCase().replace("story depth","depth").replace("her voice","narrative").replace("researcher only","setup"),
       type: q.type || "single",
       label: q.label || "",
       options: q.options || [],
@@ -632,9 +633,10 @@ async function loadQuestionsFromDB(): Promise<typeof ALL_QUESTIONS | null> {
       always: q.always !== false,
       composite: q.composite || "",
       weight: q.weight ?? null,
-      trigger: undefined, // triggers are kept in code logic, not DB
+      conditionRule: q.conditionRule || undefined,
       scaleLabels: q.type === "scale5" ? q.options : undefined,
       researcherDirection: q.researcherDirection || undefined,
+      required: q.always !== false,
     }));
   } catch (e) {
     console.error("Failed to load questions from database:", e);
@@ -690,8 +692,8 @@ export default function RootstoryInterview() {
   }, [online]);
 
   const visibleQuestions = QUESTIONS.filter(q => {
-    if (!q.trigger) return true;
-    try { return q.trigger(answers); } catch { return false; }
+    if (!(q as any).conditionRule) return true;
+    try { return evaluateCondition((q as any).conditionRule, answers); } catch { return false; }
   });
   const current  = visibleQuestions[currentIdx];
   const progress = visibleQuestions.length > 0 ? (currentIdx / visibleQuestions.length) * 100 : 0;

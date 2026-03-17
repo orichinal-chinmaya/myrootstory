@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { evaluateCondition, normalizeConditionRule } from "@/lib/conditionEvaluator";
 
 // ─── COMPOSITE COLOUR MAP ─────────────────────────────────────────────────────
 const COMPOSITES: Record<string, { bg: string; border: string; text: string }> = {
@@ -997,6 +998,16 @@ function BranchingLogic({questions, editMode, updateField}: {questions: Question
                             {q.conditionRule || "No condition rule defined"}
                           </span>
                         )}
+                        {/* Parse validation indicator */}
+                        {q.conditionRule && (() => {
+                          try {
+                            // Test parse with empty answers — just verify it doesn't throw
+                            evaluateCondition(q.conditionRule, {});
+                            return <span title="Rule is valid and parseable" style={{fontSize:10,color:"#2E7D52",flexShrink:0,paddingTop:2}}>✓</span>;
+                          } catch {
+                            return <span title="Rule syntax error — may not evaluate correctly" style={{fontSize:10,color:"#C85000",flexShrink:0,paddingTop:2}}>⚠</span>;
+                          }
+                        })()}
                       </div>
                     </div>
                   </div>
