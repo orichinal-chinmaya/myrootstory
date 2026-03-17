@@ -76,6 +76,7 @@ interface Question {
   hint: string;
   adminComment?: string;
   researcherDirection?: string;
+  conditionRule?: string; // human-readable branching condition, e.g. "ES-5 = Yes"
 }
 
 // ─── COMPLETE QUESTION DATA ───────────────────────────────────────────────────
