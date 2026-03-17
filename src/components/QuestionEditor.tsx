@@ -590,7 +590,7 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
             <span style={{fontSize:11,fontWeight:500,padding:"2px 7px",borderRadius:4,background:cc.bg,color:cc.text,fontFamily:"monospace"}}>{q.id}</span>
             <span style={{fontSize:10,padding:"2px 6px",borderRadius:4,background:"#F5F3F0",color:"#8A8A9A"}}>{q.module}</span>
             {q.weight && <WeightDots w={q.weight}/>}
-            {!q.always && <span style={{fontSize:10,padding:"2px 7px",borderRadius:4,background:"#FEF3DC",color:"#8A4A00"}}>conditional</span>}
+            {!q.always && <span style={{fontSize:10,padding:"2px 7px",borderRadius:4,background:"#FEF3DC",color:"#8A4A00"}} title={q.conditionRule||"Conditional"}>⑂ {q.conditionRule ? q.conditionRule.slice(0,40)+(q.conditionRule.length>40?"…":"") : "conditional"}</span>}
             {q.adminComment && <span style={{fontSize:10,padding:"2px 6px",borderRadius:4,background:"#EEF0FF",color:"#3040C0"}} title={q.adminComment}>💬</span>}
             {q.researcherDirection && <span style={{fontSize:10,padding:"2px 6px",borderRadius:4,background:"#FFF0F8",color:"#A0206A"}} title={q.researcherDirection}>🔬</span>}
           </div>
