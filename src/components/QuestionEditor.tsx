@@ -66,7 +66,7 @@ function scoreAppearance(v: number | null | undefined) {
 
 interface Question {
   id: string;
-  composite: string;
+  composite: string | string[];
   module: string;
   weight: number | null;
   always: boolean;
@@ -77,7 +77,14 @@ interface Question {
   hint: string;
   adminComment?: string;
   researcherDirection?: string;
-  conditionRule?: string; // human-readable branching condition, e.g. "ES-5 = Yes"
+  conditionRule?: string;
+}
+
+function getComposites(q: Question): string[] {
+  return Array.isArray(q.composite) ? q.composite : [q.composite];
+}
+function getPrimaryComposite(q: Question): string {
+  return Array.isArray(q.composite) ? q.composite[0] : q.composite;
 }
 
 // ─── COMPLETE QUESTION DATA ───────────────────────────────────────────────────
@@ -100,16 +107,16 @@ const INITIAL_QS: Question[] = [
 
   // CONSUMPTION QUALITY — CQ-1 through CQ-14
   { id:"CQ-1",  composite:"Household Stability",    module:"Core",      weight:1, always:true,  type:"multi",   label:"How did she mainly use the DBT money she received?",  options:["Food & household groceries","Children's school fees or books","Healthcare or medicines","Repaying a loan or debt","Savings","Starting or running a business or farm activity","Clothing or household items","Other"],  scores:{"Food & household groceries":0.5,"Children's school fees or books":0.5,"Healthcare or medicines":0.5,"Repaying a loan or debt":0.5,"Savings":1.0,"Starting or running a business or farm activity":0.5,"Clothing or household items":0.3,"Other":0.0},  hint:"Each item routes to its own composite" },
-  { id:"CQ-2",  composite:"Household Stability",    module:"Core",      weight:1, always:true,  type:"open",    label:"In her own words — what is the single most important thing this money has done for her?",  options:[],  hint:"Depth boost +5 across composites when answered", scores:{} },
+  { id:"CQ-2",  composite:["Household Stability","Debt & Credit Relief","Savings & Assets","Financial Confidence","Community & Social"],  module:"Core",  weight:1, always:true,  type:"open",    label:"In her own words — what is the single most important thing this money has done for her?",  options:[],  hint:"Depth boost +5 across composites when answered", scores:{} },
   { id:"CQ-3",  composite:"Nutrition & Health",     module:"Core",      weight:3, always:true,  type:"single",  label:"In the last 6 months, did her household spend more on healthcare or medicines than before DBT?",  options:["Yes, significantly more","Yes, a little more","About the same","Less"],  scores:{"Yes, significantly more":1.0,"Yes, a little more":0.65,"About the same":0.2,"Less":0.0},  hint:"" },
   { id:"CQ-4",  composite:"Nutrition & Health",     module:"Core",      weight:3, always:true,  type:"single",  label:"Has the quality or quantity of food her household eats improved since she started receiving this money?",  options:["Yes, much better","Yes, a little better","About the same","Worse"],  scores:{"Yes, much better":1.0,"Yes, a little better":0.65,"About the same":0.2,"Worse":0.0},  hint:"" },
   { id:"CQ-5",  composite:"Education",              module:"Core",      weight:3, always:true,  type:"single",  label:"Has she been able to spend more on her children's education — fees, books, uniforms, or tuition?",  options:["Yes, significantly more","Yes, a little more","No change","Not applicable — no children in school"],  scores:{"Yes, significantly more":1.0,"Yes, a little more":0.65,"No change":0.1,"Not applicable — no children in school":0.4},  hint:"" },
   { id:"CQ-6",  composite:"Savings & Assets",       module:"Core",      weight:2, always:true,  type:"single",  label:"If she were to estimate — what share of the DBT money did she spend on things that will help her household grow?",  options:["Most of it (more than half)","About half","Less than half","Almost none — it covers daily survival"],  scores:{"Most of it (more than half)":1.0,"About half":0.65,"Less than half":0.3,"Almost none — it covers daily survival":0.0},  hint:"" },
   { id:"CQ-7",  composite:"Livelihood & Enterprise", module:"Adaptive",  weight:null, always:false, type:"multi",  label:"What type of livelihood or farm activity did she use the money for?",  options:["Seeds or fertiliser","Livestock or poultry","Small shop or trade","Tools or equipment","Skills or training","Other"],  hint:"Shown if CQ-1 includes business/farm. Context only.", scores:{}, conditionRule:'CQ-1 includes "Starting or running a business or farm activity" OR "Agricultural labour"' },
-  { id:"CQ-8",  composite:"Livelihood & Enterprise", module:"Adaptive",  weight:3, always:false, type:"single",  label:"Did this activity generate income or improve the household's productive capacity?",  options:["Yes, generating regular income","Yes, some additional income","Not yet but she expects it to","No income generated"],  scores:{"Yes, generating regular income":1.0,"Yes, some additional income":0.65,"Not yet but she expects it to":0.3,"No income generated":0.0},  hint:"Shown if CQ-1 includes business/farm.", conditionRule:'CQ-1 includes "Starting or running a business or farm activity"' },
-  { id:"CQ-9",  composite:"Livelihood & Enterprise", module:"Adaptive",  weight:2, always:false, type:"single",  label:"Did this activity create paid work for others in her household or community?",  options:["Yes, for household members","Yes, for community members","No"],  scores:{"Yes, for household members":0.8,"Yes, for community members":1.0,"No":0.0},  hint:"Also feeds Community & Social wt 1.", conditionRule:'CQ-1 includes "Starting or running a business or farm activity"' },
-  { id:"CQ-10", composite:"Livelihood & Enterprise", module:"Adaptive",  weight:2, always:false, type:"single",  label:"Does she plan to continue or expand this activity in the next 6 months?",  options:["Yes, expand","Yes, continue at same level","Uncertain","No"],  scores:{"Yes, expand":1.0,"Yes, continue at same level":0.65,"Uncertain":0.3,"No":0.0},  hint:"", conditionRule:'CQ-1 includes "Starting or running a business or farm activity"' },
-  { id:"CQ-11", composite:"Community & Social",      module:"Community",  weight:3, always:true,  type:"single",  label:"Since receiving this payment, has she been spending more at local shops, markets, or with local vendors?",  options:["Yes, spending more","About the same","Spending less locally"],  scores:{"Yes, spending more":1.0,"About the same":0.0,"Spending less locally":0.0},  hint:"" },
+  { id:"CQ-8",  composite:"Livelihood & Enterprise", module:"Adaptive",  weight:3, always:false, type:"single",  label:"Did this activity generate income or improve the household's productive capacity?",  options:["Yes, generating regular income","Yes, some additional income","Not yet but she expects it to","No income generated"],  scores:{"Yes, generating regular income":1.0,"Yes, some additional income":0.65,"Not yet but she expects it to":0.3,"No income generated":0.0},  hint:"Shown if CQ-1 includes business/farm.", conditionRule:'CQ-1 includes "Starting or running a business or farm activity" OR "Agricultural labour"' },
+  { id:"CQ-9",  composite:["Livelihood & Enterprise","Community & Social"],  module:"Adaptive",  weight:2, always:false, type:"single",  label:"Did this activity create paid work for others in her household or community?",  options:["Yes, for household members","Yes, for community members","No"],  scores:{"Yes, for household members":0.8,"Yes, for community members":1.0,"No":0.0},  hint:"Feeds Livelihood & Enterprise wt 2; Community & Social wt 1.", conditionRule:'CQ-1 includes "Starting or running a business or farm activity" OR "Agricultural labour"' },
+  { id:"CQ-10", composite:"Livelihood & Enterprise", module:"Adaptive",  weight:2, always:false, type:"single",  label:"Does she plan to continue or expand this activity in the next 6 months?",  options:["Yes, expand","Yes, continue at same level","Uncertain","No"],  scores:{"Yes, expand":1.0,"Yes, continue at same level":0.65,"Uncertain":0.3,"No":0.0},  hint:"", conditionRule:'CQ-1 includes "Starting or running a business or farm activity" OR "Agricultural labour"' },
+  { id:"CQ-11", composite:"Community & Social",      module:"Community",  weight:3, always:true,  type:"single",  label:"Since receiving this payment, has she been spending more at local shops, markets, or with local vendors?",  options:["Yes, spending more","About the same","Spending less locally"],  scores:{"Yes, spending more":1.0,"About the same":0.3,"Spending less locally":0.0},  hint:"" },
   { id:"CQ-12", composite:"Community & Social",      module:"Community",  weight:2, always:true,  type:"single",  label:"Has she been able to provide financial support to other family members, relatives, or neighbours?",  options:["Yes, regularly","Yes, occasionally","No"],  scores:{"Yes, regularly":1.0,"Yes, occasionally":0.6,"No":0.0},  hint:"" },
   { id:"CQ-13", composite:"Community & Social",      module:"Community",  weight:2, always:true,  type:"single",  label:"Has she become more active in community activities, SHGs, or local women's groups since receiving this payment?",  options:["Yes, more active","About the same","Less active"],  scores:{"Yes, more active":1.0,"About the same":0.3,"Less active":0.0},  hint:"" },
   { id:"CQ-14", composite:"Community & Social",      module:"Adaptive",   weight:null, always:false, type:"open",   label:"Have there been any changes for her family or neighbours since women started receiving this payment?",  options:[],  hint:"Shown if CQ-11=spending more or CQ-13=more active.", scores:{}, conditionRule:'CQ-11 = "Yes, spending more" OR CQ-13 = "Yes, more active"' },
@@ -117,26 +124,26 @@ const INITIAL_QS: Question[] = [
   // ECONOMIC SECURITY — ES-1 through ES-22
   { id:"ES-1",  composite:"Household Stability",  module:"Core",        weight:1, always:true,  type:"scale5",  label:"Before receiving this money, how difficult was it to cover essential household expenses each month?",  options:["Very difficult","Difficult","Neither easy nor hard","Easy","Very easy"],  scores:{"1":1.0,"2":0.75,"3":0.5,"4":0.25,"5":0.0},  hint:"Baseline context." },
   { id:"ES-2",  composite:"Household Stability",  module:"Core",        weight:3, always:true,  type:"scale5",  label:"Since receiving this money, how difficult is it now to cover essential household expenses each month?",  options:["Very difficult","Difficult","Neither easy nor hard","Easy","Very easy"],  scores:{"1":0.0,"2":0.25,"3":0.5,"4":0.75,"5":1.0},  hint:"Current state — inverted scoring from ES-1." },
-  { id:"ES-3",  composite:"Household Stability",  module:"Story Depth", weight:1, always:false,  type:"open",    label:"Tell me about a specific time before this money came when she could not manage an expense. What happened?",  options:[],  hint:"Depth boost +5 to Stability + Debt.", scores:{}, conditionRule:'ES-1 ∈ {1, 2, 3} (reported difficulty before)' },
+  { id:"ES-3",  composite:["Household Stability","Debt & Credit Relief"],  module:"Story Depth", weight:1, always:true,  type:"open",    label:"Tell me about a specific time before this money came when she could not manage an expense. What happened?",  options:[],  hint:"Always asked. Depth boost +5 to Stability + Debt.", scores:{} },
   { id:"ES-4",  composite:"Household Stability",  module:"Core",        weight:3, always:true,  type:"single",  label:"Since receiving this payment, have her household expenses become more stable month to month?",  options:["Yes, much more stable","Yes, somewhat more stable","No change","No, less stable"],  scores:{"Yes, much more stable":1.0,"Yes, somewhat more stable":0.6,"No change":0.2,"No, less stable":0.0},  hint:"" },
   { id:"ES-5",  composite:"Household Stability",  module:"Core",        weight:null, always:true,  type:"single",  label:"In the last 6 months, did she experience an unexpected financial shock?",  options:["Yes","No"],  scores:{"Yes":0.0,"No":0.0},  hint:"Gate — triggers ES-6 if Yes, ES-6b if No." },
-  { id:"ES-6",  composite:"Household Stability",  module:"Core",        weight:2, always:false, type:"single",  label:"Was she able to manage it without borrowing at high interest?",  options:["Yes, managed without borrowing","Yes, but had to borrow","No, could not manage it"],  scores:{"Yes, managed without borrowing":1.0,"Yes, but had to borrow":0.4,"No, could not manage it":0.0},  hint:"Path A: actual shock. Feeds Debt & Credit Relief wt 1.", conditionRule:'ES-5 = "Yes"' },
-  { id:"ES-6b", composite:"Household Stability",  module:"Core",        weight:2, always:false, type:"single",  label:"If she does experience a sudden financial shock in the future — do you think she'd be able to manage without borrowing?",  options:["Yes, she's confident she could","Maybe, depends on the size","Probably not","Don't know / uncertain"],  scores:{"Yes, she's confident she could":1.0,"Maybe, depends on the size":0.6,"Probably not":0.0,"Don't know / uncertain":0.3},  hint:"Path B: perceived capacity. Feeds Debt & Credit Relief wt 1.", conditionRule:'ES-5 = "No"' },
+  { id:"ES-6",  composite:["Household Stability","Debt & Credit Relief"],  module:"Core",  weight:2, always:false, type:"single",  label:"Was she able to manage it without borrowing at high interest?",  options:["Yes, managed without borrowing","Yes, but had to borrow","No, could not manage it"],  scores:{"Yes, managed without borrowing":1.0,"Yes, but had to borrow":0.4,"No, could not manage it":0.0},  hint:"Path A: actual shock.", conditionRule:'ES-5 = "Yes"' },
+  { id:"ES-6b", composite:["Household Stability","Debt & Credit Relief"],  module:"Core",  weight:2, always:false, type:"single",  label:"If she does experience a sudden financial shock in the future — do you think she'd be able to manage without borrowing?",  options:["Yes, she's confident she could","Maybe, depends on the size","Probably not","Don't know / uncertain"],  scores:{"Yes, she's confident she could":1.0,"Maybe, depends on the size":0.6,"Probably not":0.0,"Don't know / uncertain":0.3},  hint:"Path B: perceived capacity.", conditionRule:'ES-5 = "No"' },
   { id:"ES-7",  composite:"Household Stability",  module:"Core",        weight:2, always:true,  type:"single",  label:"Has the DBT payment given her more breathing room during month-end?",  options:["Yes, significantly more breathing room","Yes, a little more breathing room","No difference","Less breathing room than before"],  scores:{"Yes, significantly more breathing room":1.0,"Yes, a little more breathing room":0.6,"No difference":0.2,"Less breathing room than before":0.0},  hint:"Subjective ease during crunch times." },
-  { id:"ES-8",  composite:"Household Stability",  module:"Story Depth", weight:1, always:false, type:"open",    label:"Was there a specific month or moment when she felt things were different because of this payment?",  options:[],  hint:"Depth boost +5.", scores:{}, conditionRule:'ES-4 ≠ "No change" OR ES-7 = "Yes, significantly…" or "Yes, a little…"' },
+  { id:"ES-8",  composite:"Household Stability",  module:"Story Depth", weight:1, always:false, type:"open",    label:"Was there a specific month or moment when she felt things were different because of this payment?",  options:[],  hint:"Depth boost +5.", scores:{}, conditionRule:'ES-4 ≠ "No change" OR ES-7 = any "Yes" answer' },
   { id:"ES-9",  composite:"Debt & Credit Relief", module:"Core",        weight:1, always:true,  type:"single",  label:"Before receiving this money, how often did she borrow from a moneylender or informal lender?",  options:["Never","Rarely — once or twice a year","Sometimes — every few months","Often — every month or more"],  scores:{"Never":0.0,"Rarely — once or twice a year":0.3,"Sometimes — every few months":0.6,"Often — every month or more":1.0},  hint:"Baseline context." },
   { id:"ES-10", composite:"Debt & Credit Relief", module:"Core",        weight:3, always:false, type:"single",  label:"Since receiving this money, how has that borrowing changed?",  options:["Stopped completely","Reduced significantly","Reduced a little","No change","Increased"],  scores:{"Stopped completely":1.0,"Reduced significantly":0.75,"Reduced a little":0.4,"No change":0.1,"Increased":0.0},  hint:"Shown if ES-9 ≠ Never.", conditionRule:'ES-9 ≠ "Never"' },
   { id:"ES-11", composite:"Debt & Credit Relief", module:"Story Depth", weight:1, always:false, type:"open",    label:"Before this money came, where did that money come from? Who did she go to, and what did it cost her?",  options:[],  hint:"Shown if borrowing reduced. Depth boost +5.", scores:{}, conditionRule:'ES-10 ∈ {"Stopped completely", "Reduced significantly", "Reduced a little"}' },
   { id:"ES-12", composite:"Debt & Credit Relief", module:"Core",        weight:2, always:false, type:"single",  label:"Has this money helped her avoid taking a high-interest loan in the last year?",  options:["Yes, avoided at least one loan","Possibly","No","Not applicable"],  scores:{"Yes, avoided at least one loan":1.0,"Possibly":0.5,"No":0.0,"Not applicable":0.3},  hint:"Shown if ES-9 ≠ Never.", conditionRule:'ES-9 ≠ "Never"' },
   { id:"ES-13", composite:"Debt & Credit Relief", module:"Core",        weight:2, always:true,  type:"single",  label:"How would she describe her overall financial management now compared to before?",  options:["Much better","Somewhat better","About the same","Worse"],  scores:{"Much better":1.0,"Somewhat better":0.65,"About the same":0.25,"Worse":0.0},  hint:"" },
-  { id:"ES-14", composite:"Debt & Credit Relief", module:"Adaptive",    weight:null, always:false, type:"multi",  label:"What type of debt did she repay with this money?",  options:["Moneylender","Microfinance / SHG loan","Bank loan","Family or friend","Other"],  hint:"Context only. Shown if CQ-1 includes debt + ES-10 shows reduction.", scores:{}, conditionRule:'CQ-1 includes "Repaying a loan or debt" AND ES-10 ∈ {reduced…}' },
-  { id:"ES-15", composite:"Debt & Credit Relief", module:"Adaptive",    weight:2, always:false, type:"single",  label:"Has she been able to reduce the total amount of debt her household carries?",  options:["Yes, significantly reduced","Yes, somewhat reduced","No change","Debt has increased"],  scores:{"Yes, significantly reduced":1.0,"Yes, somewhat reduced":0.65,"No change":0.2,"Debt has increased":0.0},  hint:"", conditionRule:'CQ-1 includes "Repaying a loan or debt" AND ES-10 ∈ {reduced…}' },
-  { id:"ES-16", composite:"Debt & Credit Relief", module:"Adaptive",    weight:2, always:false, type:"single",  label:"Does she feel less dependent on borrowing to get through the month now?",  options:["Yes, much less dependent","Yes, a little less","About the same","More dependent"],  scores:{"Yes, much less dependent":1.0,"Yes, a little less":0.6,"About the same":0.2,"More dependent":0.0},  hint:"", conditionRule:'CQ-1 includes "Repaying a loan or debt" AND ES-10 ∈ {reduced…}' },
+  { id:"ES-14", composite:"Debt & Credit Relief", module:"Adaptive",    weight:null, always:false, type:"multi",  label:"What type of debt did she repay with this money?",  options:["Moneylender","Microfinance / SHG loan","Bank loan","Family or friend","Other"],  hint:"Context only.", scores:{}, conditionRule:'CQ-1 includes "Repaying a loan or debt"' },
+  { id:"ES-15", composite:"Debt & Credit Relief", module:"Adaptive",    weight:2, always:false, type:"single",  label:"Has she been able to reduce the total amount of debt her household carries?",  options:["Yes, significantly reduced","Yes, somewhat reduced","No change","Debt has increased"],  scores:{"Yes, significantly reduced":1.0,"Yes, somewhat reduced":0.65,"No change":0.2,"Debt has increased":0.0},  hint:"", conditionRule:'CQ-1 includes "Repaying a loan or debt"' },
+  { id:"ES-16", composite:"Debt & Credit Relief", module:"Adaptive",    weight:2, always:false, type:"single",  label:"Does she feel less dependent on borrowing to get through the month now?",  options:["Yes, much less dependent","Yes, a little less","About the same","More dependent"],  scores:{"Yes, much less dependent":1.0,"Yes, a little less":0.6,"About the same":0.2,"More dependent":0.0},  hint:"", conditionRule:'CQ-1 includes "Repaying a loan or debt"' },
   { id:"ES-17", composite:"Savings & Assets",     module:"Core",        weight:3, always:true,  type:"single",  label:"Has she started saving a portion of the DBT money regularly, even a small amount?",  options:["Yes, saving regularly","Yes, saving occasionally","Tried but couldn't","No"],  scores:{"Yes, saving regularly":1.0,"Yes, saving occasionally":0.65,"Tried but couldn't":0.3,"No":0.0},  hint:"" },
   { id:"ES-18", composite:"Savings & Assets",     module:"Core",        weight:2, always:true,  type:"single",  label:"Has she purchased any asset since receiving this money — livestock, a tool, furniture, or anything of lasting value?",  options:["Yes, multiple assets","Yes, one asset","No"],  scores:{"Yes, multiple assets":1.0,"Yes, one asset":0.7,"No":0.0},  hint:"" },
   { id:"ES-19", composite:"Financial Inclusion",   module:"Core",        weight:3, always:true,  type:"single",  label:"How often does she use her bank account now compared to before receiving DBT?",  options:["I use it regularly now — didn't before","I use it more than before","About the same as before","I don't have or use a bank account"],  scores:{"I use it regularly now — didn't before":1.0,"I use it more than before":0.7,"About the same as before":0.3,"I don't have or use a bank account":0.0},  hint:"" },
   { id:"ES-20", composite:"Financial Inclusion",   module:"Core",        weight:3, always:true,  type:"single",  label:"Has she started doing anything specific to manage her money better — keeping a record, setting aside money, or using a savings group?",  options:["Yes, I keep a record or budget","Yes, I set aside money for specific purposes","Yes, I use an SHG or savings group","No specific practice"],  scores:{"Yes, I keep a record or budget":1.0,"Yes, I set aside money for specific purposes":0.8,"Yes, I use an SHG or savings group":0.7,"No specific practice":0.0},  hint:"" },
-  { id:"ES-21", composite:"Financial Confidence",  module:"Story Depth", weight:1, always:false, type:"open",    label:"How does it feel to know that a payment is coming on a fixed date? Has that changed anything about how she thinks about the future?",  options:[],  hint:"Depth boost +5 to Financial Confidence, Household Agency.", scores:{}, conditionRule:'WE-1 ≥ 4 OR WE-2 = "Yes, much more…" or "Yes, a little…" OR ES-2 = 5' },
+  { id:"ES-21", composite:["Financial Confidence","Household Agency"],  module:"Story Depth", weight:1, always:false, type:"open",    label:"How does it feel to know that a payment is coming on a fixed date? Has that changed anything about how she thinks about the future?",  options:[],  hint:"Depth boost +5 to Financial Confidence, Household Agency.", scores:{}, conditionRule:'ES-2 > ES-1 OR WE-2 = "Yes, much more confident"' },
   { id:"ES-22", composite:"Financial Inclusion",   module:"Adaptive",    weight:null, always:false, type:"multi",  label:"What prevents her from using the bank account more often?",  options:["Fear or distrust of banks","Lacks understanding of how to use it","Insufficient balance to maintain account","Bank location or hours are inconvenient","Prefers to keep cash at home","Husband or family member controls the account","No specific barrier","Other"],  hint:"Diagnostic only. Shown if ES-19 < regular use.", scores:{}, conditionRule:'ES-19 ≠ "I use it regularly now — didn\'t before"' },
 
   // WOMEN'S EMPOWERMENT — WE-1 through WE-12
@@ -154,14 +161,14 @@ const INITIAL_QS: Question[] = [
   { id:"WE-12", composite:"Social Empowerment",    module:"Core",        weight:2, always:true,  type:"single",  label:"Does she feel more financially independent — less dependent on her husband or family?",  options:["Yes, much more independent","Yes, somewhat more independent","No change","More dependent than before"],  scores:{"Yes, much more independent":1.0,"Yes, somewhat more independent":0.65,"No change":0.2,"More dependent than before":0.0},  hint:"" },
 
   // SOCIAL TRANSFORMATION — ST-1 through ST-4
-  { id:"ST-1",  composite:"Narrative",              module:"Her Voice",   weight:null, always:true,  type:"open",    label:"How has her reliance on others changed since Ladki Bahin? Does she feel more independent?",  options:[],  hint:"Record exact language.", scores:{} },
+  { id:"ST-1",  composite:["Social Empowerment","Household Agency","Community & Social"],  module:"Her Voice",  weight:null, always:true,  type:"open",    label:"How has her reliance on others changed since Ladki Bahin? Does she feel more independent?",  options:[],  hint:"Record exact language. AI codes for sentiment toward Social Empowerment, Household Agency, Community & Social.", scores:{} },
   { id:"ST-2",  composite:"Community & Social",     module:"Community",   weight:2, always:true,  type:"single",  label:"Since receiving Ladki Bahin, does she feel her position or standing in her community has changed?",  options:["Yes, she feels more respected","About the same","She feels less respected"],  scores:{"Yes, she feels more respected":1.0,"About the same":0.3,"She feels less respected":0.0},  hint:"" },
   { id:"ST-3",  composite:"Community & Social",     module:"Community",   weight:2, always:true,  type:"single",  label:"Since receiving Ladki Bahin, has she been able to provide support — financial or practical — to another woman, relative, or neighbour?",  options:["Yes, regularly","Yes, occasionally","No"],  scores:{"Yes, regularly":1.0,"Yes, occasionally":0.55,"No":0.0},  hint:"" },
-  { id:"ST-4",  composite:"Narrative",              module:"Her Voice",   weight:null, always:true,  type:"open",    label:"If this payment stopped tomorrow — what is the first thing in her life that would be affected?",  options:[],  hint:"Reveals what matters most.", scores:{} },
+  { id:"ST-4",  composite:["Household Stability","Household Agency","Social Empowerment","Debt & Credit Relief"],  module:"Her Voice",  weight:null, always:true,  type:"open",    label:"If this payment stopped tomorrow — what is the first thing in her life that would be affected?",  options:[],  hint:"Reveals what matters most. AI codes for sentiment toward Household Stability, Household Agency, Social Empowerment, Debt & Credit Relief.", scores:{} },
 
   // VALIDATION — V-2 through V-4
   { id:"V-2",   composite:"Narrative",              module:"Validation",  weight:null, always:true,  type:"single",  label:"Does this story accurately describe her experience?",  options:["Yes, this is my story","Mostly — small details to adjust","This needs to be rewritten"],  hint:"Read narrative aloud to her in her language.", scores:{} },
-  { id:"V-3",   composite:"Narrative",              module:"Validation",  weight:null, always:false, type:"open",    label:"What would she like to correct or add?",  options:[],  hint:"Shown if V-2 = needs adjustment. Record verbatim.", scores:{}, conditionRule:'V-2 = "Mostly — small details to adjust" OR "This needs to be rewritten"' },
+  { id:"V-3",   composite:"Narrative",              module:"Validation",  weight:null, always:false, type:"open",    label:"What would she like to correct or add?",  options:[],  hint:"Shown if V-2 ≠ Yes. Record verbatim.", scores:{}, conditionRule:'V-2 ≠ "Yes, this is my story"' },
   { id:"V-4",   composite:"Narrative",              module:"Validation",  weight:null, always:true,  type:"open",    label:"Is there anything else she would like to add — anything the story missed?",  options:[],  hint:"Final opportunity for her voice.", scores:{} },
 ];
 
@@ -216,7 +223,8 @@ export default function QuestionEditor() {
   const isEditing = (id: string) => globalEdit || editingIds.has(id);
 
   const visible = questions.filter(q => {
-    const mc = filterComp === "All" || q.composite === filterComp;
+    const comps = getComposites(q);
+    const mc = filterComp === "All" || comps.includes(filterComp);
     const s  = search.toLowerCase();
     const ms = !s || q.id.toLowerCase().includes(s) || q.label.toLowerCase().includes(s);
     return mc && ms;
@@ -366,7 +374,7 @@ export default function QuestionEditor() {
     const screens = chunks.map((qs, i) => {
       const sid = screenIds[i];
       const isLast = i === chunks.length - 1;
-      const compositeSet = [...new Set(qs.map(q => q.composite))];
+      const compositeSet = [...new Set(qs.flatMap(q => getComposites(q)))];
       const children = buildChildren(qs);
       const formChildren: object[] = [
         ...children,
@@ -375,7 +383,7 @@ export default function QuestionEditor() {
       return { id: sid, title: compositeSet.join(" · ").substring(0, 60), layout: { type: "SingleColumnLayout", children: [{ type: "Form", name: `form_${sid.toLowerCase()}`, children: formChildren }] } };
     });
 
-    const scoringMetadata = questions.filter(q => q.scores && Object.keys(q.scores).length > 0).map(q => ({ id: q.id, composite: q.composite, weight: q.weight, impact_dimensions: IMPACT_DIMS[q.composite] || [], scores: q.scores }));
+    const scoringMetadata = questions.filter(q => q.scores && Object.keys(q.scores).length > 0).map(q => ({ id: q.id, composite: q.composite, weight: q.weight, impact_dimensions: [...new Set(getComposites(q).flatMap(c => IMPACT_DIMS[c] || []))], scores: q.scores }));
     const waFlow = { version: "6.0", data_api_version: "3.0", routing_model: routingModel, screens, _rootstory_metadata: { exportedAt: new Date().toISOString(), language: lang, total_questions: questions.length, scoring_map: scoringMetadata, translations: lang !== "en" ? trans : undefined } };
 
     const blob = new Blob([JSON.stringify(waFlow, null, 2)], { type: "application/json" });
@@ -495,7 +503,7 @@ export default function QuestionEditor() {
         <div style={{width:190,flexShrink:0,background:"#fff",borderRight:"0.5px solid #E0DDD8",overflowY:"auto",padding:"10px 0"}}>
           <div style={{fontSize:10,fontWeight:500,color:"#8A8A9A",letterSpacing:0.7,padding:"0 12px 8px",textTransform:"uppercase"}}>Composite</div>
           {["All",...Object.keys(COMPOSITES)].map(comp=>{
-            const cnt   = comp==="All"?questions.length:questions.filter(q=>q.composite===comp).length;
+            const cnt   = comp==="All"?questions.length:questions.filter(q=>getComposites(q).includes(comp)).length;
             const isAct = filterComp===comp;
             const cc    = COMPOSITES[comp];
             return (
@@ -563,7 +571,7 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
   duplicateQuestion: (qid: string) => void;
   questions: Question[];
 }) {
-  const cc      = COMPOSITES[q.composite]||COMPOSITES["Setup / Admin"];
+  const cc      = COMPOSITES[getPrimaryComposite(q)]||COMPOSITES["Setup / Admin"];
   const hasScore= !!(q.scores && Object.keys(q.scores).length>0 && q.type!=="open");
   const isScale = q.type==="scale5";
   const isEn    = lang==="en";
@@ -628,10 +636,28 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
                     style={inputSm}/>
                 </EditField>
                 {/* Composite */}
-                <EditField label="Composite / Category">
-                  <select value={q.composite} onChange={e=>updateField(q.id,"composite",e.target.value)} style={inputSm}>
-                    {Object.keys(COMPOSITES).map(c=><option key={c} value={c}>{c}</option>)}
-                  </select>
+                <EditField label="Composite(s) — click to toggle">
+                  <div style={{display:"flex",flexWrap:"wrap",gap:4,padding:"4px 0"}}>
+                    {Object.keys(COMPOSITES).map(c => {
+                      const comps = getComposites(q);
+                      const active = comps.includes(c);
+                      const cc2 = COMPOSITES[c];
+                      return (
+                        <button key={c} type="button" onClick={() => {
+                          const current = getComposites(q);
+                          const next = active ? current.filter(x => x !== c) : [...current, c];
+                          if (next.length === 0) return;
+                          updateField(q.id, "composite", next.length === 1 ? next[0] : next);
+                        }}
+                          style={{fontSize:10,padding:"2px 8px",borderRadius:4,cursor:"pointer",
+                            border: active ? `1.5px solid ${cc2.border}` : "1px solid #E0DDD8",
+                            background: active ? cc2.bg : "transparent",
+                            color: active ? cc2.text : "#8A8A9A", fontFamily:"Georgia, serif"}}>
+                          {active ? "✓ " : ""}{c}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </EditField>
                 {/* Module */}
                 <EditField label="Module">
@@ -822,18 +848,26 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
           )}
 
           <div style={{display:"flex",flexWrap:"wrap",gap:16,padding:"10px 14px",borderTop:"0.5px solid #E0DDD8"}}>
-            <MetaCell label="Composite">
-              <span style={{fontSize:12,fontWeight:500,padding:"2px 9px",borderRadius:4,background:cc.bg,color:cc.text}}>{q.composite}</span>
+            <MetaCell label={getComposites(q).length > 1 ? "Composites" : "Composite"}>
+              <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
+                {getComposites(q).map(comp => {
+                  const cc2 = COMPOSITES[comp] || COMPOSITES["Setup / Admin"];
+                  return <span key={comp} style={{fontSize:12,fontWeight:500,padding:"2px 9px",borderRadius:4,background:cc2.bg,color:cc2.text}}>{comp}</span>;
+                })}
+              </div>
             </MetaCell>
-            {IMPACT_DIMS[q.composite] && IMPACT_DIMS[q.composite].length > 0 && (
-              <MetaCell label={IMPACT_DIMS[q.composite].length > 1 ? "Impact Dimensions" : "Impact Dimension"}>
-                <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
-                  {IMPACT_DIMS[q.composite].map(dim => (
-                    <span key={dim} style={{fontSize:11,padding:"2px 8px",borderRadius:4,background:"#F5F3F0",border:"0.5px solid #E0DDD8",color:"#3A3A5C"}}>{dim}</span>
-                  ))}
-                </div>
-              </MetaCell>
-            )}
+            {(() => {
+              const allDims = [...new Set(getComposites(q).flatMap(c => IMPACT_DIMS[c] || []))];
+              return allDims.length > 0 ? (
+                <MetaCell label={allDims.length > 1 ? "Impact Dimensions" : "Impact Dimension"}>
+                  <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
+                    {allDims.map(dim => (
+                      <span key={dim} style={{fontSize:11,padding:"2px 8px",borderRadius:4,background:"#F5F3F0",border:"0.5px solid #E0DDD8",color:"#3A3A5C"}}>{dim}</span>
+                    ))}
+                  </div>
+                </MetaCell>
+              ) : null;
+            })()}
             {q.weight && (
               <MetaCell label="Weight">
                 <span style={{fontSize:12,color:"#8A8A9A"}}>{q.weight}/3 — {WEIGHT_LABEL[q.weight]}</span>
@@ -893,7 +927,7 @@ function BranchingLogic({questions, editMode, updateField}: {questions: Question
 
       {/* Branch groups */}
       {Object.entries(branches).map(([gateId, {gate, children}]) => {
-        const cc = gate ? (COMPOSITES[gate.composite] || COMPOSITES["Setup / Admin"]) : {bg:"#F0F4F0",border:"#8A8A9A",text:"#3A4A3A"};
+        const cc = gate ? (COMPOSITES[getPrimaryComposite(gate)] || COMPOSITES["Setup / Admin"]) : {bg:"#F0F4F0",border:"#8A8A9A",text:"#3A4A3A"};
         return (
           <div key={gateId} style={{background:"#fff",border:"0.5px solid #E0DDD8",borderRadius:8,overflow:"hidden"}}>
             {/* Gate header */}
@@ -934,7 +968,7 @@ function BranchingLogic({questions, editMode, updateField}: {questions: Question
             {/* Child branches */}
             <div>
               {children.map((q,ci) => {
-                const qcc = COMPOSITES[q.composite] || COMPOSITES["Setup / Admin"];
+                const qcc = COMPOSITES[getPrimaryComposite(q)] || COMPOSITES["Setup / Admin"];
                 return (
                   <div key={q.id} style={{display:"flex",alignItems:"stretch",borderTop:ci>0?"0.5px solid #E0DDD8":"none"}}>
                     <div style={{width:48,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",position:"relative"}}>
@@ -945,7 +979,7 @@ function BranchingLogic({questions, editMode, updateField}: {questions: Question
                     <div style={{flex:1,padding:"10px 14px 10px 0",minWidth:0}}>
                       <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3,flexWrap:"wrap"}}>
                         <span style={{fontSize:11,fontWeight:500,padding:"1px 7px",borderRadius:4,background:qcc.bg,color:qcc.text,fontFamily:"monospace"}}>{q.id}</span>
-                        <span style={{fontSize:10,color:"#8A8A9A"}}>{q.composite}</span>
+                        <span style={{fontSize:10,color:"#8A8A9A"}}>{getComposites(q).join(" · ")}</span>
                         {q.weight && <WeightDots w={q.weight}/>}
                       </div>
                       <div style={{fontSize:12,color:"#1A1A2E",lineHeight:1.5,marginBottom:4}}>
@@ -997,7 +1031,7 @@ function ScoreMatrix({questions}: {questions: Question[]}) {
         All scored questions across composites. Click any cell to see the full question card.
       </div>
       {Object.keys(COMPOSITES).filter(c=>c!=="Setup / Admin"&&c!=="Narrative").map(comp=>{
-        const qs = scored.filter(q=>q.composite===comp);
+        const qs = scored.filter(q=>getComposites(q).includes(comp));
         if (!qs.length) return null;
         const cc = COMPOSITES[comp];
         return (
