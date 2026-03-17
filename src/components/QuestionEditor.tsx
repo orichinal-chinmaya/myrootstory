@@ -374,7 +374,7 @@ export default function QuestionEditor() {
     const screens = chunks.map((qs, i) => {
       const sid = screenIds[i];
       const isLast = i === chunks.length - 1;
-      const compositeSet = [...new Set(qs.map(q => q.composite))];
+      const compositeSet = [...new Set(qs.flatMap(q => getComposites(q)))];
       const children = buildChildren(qs);
       const formChildren: object[] = [
         ...children,
