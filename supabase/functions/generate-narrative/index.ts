@@ -7,16 +7,16 @@ const corsHeaders = {
 
 function buildPrompt(answers: Record<string, unknown>): string {
   const a = answers;
-  const scheme    = (a["S8"] as string)  || "a women's DBT scheme";
-  const district  = (a["S2"] as string)  || "Maharashtra";
-  const livelihood= (a["S10"] as string) || "not specified";
-  const fundUse   = Array.isArray(a["P1"]) ? (a["P1"] as string[]).join(", ") : ((a["P1"] as string) || "not recorded");
+  const scheme    = (a["S3"] as string)  || "a women's DBT scheme";
+  const district  = (a["S1"] as string)  || "Maharashtra";
+  const livelihood= (a["S5"] as string)  || "not specified";
+  const fundUse   = Array.isArray(a["CQ-1"]) ? (a["CQ-1"] as string[]).join(", ") : ((a["CQ-1"] as string) || "not recorded");
 
   const depthMap: Record<string, string> = {
-    D1:"BEFORE THIS MONEY CAME", D2:"THE MOMENT THINGS CHANGED",
-    D4:"HOW IT FEELS TO KNOW IT IS COMING",
-    D6:"IN MY OWN WORDS", D7:"WHAT I WOULD LOSE IF IT STOPPED",
-    V4:"ANYTHING ELSE I WANT TO SAY"
+    "ES-3":"BEFORE THIS MONEY CAME", "ES-8":"THE MOMENT THINGS CHANGED",
+    "ES-21":"HOW IT FEELS TO KNOW IT IS COMING",
+    "ST-1":"IN MY OWN WORDS", "ST-4":"WHAT I WOULD LOSE IF IT STOPPED",
+    "V-4":"ANYTHING ELSE I WANT TO SAY"
   };
   const depthLines = Object.entries(depthMap)
     .filter(([id]) => a[id] && String(a[id]).trim().length > 5)
@@ -37,19 +37,19 @@ STRICT RULES:
 WHAT SHE SHARED:
 Location: ${district} | Scheme: ${scheme} | Livelihood: ${livelihood}
 Used money for: ${fundUse}
-Most important to her: "${a["P2"] || ""}"
-Expenses before → now: ${a["P3"] || "—"} → ${a["P4"] || "—"} | Stable: ${a["P5"] || "—"}
-Pressure reduced: ${a["P8"] || "—"}
-Borrowing: ${a["P9"] || "—"} → ${a["P10"] || "—"}
-Confidence: ${a["P13"] || "—"}/5 → ${a["P14"] || "—"}
-More say at home: ${a["P15"] || "—"} | Planning ahead: ${a["P16"] || "—"}
-Saving: ${a["N1"] || "—"} | Asset: ${a["N2"] || "—"}
-Food: ${a["N4"] || "—"} | Health spend: ${a["N3"] || "—"} | Education: ${a["N5"] || "—"}
-Self-worth: ${a["N7"] || "—"} | Banking: ${a["N8"] || "—"}
-Independence: ${a["N12"] || "—"}
-Community: ${a["CS1"] || "—"} | Supporting others: ${a["CS3"] || "—"}
-${a["A4b"] ? `Livelihood income: ${a["A4b"]}` : ""}
-${a["A6b"] ? `Spending decisions: ${a["A6b"]}` : ""}
+Most important to her: "${a["CQ-2"] || ""}"
+Expenses before → now: ${a["ES-1"] || "—"} → ${a["ES-2"] || "—"} | Stable: ${a["ES-4"] || "—"}
+Pressure reduced: ${a["ES-7"] || "—"}
+Borrowing: ${a["ES-9"] || "—"} → ${a["ES-10"] || "—"}
+Confidence: ${a["WE-1"] || "—"}/5 → ${a["WE-2"] || "—"}
+More say at home: ${a["WE-4"] || "—"} | Planning ahead: ${a["WE-5"] || "—"}
+Saving: ${a["ES-17"] || "—"} | Asset: ${a["ES-18"] || "—"}
+Food: ${a["CQ-4"] || "—"} | Health spend: ${a["CQ-3"] || "—"} | Education: ${a["CQ-5"] || "—"}
+Self-worth: ${a["WE-10"] || "—"} | Banking: ${a["ES-19"] || "—"}
+Independence: ${a["WE-12"] || "—"}
+Community: ${a["CQ-11"] || "—"} | Supporting others: ${a["CQ-12"] || "—"}
+${a["CQ-8"] ? `Livelihood income: ${a["CQ-8"]}` : ""}
+${a["WE-7"] ? `Spending decisions: ${a["WE-7"]}` : ""}
 
 HER EXACT WORDS (use these, do not paraphrase):
 ${depthLines || "(none recorded)"}`;

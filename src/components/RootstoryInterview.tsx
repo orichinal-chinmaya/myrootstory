@@ -927,7 +927,7 @@ export default function RootstoryInterview() {
             <div style={{flex:1}}>
               <h2 style={{fontSize:20,color:C.ink,margin:0,fontFamily:"Georgia,serif"}}>Interview Complete</h2>
               <p style={{fontSize:11,color:C.grey,margin:0}}>
-                {[answers["S1"],answers["S2"],answers["S8"]].filter(Boolean).join(" · ")}
+                {[answers["PID"],answers["S1"],answers["S3"]].filter(Boolean).join(" · ")}
               </p>
             </div>
             <button style={{...SS.primaryBtn,fontSize:12,padding:"8px 18px",width:"auto"}} onClick={resetAll}>+ New Interview</button>
