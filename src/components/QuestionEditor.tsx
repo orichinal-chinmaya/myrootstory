@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { evaluateCondition, normalizeConditionRule } from "@/lib/conditionEvaluator";
 
 // ─── COMPOSITE COLOUR MAP ─────────────────────────────────────────────────────
 const COMPOSITES: Record<string, { bg: string; border: string; text: string }> = {
