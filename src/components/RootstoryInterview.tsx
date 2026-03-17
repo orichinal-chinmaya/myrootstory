@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import type { CSSProperties } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { evaluateCondition } from "@/lib/conditionEvaluator";
 
 // ─── OFFLINE QUEUE ────────────────────────────────────────────────────────────
 const QUEUE_KEY = "rootstory_queue";
