@@ -1031,7 +1031,7 @@ function ScoreMatrix({questions}: {questions: Question[]}) {
         All scored questions across composites. Click any cell to see the full question card.
       </div>
       {Object.keys(COMPOSITES).filter(c=>c!=="Setup / Admin"&&c!=="Narrative").map(comp=>{
-        const qs = scored.filter(q=>q.composite===comp);
+        const qs = scored.filter(q=>getComposites(q).includes(comp));
         if (!qs.length) return null;
         const cc = COMPOSITES[comp];
         return (

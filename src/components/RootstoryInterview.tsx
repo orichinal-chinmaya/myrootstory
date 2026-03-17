@@ -521,7 +521,7 @@ const ALL_QUESTIONS = [
     trigger:(a)=>a["ES-19"]!=="I use it regularly now — didn't before" },
   { id:"ES-21", module:"depth", label:"How does it feel to know that a payment is coming on a fixed date? Has that changed anything about how she thinks about the future?",
     hint:"Listen for language about dignity, certainty, not having to ask anyone.",
-    type:"open", trigger:(a)=>["4","5"].includes(a["WE-1"])||["Yes, much more confident","Yes, a little more confident"].includes(a["WE-2"])||a["ES-2"]==="5",
+    type:"open", trigger:(a)=>(Number(a["ES-2"]||0)>Number(a["ES-1"]||0))||a["WE-2"]==="Yes, much more confident",
     depthCategory:"Predictability & Dignity", badge:"✦ Story Depth" },
 
   // ── WOMEN'S EMPOWERMENT: WE-1 through WE-12 ──────────────────────────────
