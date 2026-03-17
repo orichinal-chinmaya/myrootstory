@@ -160,7 +160,7 @@ const INITIAL_QS: Question[] = [
 
   // VALIDATION — V-2 through V-4
   { id:"V-2",   composite:"Narrative",              module:"Validation",  weight:null, always:true,  type:"single",  label:"Does this story accurately describe her experience?",  options:["Yes, this is my story","Mostly — small details to adjust","This needs to be rewritten"],  hint:"Read narrative aloud to her in her language.", scores:{} },
-  { id:"V-3",   composite:"Narrative",              module:"Validation",  weight:null, always:false, type:"open",    label:"What would she like to correct or add?",  options:[],  hint:"Shown if V-2 = needs adjustment. Record verbatim.", scores:{} },
+  { id:"V-3",   composite:"Narrative",              module:"Validation",  weight:null, always:false, type:"open",    label:"What would she like to correct or add?",  options:[],  hint:"Shown if V-2 = needs adjustment. Record verbatim.", scores:{}, conditionRule:'V-2 = "Mostly — small details to adjust" OR "This needs to be rewritten"' },
   { id:"V-4",   composite:"Narrative",              module:"Validation",  weight:null, always:true,  type:"open",    label:"Is there anything else she would like to add — anything the story missed?",  options:[],  hint:"Final opportunity for her voice.", scores:{} },
 ];
 
