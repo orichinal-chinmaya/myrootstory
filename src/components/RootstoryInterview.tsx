@@ -823,7 +823,7 @@ export default function RootstoryInterview() {
       pos => {
         const loc = { lat:pos.coords.latitude.toFixed(5), lng:pos.coords.longitude.toFixed(5), accuracy:Math.round(pos.coords.accuracy) };
         setLocation(loc);
-        setAnswers(p => ({...p, S5:`${loc.lat}, ${loc.lng} (±${loc.accuracy}m)`}));
+        setAnswers(p => ({...p, "S2":`${loc.lat}, ${loc.lng} (±${loc.accuracy}m)`}));
       },
       () => alert("Location access denied.")
     );
