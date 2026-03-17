@@ -223,7 +223,8 @@ export default function QuestionEditor() {
   const isEditing = (id: string) => globalEdit || editingIds.has(id);
 
   const visible = questions.filter(q => {
-    const mc = filterComp === "All" || q.composite === filterComp;
+    const comps = getComposites(q);
+    const mc = filterComp === "All" || comps.includes(filterComp);
     const s  = search.toLowerCase();
     const ms = !s || q.id.toLowerCase().includes(s) || q.label.toLowerCase().includes(s);
     return mc && ms;
