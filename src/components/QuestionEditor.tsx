@@ -1004,7 +1004,7 @@ function ScoreMatrix({questions}: {questions: Question[]}) {
           <div key={comp}>
             <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
               <span style={{fontSize:12,fontWeight:500,padding:"3px 10px",borderRadius:4,background:cc.bg,color:cc.text}}>{comp}</span>
-              {IMPACT_DIM[comp] && <span style={{fontSize:11,color:"#8A8A9A"}}>→ {IMPACT_DIM[comp]}</span>}
+              {IMPACT_DIMS[comp] && <span style={{fontSize:11,color:"#8A8A9A"}}>→ {IMPACT_DIMS[comp].join(" · ")}</span>}
             </div>
             <div style={{overflowX:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
