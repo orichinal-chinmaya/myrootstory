@@ -82,19 +82,19 @@ const DOMAIN_COMPOSITES: Record<string, string[]> = {
   "Social Transformation":          ["Social Empowerment", "Household Agency", "Community & Social"],
 };
 
-// Legacy 1:1 map for backward-compat (primary domain per composite)
-const IITM_DIMS: Record<string, string> = {
-  "Household Stability":     "Economic Security",
-  "Debt & Credit Relief":    "Economic Security",
-  "Savings & Assets":        "Economic Security",
-  "Nutrition & Health":      "Consumption Quality & Multiplier",
-  "Education":               "Consumption Quality & Multiplier",
-  "Financial Confidence":    "Women's Empowerment",
-  "Household Agency":        "Women's Empowerment",
-  "Social Empowerment":      "Women's Empowerment",
-  "Financial Inclusion":     "Women's Empowerment",
-  "Livelihood & Enterprise": "Consumption Quality & Multiplier",
-  "Community & Social":      "Consumption Quality & Multiplier",
+// Composite → Impact Dimensions (v0.4: composites can feed MULTIPLE domains)
+const COMPOSITE_DIMS: Record<string, string[]> = {
+  "Household Stability":     ["Economic Security"],
+  "Debt & Credit Relief":    ["Economic Security"],
+  "Savings & Assets":        ["Economic Security"],
+  "Nutrition & Health":      ["Consumption Quality & Multiplier"],
+  "Education":               ["Consumption Quality & Multiplier"],
+  "Financial Confidence":    ["Women's Empowerment"],
+  "Household Agency":        ["Women's Empowerment", "Social Transformation"],
+  "Social Empowerment":      ["Women's Empowerment", "Social Transformation"],
+  "Financial Inclusion":     ["Women's Empowerment"],
+  "Livelihood & Enterprise": ["Consumption Quality & Multiplier"],
+  "Community & Social":      ["Consumption Quality & Multiplier", "Social Transformation"],
 };
 
 // ─── MAHARASHTRA DATA ─────────────────────────────────────────────────────────
