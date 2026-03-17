@@ -825,9 +825,13 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
             <MetaCell label="Composite">
               <span style={{fontSize:12,fontWeight:500,padding:"2px 9px",borderRadius:4,background:cc.bg,color:cc.text}}>{q.composite}</span>
             </MetaCell>
-            {IMPACT_DIM[q.composite] && (
-              <MetaCell label="Impact Dimension">
-                <span style={{fontSize:12,color:"#8A8A9A"}}>{IMPACT_DIM[q.composite]}</span>
+            {IMPACT_DIMS[q.composite] && IMPACT_DIMS[q.composite].length > 0 && (
+              <MetaCell label={IMPACT_DIMS[q.composite].length > 1 ? "Impact Dimensions" : "Impact Dimension"}>
+                <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
+                  {IMPACT_DIMS[q.composite].map(dim => (
+                    <span key={dim} style={{fontSize:11,padding:"2px 8px",borderRadius:4,background:"#F5F3F0",border:"0.5px solid #E0DDD8",color:"#3A3A5C"}}>{dim}</span>
+                  ))}
+                </div>
               </MetaCell>
             )}
             {q.weight && (
