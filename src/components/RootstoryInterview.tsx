@@ -801,7 +801,7 @@ export default function RootstoryInterview() {
           r.id === record.id ? {...r, narrative: text.trim(), narrativeGenerated: true} : r
         );
         saveQueue(q);
-        if (record.id === answers["S1"]) {
+        if (record.id === answers["PID"]) {
           setNarrative(text.trim());
           setQueued(false);
         }
