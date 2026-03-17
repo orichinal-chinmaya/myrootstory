@@ -927,7 +927,7 @@ function BranchingLogic({questions, editMode, updateField}: {questions: Question
 
       {/* Branch groups */}
       {Object.entries(branches).map(([gateId, {gate, children}]) => {
-        const cc = gate ? (COMPOSITES[gate.composite] || COMPOSITES["Setup / Admin"]) : {bg:"#F0F4F0",border:"#8A8A9A",text:"#3A4A3A"};
+        const cc = gate ? (COMPOSITES[getPrimaryComposite(gate)] || COMPOSITES["Setup / Admin"]) : {bg:"#F0F4F0",border:"#8A8A9A",text:"#3A4A3A"};
         return (
           <div key={gateId} style={{background:"#fff",border:"0.5px solid #E0DDD8",borderRadius:8,overflow:"hidden"}}>
             {/* Gate header */}
