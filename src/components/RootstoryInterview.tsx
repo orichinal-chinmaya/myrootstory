@@ -858,7 +858,7 @@ export default function RootstoryInterview() {
     setAnswers({}); setCurrentIdx(0); setNarrative(""); setNarLoading(false);
     setNarError(""); setValidated(false); setActiveTab("story"); setLocation(null);
     const pid = generateParticipantId(researcher.id);
-    setAnswers({ S1:pid, timestamp:new Date().toISOString() });
+    setAnswers({ PID:pid, timestamp:new Date().toISOString() });
     setPhase("interview");
   }
 
