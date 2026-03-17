@@ -381,19 +381,42 @@ export default function QuestionEditor() {
     a.click();
   };
 
-  const handleSave = () => {
-    const overrides: Record<string, { label?: string; options?: string[] }> = {};
-    questions.forEach(q => {
-      const orig = INITIAL_QS.find(o => o.id === q.id);
-      if (!orig) return;
-      const entry: { label?: string; options?: string[] } = {};
-      if (q.label !== orig.label) entry.label = q.label;
-      if (JSON.stringify(q.options) !== JSON.stringify(orig.options)) entry.options = q.options;
-      if (Object.keys(entry).length) overrides[q.id] = entry;
-    });
-    localStorage.setItem("rootstory_question_overrides", JSON.stringify(overrides));
-    setFlash(true);
-    setTimeout(() => setFlash(false), 1600);
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      // Upsert the full question set + translations to the database
+      const { error } = await supabase
+        .from("question_schema")
+        .upsert({
+          id: "default",
+          questions: questions as unknown as Record<string, unknown>[],
+          translations: trans as unknown as Record<string, unknown>,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: "id" });
+
+      if (error) {
+        console.error("Failed to save question schema:", error);
+        alert("Save failed: " + error.message);
+        return;
+      }
+
+      // Also keep localStorage as fallback for the interview component
+      const overrides: Record<string, { label?: string; options?: string[] }> = {};
+      questions.forEach(q => {
+        const orig = INITIAL_QS.find(o => o.id === q.id);
+        if (!orig) return;
+        const entry: { label?: string; options?: string[] } = {};
+        if (q.label !== orig.label) entry.label = q.label;
+        if (JSON.stringify(q.options) !== JSON.stringify(orig.options)) entry.options = q.options;
+        if (Object.keys(entry).length) overrides[q.id] = entry;
+      });
+      localStorage.setItem("rootstory_question_overrides", JSON.stringify(overrides));
+
+      setFlash(true);
+      setTimeout(() => setFlash(false), 1600);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const trCount = lang !== "en" ? Object.keys(trans[lang]||{}).filter(k => trans[lang][k]?.label).length : 0;
