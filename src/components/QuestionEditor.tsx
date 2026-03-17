@@ -687,6 +687,17 @@ function QCard({q,lang,expanded,onToggle,getTr,setTr,updateScore,updateLabel,upd
                 </EditField>
               </div>
 
+              {/* Condition Rule */}
+              {!q.always && (
+                <div style={{marginTop:10}}>
+                  <EditField label="Branching Condition (when is this question shown?)">
+                    <textarea value={q.conditionRule||""} onChange={e=>updateField(q.id,"conditionRule",e.target.value)}
+                      placeholder='e.g. ES-5 = "Yes"'
+                      style={{...inputSm,width:"100%",minHeight:48,resize:"vertical"}}/>
+                  </EditField>
+                </div>
+              )}
+
               {/* Actions */}
               <div style={{display:"flex",gap:8,marginTop:12,flexWrap:"wrap"}}>
                 <button onClick={()=>duplicateQuestion(q.id)} style={actionBtnStyle}>⧉ Duplicate</button>
