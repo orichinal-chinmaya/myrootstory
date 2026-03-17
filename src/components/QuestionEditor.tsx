@@ -383,7 +383,7 @@ export default function QuestionEditor() {
       return { id: sid, title: compositeSet.join(" · ").substring(0, 60), layout: { type: "SingleColumnLayout", children: [{ type: "Form", name: `form_${sid.toLowerCase()}`, children: formChildren }] } };
     });
 
-    const scoringMetadata = questions.filter(q => q.scores && Object.keys(q.scores).length > 0).map(q => ({ id: q.id, composite: q.composite, weight: q.weight, impact_dimensions: IMPACT_DIMS[q.composite] || [], scores: q.scores }));
+    const scoringMetadata = questions.filter(q => q.scores && Object.keys(q.scores).length > 0).map(q => ({ id: q.id, composite: q.composite, weight: q.weight, impact_dimensions: [...new Set(getComposites(q).flatMap(c => IMPACT_DIMS[c] || []))], scores: q.scores }));
     const waFlow = { version: "6.0", data_api_version: "3.0", routing_model: routingModel, screens, _rootstory_metadata: { exportedAt: new Date().toISOString(), language: lang, total_questions: questions.length, scoring_map: scoringMetadata, translations: lang !== "en" ? trans : undefined } };
 
     const blob = new Blob([JSON.stringify(waFlow, null, 2)], { type: "application/json" });
