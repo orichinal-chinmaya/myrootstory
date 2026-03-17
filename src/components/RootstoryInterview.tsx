@@ -665,8 +665,19 @@ export default function RootstoryInterview() {
   const online = useOnline();
   const cardRef = useRef(null);
 
-  // Load questions with any overrides saved by QuestionEditor
-  const QUESTIONS = useMemo(() => applyEditorOverrides(ALL_QUESTIONS), []);
+  const [questionsLoaded, setQuestionsLoaded] = useState(false);
+  const [QUESTIONS, setQUESTIONS] = useState(() => applyEditorOverrides(ALL_QUESTIONS));
+
+  // Load questions from database, fall back to localStorage overrides
+  useEffect(() => {
+    (async () => {
+      const dbQs = await loadQuestionsFromDB();
+      if (dbQs && dbQs.length > 0) {
+        setQUESTIONS(dbQs as typeof ALL_QUESTIONS);
+      }
+      setQuestionsLoaded(true);
+    })();
+  }, []);
 
   // Refresh queue display whenever we return to complete screen
   useEffect(() => {
