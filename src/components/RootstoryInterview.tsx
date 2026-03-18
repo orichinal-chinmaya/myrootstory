@@ -621,34 +621,28 @@ async function loadQuestionsFromDB(): Promise<typeof ALL_QUESTIONS | null> {
     if (error || !data?.questions) return null;
     const dbQs = data.questions as any[];
     if (!Array.isArray(dbQs) || dbQs.length === 0) return null;
-    // Build a lookup of hardcoded options for fallback (e.g. districts, schemes)
-    const hardcodedLookup: Record<string, any> = {};
-    ALL_QUESTIONS.forEach(q => { hardcodedLookup[q.id] = q; });
-
-    // Map DB question schema into the interview format — conditionRule drives visibility
+    // Map DB question schema directly into the interview format — no hardcoded fallback
     return dbQs.map((q: any) => {
-      const hc = hardcodedLookup[q.id];
-      // Use DB options if non-empty, else fall back to hardcoded options
-      const dbOpts = Array.isArray(q.options) && q.options.length > 0 ? q.options : (hc?.options || []);
+      const dbOpts = Array.isArray(q.options) ? q.options : [];
       return {
         id: q.id,
         module: (q.module || "Core").toLowerCase().replace("story depth","depth").replace("her voice","narrative").replace("researcher only","setup"),
-        type: q.type || (hc?.type || "single"),
-        label: q.label || (hc?.label || ""),
+        type: q.type || "single",
+        label: q.label || "",
         options: dbOpts,
         scores: q.scores || {},
-        hint: q.hint || (hc?.hint || ""),
+        hint: q.hint || "",
         always: q.always !== false,
         composite: q.composite || "",
         weight: q.weight ?? null,
         conditionRule: q.conditionRule || undefined,
-        scaleLabels: q.type === "scale5" ? q.options : (hc?.scaleLabels || undefined),
+        scaleLabels: q.type === "scale5" ? q.options : undefined,
         researcherDirection: q.researcherDirection || undefined,
         required: q.always !== false,
-        placeholder: hc?.placeholder || undefined,
-        researcherOnly: hc?.researcherOnly || false,
-        depthCategory: hc?.depthCategory || undefined,
-        badge: hc?.badge || undefined,
+        placeholder: q.placeholder || undefined,
+        researcherOnly: q.researcherOnly || false,
+        depthCategory: q.depthCategory || undefined,
+        badge: q.badge || undefined,
       };
     });
   } catch (e) {
