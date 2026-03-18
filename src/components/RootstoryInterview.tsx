@@ -1386,8 +1386,9 @@ export default function RootstoryInterview() {
             {/* Select */}
             {current.type==="select" && (
               <select value={answers[current.id]||""} onChange={e=>answer(e.target.value)}
-                style={{width:"100%",padding:"11px 14px",borderRadius:7,border:`1px solid ${C.border}`,background:C.white,fontSize:14,color:C.ink,fontFamily:"Georgia,serif",outline:"none"}}>
-                {current.options?.map(o=><option key={o} value={o.includes("…")?"":o}>{o}</option>)}
+                style={{width:"100%",padding:"11px 14px",borderRadius:7,border:`1px solid ${C.border}`,background:C.white,fontSize:14,color:answers[current.id]?C.ink:C.grey,fontFamily:"Georgia,serif",outline:"none"}}>
+                <option value="" disabled>Select…</option>
+                {current.options?.filter(o => !o.includes("…")).map(o=><option key={o} value={o}>{o}</option>)}
               </select>
             )}
 
