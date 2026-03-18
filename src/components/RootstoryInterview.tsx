@@ -621,23 +621,36 @@ async function loadQuestionsFromDB(): Promise<typeof ALL_QUESTIONS | null> {
     if (error || !data?.questions) return null;
     const dbQs = data.questions as any[];
     if (!Array.isArray(dbQs) || dbQs.length === 0) return null;
+    // Build a lookup of hardcoded options for fallback (e.g. districts, schemes)
+    const hardcodedLookup: Record<string, any> = {};
+    ALL_QUESTIONS.forEach(q => { hardcodedLookup[q.id] = q; });
+
     // Map DB question schema into the interview format — conditionRule drives visibility
-    return dbQs.map((q: any) => ({
-      id: q.id,
-      module: (q.module || "Core").toLowerCase().replace("story depth","depth").replace("her voice","narrative").replace("researcher only","setup"),
-      type: q.type || "single",
-      label: q.label || "",
-      options: q.options || [],
-      scores: q.scores || {},
-      hint: q.hint || "",
-      always: q.always !== false,
-      composite: q.composite || "",
-      weight: q.weight ?? null,
-      conditionRule: q.conditionRule || undefined,
-      scaleLabels: q.type === "scale5" ? q.options : undefined,
-      researcherDirection: q.researcherDirection || undefined,
-      required: q.always !== false,
-    }));
+    return dbQs.map((q: any) => {
+      const hc = hardcodedLookup[q.id];
+      // Use DB options if non-empty, else fall back to hardcoded options
+      const dbOpts = Array.isArray(q.options) && q.options.length > 0 ? q.options : (hc?.options || []);
+      return {
+        id: q.id,
+        module: (q.module || "Core").toLowerCase().replace("story depth","depth").replace("her voice","narrative").replace("researcher only","setup"),
+        type: q.type || (hc?.type || "single"),
+        label: q.label || (hc?.label || ""),
+        options: dbOpts,
+        scores: q.scores || {},
+        hint: q.hint || (hc?.hint || ""),
+        always: q.always !== false,
+        composite: q.composite || "",
+        weight: q.weight ?? null,
+        conditionRule: q.conditionRule || undefined,
+        scaleLabels: q.type === "scale5" ? q.options : (hc?.scaleLabels || undefined),
+        researcherDirection: q.researcherDirection || undefined,
+        required: q.always !== false,
+        placeholder: hc?.placeholder || undefined,
+        researcherOnly: hc?.researcherOnly || false,
+        depthCategory: hc?.depthCategory || undefined,
+        badge: hc?.badge || undefined,
+      };
+    });
   } catch (e) {
     console.error("Failed to load questions from database:", e);
     return null;
@@ -1373,8 +1386,9 @@ export default function RootstoryInterview() {
             {/* Select */}
             {current.type==="select" && (
               <select value={answers[current.id]||""} onChange={e=>answer(e.target.value)}
-                style={{width:"100%",padding:"11px 14px",borderRadius:7,border:`1px solid ${C.border}`,background:C.white,fontSize:14,color:C.ink,fontFamily:"Georgia,serif",outline:"none"}}>
-                {current.options?.map(o=><option key={o} value={o.includes("…")?"":o}>{o}</option>)}
+                style={{width:"100%",padding:"11px 14px",borderRadius:7,border:`1px solid ${C.border}`,background:C.white,fontSize:14,color:answers[current.id]?C.ink:C.grey,fontFamily:"Georgia,serif",outline:"none"}}>
+                <option value="" disabled>Select…</option>
+                {current.options?.filter(o => !o.includes("…")).map(o=><option key={o} value={o}>{o}</option>)}
               </select>
             )}
 
