@@ -209,22 +209,16 @@ function calcScores(answers) {
     effs.forEach(([eff, w]) => { totals[eff] += (val as number)*(w as number); weights[eff] += (w as number); });
   });
 
-  // P1 multi-select: each selection type feeds the correct composite
-  // Food/health/clothing → Household Stability (covering basic needs)
-  // School fees → Education (developmental spend)
-  // Healthcare → Nutrition & Health (health investment)
-  // Savings → Savings & Assets (forward-looking behaviour)
-  // Business/farm → Livelihood & Enterprise
-  // Debt repayment → Debt & Credit Relief
+  // CQ-1 multi-select: each selection feeds the correct composite
   if (Array.isArray(answers["CQ-1"])) {
     const p1 = answers["CQ-1"];
     const map = [
-      { items:["Food & household groceries","Clothing or household items"], eff:"Household Stability", w:1 },
-      { items:["Healthcare or medicines"],              eff:"Nutrition & Health",     w:1 },
-      { items:["Children's school fees or books"],      eff:"Education",              w:1 },
-      { items:["Savings"],                              eff:"Savings & Assets",       w:2 },
-      { items:["Starting or running a business or farm activity"], eff:"Livelihood & Enterprise", w:1 },
-      { items:["Repaying a loan or debt"],              eff:"Debt & Credit Relief",   w:1 },
+      { items:["Food & groceries","Household expenses"], eff:"Consumption Quality", w:1 },
+      { items:["Healthcare & medicine"],                  eff:"Nutrition & Health",     w:1 },
+      { items:["Children's education"],                   eff:"Education",              w:1 },
+      { items:["Savings"],                                eff:"Savings & Resilience",   w:2 },
+      { items:["Business / income activity"],             eff:"Livelihood & Enterprise", w:1 },
+      { items:["Debt or loan repayment"],                 eff:"Savings & Resilience",   w:1 },
     ];
     map.forEach(({ items, eff, w }) => {
       const count = p1.filter(x => items.includes(x)).length;
@@ -233,6 +227,50 @@ function calcScores(answers) {
         totals[eff] += val * w;
         weights[eff] += w;
       }
+    });
+  }
+
+  // CQ-2 multi-select: spending increases feed composites
+  if (Array.isArray(answers["CQ-2"])) {
+    const p2 = answers["CQ-2"];
+    const map2 = [
+      { item:"Food", eff:"Consumption Quality", w:1 },
+      { item:"Healthcare / medicines", eff:"Nutrition & Health", w:2 },
+      { item:"Children's education", eff:"Education", w:2 },
+    ];
+    map2.forEach(({ item, eff, w }) => {
+      if (p2.includes(item)) { totals[eff] += 1.0 * w; weights[eff] += w; }
+    });
+    if (p2.includes("None of the above")) {
+      totals["Consumption Quality"] += 0; weights["Consumption Quality"] += 1;
+    }
+  }
+
+  // WE-5 multi-select: decision participation
+  if (Array.isArray(answers["WE-5"])) {
+    const p5 = answers["WE-5"];
+    const items5 = ["Children's education","Healthcare decisions","Major household purchases"];
+    const count5 = p5.filter(x => items5.includes(x)).length;
+    if (count5 > 0) { totals["Household Agency"] += (count5/3) * 2; weights["Household Agency"] += 2; }
+    else if (p5.includes("None of these")) { totals["Household Agency"] += 0; weights["Household Agency"] += 2; }
+  }
+
+  // WE-7 multi-select: mobility
+  if (Array.isArray(answers["WE-7"])) {
+    const p7 = answers["WE-7"];
+    const items7 = ["Bank","Market","Work / income activity"];
+    const count7 = p7.filter(x => items7.includes(x)).length;
+    if (count7 > 0) { totals["Social Empowerment"] += (count7/3) * 3; weights["Social Empowerment"] += 3; }
+    else if (p7.includes("None of these")) { totals["Social Empowerment"] += 0; weights["Social Empowerment"] += 3; }
+  }
+
+  // ES-12 multi-select: financial behaviours
+  if (Array.isArray(answers["ES-12"])) {
+    const p12 = answers["ES-12"];
+    const scoreMap12 = {"Saving regularly":1.0, "Using ATM or UPI payments":1.0, "Taking a formal bank loan":0.7};
+    p12.forEach(item => {
+      const val = scoreMap12[item];
+      if (val !== undefined) { totals["Financial Inclusion"] += val * 2; weights["Financial Inclusion"] += 2; }
     });
   }
 
