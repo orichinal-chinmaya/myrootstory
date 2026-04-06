@@ -250,6 +250,17 @@ function calcScores(answers) {
     }
   }
 
+  // CQ-8 multi-select: shopping mobility → Consumption Quality + Social Empowerment
+  if (Array.isArray(answers["CQ-8"])) {
+    const p8 = answers["CQ-8"] as string[];
+    const mobilityItems = ["Markets in her area", "Outside her area"];
+    const mobilityCount = p8.filter(x => mobilityItems.includes(x)).length;
+    // Any shopping = consumption quality signal
+    if (p8.length > 0) { totals["Consumption Quality"] += 0.5 * 1; weights["Consumption Quality"] += 1; }
+    // Going to markets or outside = social empowerment (mobility)
+    if (mobilityCount > 0) { totals["Social Empowerment"] += (mobilityCount / 2) * 1; weights["Social Empowerment"] += 1; }
+  }
+
   // WE-5 multi-select: decision participation
   if (Array.isArray(answers["WE-5"])) {
     const p5 = answers["WE-5"];
