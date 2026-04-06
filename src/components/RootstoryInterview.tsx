@@ -304,33 +304,29 @@ function calcIITMScores(scores) {
 // ─── PROMPT BUILDER ───────────────────────────────────────────────────────────
 function buildPrompt(answers) {
   const a = answers;
-  const scheme    = a["S3"]  || "a women's DBT scheme";
-  const district  = a["S1"]  || "Maharashtra";
-  const livelihood= a["S5"]  || "not specified";
-  const hhType    = a["S4"]  || "household";
+  const district  = a["S4"]  || "Maharashtra";
+  const village   = a["S5"]  || "";
+  const occupation= a["S10"] || "not specified";
   const fundUse   = Array.isArray(a["CQ-1"]) ? a["CQ-1"].join(", ") : (a["CQ-1"]||"not recorded");
 
   const depthMap = {
-    "ES-3":"BEFORE THIS MONEY CAME",      "ES-8":"THE MOMENT THINGS CHANGED",
-    "ES-21":"HOW IT FEELS TO KNOW IT IS COMING",
-    "ST-1":"IN MY OWN WORDS",
-    "ST-4":"WHAT I WOULD LOSE IF IT STOPPED", "V-4":"ANYTHING ELSE I WANT TO SAY"
+    "ST-3":"BIGGEST BENEFIT",
+    "ST-4":"PROBLEMS OR DIFFICULTIES",
+    "V-4":"ANYTHING ELSE I WANT TO SAY"
   };
   const depthLines = Object.entries(depthMap)
     .filter(([id]) => a[id] && String(a[id]).trim().length > 5)
     .map(([id,label]) => `[${label}]: "${a[id]}"`)
     .join("\n");
 
-  // Extra context from v0.4 aligned questions
   const extras = [
-    a["ES-17"] && `- Saving behaviour: ${a["ES-17"]}`,
-    a["ES-18"] && `- Asset purchased since DBT: ${a["ES-18"]}`,
-    a["CQ-3"]  && `- Healthcare spending change: ${a["CQ-3"]}`,
-    a["CQ-4"]  && `- Food quality / nutrition change: ${a["CQ-4"]}`,
-    a["CQ-5"]  && `- Education spending change: ${a["CQ-5"]}`,
-    a["WE-10"] && `- Sense of self-worth: ${a["WE-10"]}`,
-    a["ES-19"] && `- Formal banking use: ${a["ES-19"]}`,
-    a["WE-12"] && `- Financial independence: ${a["WE-12"]}`,
+    a["ES-2"]  && `- Has savings now: ${a["ES-2"]}`,
+    a["ES-3"]  && `- Monthly savings: ${a["ES-3"]}`,
+    a["CQ-3"]  && `- Food quality change: ${a["CQ-3"]}`,
+    a["CQ-7"]  && `- Education outcomes: ${a["CQ-7"]}`,
+    a["ES-8"]  && `- Work change: ${a["ES-8"]}`,
+    a["ES-10"] && `- Bank account: ${a["ES-10"]}`,
+    a["WE-1"]  && `- Financial independence: ${a["WE-1"]}`,
   ].filter(Boolean).join("\n");
 
   return `You are writing a micronarrative for a social audit. The participant will hear this read back to them. It must feel like their own story — not a summary written about them.
