@@ -341,21 +341,20 @@ STRICT RULES:
 - If she gave her own words (in quotes below), use them directly
 
 WHAT SHE SHARED:
-Location: ${district} | Scheme: ${scheme} | Livelihood: ${livelihood}
+Location: ${district} ${village ? `(${village})` : ""} | Occupation: ${occupation}
 Used money for: ${fundUse}
-Most important to her: "${a["CQ-2"]||""}"
-Expenses before → now: ${a["ES-1"]||"—"} → ${a["ES-2"]||"—"} | Stable: ${a["ES-4"]||"—"}
-Pressure reduced: ${a["ES-7"]||"—"}
-Borrowing: ${a["ES-9"]||"—"} → ${a["ES-10"]||"—"}
-Confidence: ${a["WE-1"]||"—"}/5 → ${a["WE-2"]||"—"}
-More say at home: ${a["WE-4"]||"—"} | Planning ahead: ${a["WE-5"]||"—"}
-Saving: ${a["ES-17"]||"—"} | Asset: ${a["ES-18"]||"—"}
-Food: ${a["CQ-4"]||"—"} | Health spend: ${a["CQ-3"]||"—"} | Education: ${a["CQ-5"]||"—"}
-Self-worth: ${a["WE-10"]||"—"} | Banking: ${a["ES-19"]||"—"}
-Independence: ${a["WE-12"]||"—"}
-Community: ${a["CQ-11"]||"—"} | Supporting others: ${a["CQ-12"]||"—"}
-${a["CQ-8"] ? `Livelihood income: ${a["CQ-8"]}` : ""}
-${a["WE-7"] ? `Spending decisions: ${a["WE-7"]}` : ""}
+Spending increases: ${Array.isArray(a["CQ-2"]) ? a["CQ-2"].join(", ") : (a["CQ-2"]||"—")}
+Savings before: ${a["ES-1"]||"—"} | Savings now: ${a["ES-2"]||"—"} | Monthly: ${a["ES-3"]||"—"}
+Emergency capacity: ${a["ES-4"]||"—"} | Borrowing reduced: ${a["ES-5"]||"—"}
+Working: ${a["ES-7"]||"—"} | Work change: ${a["ES-8"]||"—"}
+Bank account: ${a["ES-10"]||"—"} | Operates it: ${a["ES-11"]||"—"}
+Independence: ${a["WE-1"]||"—"} | Confidence: ${a["WE-2"]||"—"}
+Spending decisions: ${a["WE-3"]||"—"} | More say: ${a["WE-4"]||"—"}
+Respect: ${a["WE-6"]||"—"} | Mobility: ${Array.isArray(a["WE-7"]) ? a["WE-7"].join(", ") : (a["WE-7"]||"—")}
+Planning ahead: ${a["WE-9"]||"—"} | Local economy: ${a["WE-11"]||"—"}
+Food quality: ${a["CQ-3"]||"—"} | Education: ${a["CQ-7"]||"—"}
+Importance: ${a["ST-1"]||"—"} | Life improved: ${a["ST-2"]||"—"}
+${extras ? `\nADDITIONAL:\n${extras}` : ""}
 
 HER EXACT WORDS (use these, do not paraphrase):
 ${depthLines || "(none recorded)"}`;
