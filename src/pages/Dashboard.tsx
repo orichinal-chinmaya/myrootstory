@@ -54,40 +54,38 @@ const C = {
 };
 
 const COMPOSITES: Record<string, { bg: string; b: string; t: string }> = {
-  "Household Stability":     { bg:"#E8F5EE", b:"#0D2818", t:"#071A0E" },
-  "Debt & Credit Relief":    { bg:"#FEF3DC", b:"#C47A0A", t:"#8A4A00" },
-  "Savings & Assets":        { bg:"#E8F5EE", b:"#2E7D52", t:"#1B5E3A" },
+  "Consumption Quality":     { bg:"#E8F5EE", b:"#0D2818", t:"#071A0E" },
   "Nutrition & Health":      { bg:"#FFF0E8", b:"#C85000", t:"#8A2800" },
   "Education":               { bg:"#EEF0FF", b:"#3040C0", t:"#1A2880" },
+  "Savings & Resilience":    { bg:"#FEF3DC", b:"#C47A0A", t:"#8A4A00" },
+  "Livelihood & Enterprise": { bg:"#E8F8F0", b:"#107048", t:"#083828" },
+  "Financial Inclusion":     { bg:"#FFFBE6", b:"#A07800", t:"#705400" },
   "Financial Confidence":    { bg:"#F0EBF8", b:"#5B3A8C", t:"#3A1A6A" },
   "Household Agency":        { bg:"#EBF4FF", b:"#1A5FA8", t:"#0D3D70" },
   "Social Empowerment":      { bg:"#FFF0F8", b:"#A0206A", t:"#700040" },
-  "Financial Inclusion":     { bg:"#FFFBE6", b:"#A07800", t:"#705400" },
-  "Livelihood & Enterprise": { bg:"#E8F8F0", b:"#107048", t:"#083828" },
-  "Community & Social":      { bg:"#FFF3E0", b:"#E65100", t:"#BF360C" },
+  "Overall Perception":      { bg:"#FFF3E0", b:"#E65100", t:"#BF360C" },
 };
 
-// v0.4: composites can feed multiple domains
+// 4-dimension rollup
 const DOMAIN_COMPOSITES: Record<string, string[]> = {
-  "Economic Security":              ["Household Stability", "Debt & Credit Relief", "Savings & Assets"],
-  "Consumption Quality & Multiplier": ["Nutrition & Health", "Education", "Livelihood & Enterprise", "Community & Social"],
-  "Women's Empowerment":            ["Financial Confidence", "Household Agency", "Social Empowerment", "Financial Inclusion"],
-  "Social Transformation":          ["Social Empowerment", "Household Agency", "Community & Social"],
+  "Consumption Quality & Multiplier": ["Consumption Quality", "Nutrition & Health", "Education"],
+  "Economic Security":                ["Savings & Resilience", "Livelihood & Enterprise", "Financial Inclusion"],
+  "Women's Empowerment":              ["Financial Confidence", "Household Agency", "Social Empowerment"],
+  "Social Transformation":            ["Social Empowerment", "Overall Perception"],
 };
 
 // Legacy 1:1 for display (primary domain label per composite)
 const IMPACT_DIMS: Record<string, string> = {
-  "Household Stability":     "Economic Security",
-  "Debt & Credit Relief":    "Economic Security",
-  "Savings & Assets":        "Economic Security",
+  "Consumption Quality":     "Consumption Quality & Multiplier",
   "Nutrition & Health":      "Consumption Quality & Multiplier",
   "Education":               "Consumption Quality & Multiplier",
+  "Savings & Resilience":    "Economic Security",
+  "Livelihood & Enterprise": "Economic Security",
+  "Financial Inclusion":     "Economic Security",
   "Financial Confidence":    "Women's Empowerment",
   "Household Agency":        "Women's Empowerment",
   "Social Empowerment":      "Women's Empowerment",
-  "Financial Inclusion":     "Women's Empowerment",
-  "Livelihood & Enterprise": "Consumption Quality & Multiplier",
-  "Community & Social":      "Consumption Quality & Multiplier",
+  "Overall Perception":      "Social Transformation",
 };
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
