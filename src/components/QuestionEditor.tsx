@@ -4,41 +4,38 @@ import { evaluateCondition, normalizeConditionRule } from "@/lib/conditionEvalua
 
 // ─── COMPOSITE COLOUR MAP ─────────────────────────────────────────────────────
 const COMPOSITES: Record<string, { bg: string; border: string; text: string }> = {
-  "Household Stability":    { bg:"#E8F5EE", border:"#0D2818", text:"#071A0E" },
-  "Debt & Credit Relief":   { bg:"#FEF3DC", border:"#C47A0A", text:"#8A4A00" },
-  "Savings & Assets":       { bg:"#E8F8F0", border:"#2E7D52", text:"#1B5E3A" },
+  "Consumption Quality":    { bg:"#E8F5EE", border:"#0D2818", text:"#071A0E" },
   "Nutrition & Health":     { bg:"#FFF0E8", border:"#C85000", text:"#8A2800" },
   "Education":              { bg:"#EEF0FF", border:"#3040C0", text:"#1A2880" },
+  "Savings & Resilience":   { bg:"#FEF3DC", border:"#C47A0A", text:"#8A4A00" },
+  "Livelihood & Enterprise":{ bg:"#E8F8F0", border:"#107048", text:"#083828" },
+  "Financial Inclusion":    { bg:"#FFFBE6", border:"#A07800", text:"#705400" },
   "Financial Confidence":   { bg:"#F0EBF8", border:"#5B3A8C", text:"#3A1A6A" },
   "Household Agency":       { bg:"#EBF4FF", border:"#1A5FA8", text:"#0D3D70" },
   "Social Empowerment":     { bg:"#FFF0F8", border:"#A0206A", text:"#700040" },
-  "Financial Inclusion":    { bg:"#FFFBE6", border:"#A07800", text:"#705400" },
-  "Livelihood & Enterprise":{ bg:"#E8F8F0", border:"#107048", text:"#083828" },
-  "Community & Social":     { bg:"#FFF3E0", border:"#E65100", text:"#BF360C" },
+  "Overall Perception":     { bg:"#FFF3E0", border:"#E65100", text:"#BF360C" },
   "Setup / Admin":          { bg:"#F0F4F0", border:"#8A9A8A", text:"#3A4A3A" },
   "Narrative":              { bg:"#F5F0E8", border:"#C8A060", text:"#5A3A10" },
 };
 
 const DOMAIN_COMPOSITES: Record<string, string[]> = {
-  "Economic Security":              ["Household Stability", "Debt & Credit Relief", "Savings & Assets"],
-  "Consumption Quality & Multiplier": ["Nutrition & Health", "Education", "Livelihood & Enterprise", "Community & Social"],
-  "Women's Empowerment":            ["Financial Confidence", "Household Agency", "Social Empowerment", "Financial Inclusion"],
-  "Social Transformation":          ["Social Empowerment", "Household Agency", "Community & Social"],
+  "Consumption Quality & Multiplier": ["Consumption Quality", "Nutrition & Health", "Education"],
+  "Economic Security":                ["Savings & Resilience", "Livelihood & Enterprise", "Financial Inclusion"],
+  "Women's Empowerment":              ["Financial Confidence", "Household Agency", "Social Empowerment"],
+  "Social Transformation":            ["Social Empowerment", "Overall Perception"],
 };
 
-// Composite → Impact Dimensions (v0.4: a composite can feed MULTIPLE domains)
 const IMPACT_DIMS: Record<string, string[]> = {
-  "Household Stability":     ["Economic Security"],
-  "Debt & Credit Relief":    ["Economic Security"],
-  "Savings & Assets":        ["Economic Security"],
-  "Nutrition & Health":      ["Consumption Quality & Multiplier"],
-  "Education":               ["Consumption Quality & Multiplier"],
-  "Financial Confidence":    ["Women's Empowerment"],
-  "Household Agency":        ["Women's Empowerment", "Social Transformation"],
-  "Social Empowerment":      ["Women's Empowerment", "Social Transformation"],
-  "Financial Inclusion":     ["Women's Empowerment"],
-  "Livelihood & Enterprise": ["Consumption Quality & Multiplier"],
-  "Community & Social":      ["Consumption Quality & Multiplier", "Social Transformation"],
+  "Consumption Quality":    ["Consumption Quality & Multiplier"],
+  "Nutrition & Health":     ["Consumption Quality & Multiplier"],
+  "Education":              ["Consumption Quality & Multiplier"],
+  "Savings & Resilience":   ["Economic Security"],
+  "Livelihood & Enterprise":["Economic Security"],
+  "Financial Inclusion":    ["Economic Security"],
+  "Financial Confidence":   ["Women's Empowerment"],
+  "Household Agency":       ["Women's Empowerment"],
+  "Social Empowerment":     ["Women's Empowerment", "Social Transformation"],
+  "Overall Perception":     ["Social Transformation"],
 };
 
 const LANGS = [
