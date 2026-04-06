@@ -1117,7 +1117,7 @@ export default function RootstoryInterview() {
             {isDepth&&(
               <div style={{background:`linear-gradient(90deg,${C.amberLight},transparent)`,borderLeft:`3px solid ${C.amber}`,padding:"6px 12px",borderRadius:"0 5px 5px 0",display:"flex",alignItems:"center",gap:6}}>
                 <span style={{color:C.amber}}>✦</span>
-                <span style={{fontSize:12,color:C.amber,fontStyle:"italic"}}>{current.depthCategory} — enriches the story</span>
+                <span style={{fontSize:12,color:C.amber,fontStyle:"italic"}}>{(current as any).depthCategory} — enriches the story</span>
               </div>
             )}
 
@@ -1252,7 +1252,7 @@ export default function RootstoryInterview() {
             {/* Scale 5 */}
             {current.type==="scale5" && (
               <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-                {(current.scaleLabels||["1","2","3","4","5"]).map((lbl,i)=>{
+                {((current as any).scaleLabels||["1","2","3","4","5"]).map((lbl:string,i:number)=>{
                   const v=String(i+1),sel=answers[current.id]===v;
                   return (
                     <button key={i} onClick={()=>answer(v)}
