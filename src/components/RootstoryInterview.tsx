@@ -160,34 +160,38 @@ const SCORE_MAP = {
 };
 
 const Q_EFFECTS = {
-  "CQ-3":  [["Consumption Quality",3]],
-  "CQ-7":  [["Consumption Quality",2], ["Education",2]],
+  // ── CONSUMPTION QUALITY & MULTIPLIER ──
+  "CQ-3":  [["Consumption Quality",3], ["Nutrition & Health",2]],   // food quality → both
+  "CQ-7":  [["Education",3], ["Consumption Quality",1]],           // children's edu improvement
 
-  "ES-1":  [["Savings & Resilience",1]],
-  "ES-2":  [["Savings & Resilience",3]],
-  "ES-3":  [["Savings & Resilience",2]],
-  "ES-4":  [["Savings & Resilience",3]],
-  "ES-5":  [["Savings & Resilience",2]],
+  // ── ECONOMIC SECURITY ──
+  "ES-1":  [["Financial Inclusion",2]],                             // has bank account
+  "ES-2":  [["Savings & Resilience",3]],                            // saves regularly
+  "ES-3":  [["Savings & Resilience",2]],                            // monthly savings amount
+  "ES-4":  [["Savings & Resilience",3]],                            // can handle emergency
+  "ES-5":  [["Savings & Resilience",2], ["Financial Inclusion",1]], // borrowing decreased
 
-  "ES-7":  [["Livelihood & Enterprise",2]],
-  "ES-8":  [["Livelihood & Enterprise",3]],
-  "ES-9":  [["Livelihood & Enterprise",2]],
+  "ES-7":  [["Livelihood & Enterprise",2]],                         // benefit helped earn income
+  "ES-8":  [["Livelihood & Enterprise",3]],                         // what changed in work
+  "ES-9":  [["Livelihood & Enterprise",2]],                         // benefit supports work
 
-  "ES-10": [["Financial Inclusion",3]],
-  "ES-11": [["Financial Inclusion",2]],
+  "ES-10": [["Financial Inclusion",3], ["Financial Confidence",1]], // uses bank independently
+  "ES-11": [["Financial Inclusion",2]],                             // knows how to check balance
 
-  "WE-1":  [["Financial Confidence",3]],
-  "WE-2":  [["Financial Confidence",3]],
+  // ── WOMEN'S EMPOWERMENT ──
+  "WE-1":  [["Financial Confidence",3]],                            // more independent financially
+  "WE-2":  [["Financial Confidence",3]],                            // more confident managing money
 
-  "WE-3":  [["Household Agency",3]],
-  "WE-4":  [["Household Agency",3]],
-  "WE-6":  [["Household Agency",2]],
+  "WE-3":  [["Household Agency",3], ["Financial Confidence",1]],   // who decides spending
+  "WE-4":  [["Household Agency",3]],                                // more say in decisions
+  "WE-6":  [["Household Agency",2], ["Social Empowerment",1]],     // more respected
 
-  "WE-9":  [["Social Empowerment",3]],
-  "WE-11": [["Social Empowerment",2]],
+  // ── SOCIAL TRANSFORMATION ──
+  "WE-9":  [["Social Empowerment",3]],                              // community group participation
+  "WE-11": [["Social Empowerment",2]],                              // helped others access schemes
 
-  "ST-1":  [["Overall Perception",3]],
-  "ST-2":  [["Overall Perception",3]],
+  "ST-1":  [["Overall Perception",3]],                              // scheme importance
+  "ST-2":  [["Overall Perception",3]],                              // life improved overall
 };
 
 // Open text depth questions: flat +5 boost to relevant composites when ≥15 chars answered
@@ -533,6 +537,16 @@ async function loadQuestionsFromDB(): Promise<typeof ALL_QUESTIONS | null> {
         researcherOnly: q.researcherOnly || false,
         depthCategory: q.depthCategory || undefined,
         badge: q.badge || undefined,
+        // Map DB composite (string or JSON array) → effect array for live score badges
+        effect: (() => {
+          const c = q.composite;
+          if (!c || c === "Setup & Consent" || c === "Narrative") return [];
+          if (Array.isArray(c)) return c;
+          if (typeof c === "string" && c.startsWith("[")) {
+            try { return JSON.parse(c); } catch { return [c]; }
+          }
+          return [c];
+        })(),
       };
     });
   } catch (e) {
